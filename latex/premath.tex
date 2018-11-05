@@ -1,0 +1,52 @@
+\documentclass{article}
+
+\usepackage{comment}
+\usepackage[english]{isodate}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{siunitx}
+\usepackage{paracol}
+\usepackage{enumitem}
+\usepackage{bbm}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage{bookmark}
+\usepackage{pdfpages} %\includepdf[pages={1}]{myfile.pdf}
+
+\usepackage{amsmath}
+\usepackage{ amssymb }
+\usepackage{amsthm}
+\usepackage{mdsymbol}%for perp with two bars
+
+\usepackage{mathtools,xparse}
+\newtheorem{theorem}{Theorem}
+
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand\given[1][]{\:#1\vert\:}
+
+
+\sisetup{output-decimal-marker = {,}}
+\newcommand*{\ft}[1]{_\mathrm{#1}} 
+\newcommand*{\dd}{\mathop{}\!\mathrm{d}}
+\newcommand*{\tran}{^{\mkern-1.5mu\mathsf{T}}}%transpose of matrix
+\newcommand{\trace}{\mathrm{trace}}
+
+%%new
+\newcommand{\tab}{\hspace{.2\textwidth}}
+%\newcommand{\span}{\mathrm{Span}}
+\renewcommand{\baselinestretch}{1.5}
+
+
+
+%%%indenting
+\newlength\tindent
+\setlength{\tindent}{\parindent}
+\setlength{\parindent}{0pt}
+\renewcommand{\indent}{\hspace*{\tindent}}
+
