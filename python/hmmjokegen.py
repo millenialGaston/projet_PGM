@@ -23,16 +23,16 @@ import matplotlib.pyplot as plt
 
 class RNN(nn.Module):
     '''
-    Define the model structure
+    Define the model structure.
     '''
 
     def __init__(self, input_size, hidden_size, output_size, n_layers=1):
         super(RNN, self).__init__()
-        self.input_size = input_size    # Size of the character list
-        self.hidden_size = hidden_size  # Size of the hidden layer
-        self.output_size = output_size  # Size of output, here same as input
+        self.input_size = input_size    # Size of the character list.
+        self.hidden_size = hidden_size  # Size of the hidden layer.
+        self.output_size = output_size  # Size of output, here same as input.
         self.n_layers = n_layers
-        self.encoder = nn.Embedding(input_size, hidden_size) # Encode inputs
+        self.encoder = nn.Embedding(input_size, hidden_size) # Encode inputs.
         self.gru = nn.LSTM(hidden_size, hidden_size, n_layers)
         self.decoder = nn.Linear(hidden_size, 256)
         self.linear = nn.Linear(256, output_size)
@@ -87,11 +87,11 @@ def random_minibatch(data, sequence_size):
 
 def char_tensor(string):
     '''
-    Function used to convert a string to a tensor of number.
+    Function used to convert a string to a tensor of 'index'.
 
     Parameters:
     -----------
-    string: The string to convert
+    string: The string to convert.
 
     Returns:
     --------
@@ -140,11 +140,11 @@ def evaluate(model, init_str='W', predict_len=100, temperature=0.8):
             output, hidden = model(
                 inp.to(device), (hidden[0].to(device),hidden[1].to(device)))
             
-            # Sample from the network as a multinomial distribution
+            # Sample from the network as a multinomial distribution.
             output_dist = output.data.view(-1).div(temperature).exp()
             top_i = torch.multinomial(output_dist, 1)[0]
             
-            # Add predicted character to string and use as next input
+            # Add predicted character to string and use as next input.
             predicted_char = all_characters[top_i]
             predicted += predicted_char
             inp = char_tensor(predicted_char)
@@ -181,24 +181,24 @@ def train(data, model, num_epoch, mini_batch_size=200, lr=0.005):
         if epoch > 300:
             optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
         loss_avg = 0
-        # zero the gradient after each step
+        # zero the gradient after each step.
         model.zero_grad()
-        # init the hidden state
+        # init the hidden state.
         hidden = model.init_hidden()
-        # get a training exemple
+        # get a training exemple.
         inputs, targets = random_minibatch(data, mini_batch_size)
-        # pass it through the network
+        # pass it through the network.
         output, hidden = model(
             inputs.to(device), (hidden[0].to(device),hidden[1].to(device)))
-        # calculate the loss
+        # calculate the loss.
         loss = criterion(output.to(device), targets.to(device))
-        # populate the gradients
+        # populate the gradients.
         loss.backward()
-        # make a step
+        # make a step.
         optimizer.step()
 
         if epoch % 5 == 0:
-            # Print an exemple of generated sequence
+            # Print an exemple of generated sequence.
             print(evaluate(model,'Christ is ', 100), '\n')
             print(epoch)
             print(loss.item())
@@ -212,16 +212,16 @@ if __name__ == '__main__':
     plt.rc('ytick', labelsize=15)
     plt.rc('axes', labelsize=15)
 
-    # To use GPU if available
+    # To use GPU if available.
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     torch.cuda.manual_seed(10)
-    # Our dictionary / alphabet
+    # Our dictionary / alphabet.
     all_characters = string.printable
     n_characters = len(all_characters)
-    # load the dataset
+    # load the dataset.
     dataset = pd.read_csv('shortjokes.csv')
     dataset = ' '.join(dataset.values[:,1].tolist())
-    # create the network
+    # create the network.
     rnn = RNN(input_size=n_characters, hidden_size=512, output_size=n_characters,
         n_layers=1).to(device)
     
