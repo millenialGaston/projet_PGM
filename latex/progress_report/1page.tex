@@ -2,6 +2,20 @@
 
 \begin{document}
 \section{Implementation}
+In our original project plan we had indicated that we wished to explore 
+different network topologies to build a generative model for time series 
+data, more specifically short text sequences. After parsing through the latest
+literature we have opted for a RNN-LSTM network. They are several reasons for
+this. The most simple option would have been to use a Hidden Markov Model
+(HMM), however this topology suffers from several drawbacks, first the 
+Markov assumption is unreasonably strong for most text processing and 
+using an N'th order HMM is not an alternative as time complexity grows 
+exponentially with N. The Recurrent Neural Network (RNN) type of neural
+network allows one to introduce memory into an Artifical Neural Network (ANN)
+while keeping the model tractable. However RNN's suffer from numerical issues,
+most notably the vanishing-exploding gradient problem which is readily solved
+using a Long-Short Term Model (LSTM). \\
+
 For the implementation part of our project, we have decided to make a quote
 generator using RNNs. For this implementation, we used the Pytorch library
 because we found it more intuitive and easier to debug then other frameworks.
