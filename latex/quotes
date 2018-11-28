@@ -1,2 +1,30 @@
-:
+An advantage of this approach of deriving the cost function from maximum
+likelihood is that it removes the burden of designing cost functions for each model.
+Specifying a model p(y | x ) automatically determines a cost function log p(y | x ).
+One recurring theme throughout neural network design is that the gradient of
+the cost function must be large and predictable enough to serve as a good guide
+for the learning algorithm. Functions that saturate (become very flat) undermine
+this objective because they make the gradient become very small. In many cases
+this happens because the activation functions used to produce the output of the
+hidden units or the output units saturate. The negative log-likelihood helps to
+avoid this problem for many models. Many output units involve an exp function
+that can saturate when its argument is very negative. The log function in the
+negative log-likelihood cost function undoes the exp of some output units. We will
+discuss the interaction between the cost function and the choice of output unit in
+section 6.2.2 .
+One unusual property of the cross-entropy cost used to perform maximum
+likelihood estimation is that it usually does not have a minimum value when applied
+to the models commonly used in practice. For discrete output variables, most
+models are parametrized in such a way that they cannot represent a probability
+of zero or one, but can come arbitrarily close to doing so. Logistic regression
+is an example of such a model. For real-valued output variables, if the model
+179CHAPTER 6. DEEP FEEDFORWARD NETWORKS
+can control the density of the output distribution (for example, by learning the
+variance parameter of a Gaussian output distribution) then it becomes possible
+to assign extremely high density to the correct training set outputs, resulting in
+cross-entropy approaching negative infinity. Regularization techniques described
+in chapter 7 provide several different ways of modifying the learning problem so
+that the model cannot reap unlimited reward in this way.
+
+cite Deeplearngin, p.179
 
