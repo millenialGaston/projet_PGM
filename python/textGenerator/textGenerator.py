@@ -185,6 +185,7 @@ def cross_loss(model, device, dataset, t_vocab, sequence_size, batch_size):
     testloader = torch.utils.data.DataLoader(quote_dataset(data,labels),
         batch_size=batch_size, shuffle=False, num_workers=0)
 
+    criterion = nn.CrossEntropyLoss()
     model.eval()
     loss_avg = 0
     with torch.no_grad():
