@@ -39,17 +39,17 @@ def choose_dataset(name, filtering=False):
 		with open('data/hp.txt','r') as  file:
 			dataset = file.read()
 		dataset = dataset.lower().split()
-    # load shakes 600 000 words
-    if name == "shakes":
-    	with open('data/shakes.txt','r') as  file:
-        	dataset = file.read()
-    	dataset = dataset.lower().split()
-    if filtering == True:
-    	dataset = [dataset[i].translate(
-        	str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
-    	dataset = list(filter(('').__ne__,dataset))
+	# load shakes 600 000 words
+	if name == "shakes":
+		with open('data/shakes.txt','r') as  file:
+			dataset = file.read()
+		dataset = dataset.lower().split()
+	if filtering == True:
+		dataset = [dataset[i].translate(
+			str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
+		dataset = list(filter(('').__ne__,dataset))
 
-    return dataset
+	return dataset
 
 def main(*args,**kwargs):
 
