@@ -37,7 +37,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def fetchData(name : str,extension : str, filtering=False):
   dataPath = 'data/'
-  datset = None
+  dataset = None
   setNeedsColumnParsing = {"QUOTE","shortjokes"}
   setRegularParsing = {"hp","shakes","returnoftheking"}
   fullPath = dataPath + name + '.' + extension
