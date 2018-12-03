@@ -71,6 +71,7 @@ def main(*args,**kwargs):
     torch.cuda.manual_seed(10)
 
     dataset = choose_dataset("returnoftheking", filtering=False)
+    print(len(dataset))
     # create the network.
     target_vocab = list(set(dataset))
     t_vocab = {k:v for v,k in enumerate(target_vocab)}
