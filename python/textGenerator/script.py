@@ -40,12 +40,12 @@ def choose_dataset(name, filtering=False):
 		with open('data/hp.txt','r') as  file:
 			dataset = file.read()
 		dataset = dataset.lower().split()
-	# load shakes 600 000 words
+	# load shakes +600 000 words
 	if name == "shakes":
 		with open('data/shakes.txt','r') as  file:
 			dataset = file.read()
 		dataset = dataset.lower().split()
-	# load lord of the kind: return of the king
+	# load lord of the kind: return of the king 400 000 words
 	if name == "returnoftheking":
 		with open('data/returnoftheking.txt','r') as  file:
 			dataset = file.read()
@@ -80,7 +80,7 @@ def main(*args,**kwargs):
     	output_size=len(target_vocab)).to(device)
 
     loss_train, loss_test = textGenerator.train(rnn, device,dataset,t_vocab,
-    	target_vocab, num_epoch=20, sequence_size=50, batch_size=64, lr=0.005)
+    	target_vocab, num_epoch=20, sequence_size=100, batch_size=64, lr=0.005)
 
     plt.figure()
     plt.plot(loss_train, 'sk-',label='Trainset')
