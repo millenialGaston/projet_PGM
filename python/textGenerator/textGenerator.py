@@ -205,7 +205,7 @@ def train(model, device, dataset,t_vocab, target_vocab, num_epoch,
     trainloader = torch.utils.data.DataLoader(quote_dataset(data,labels),
         batch_size=batch_size, shuffle=True, num_workers=0)
 
-    data, labels = create_data(dataset[500000:], t_vocab, sequence_size)
+    data, labels = create_data(dataset[500000:600000], t_vocab, sequence_size)
     testloader = torch.utils.data.DataLoader(quote_dataset(data,labels),
         batch_size=batch_size, shuffle=False, num_workers=0)
 
