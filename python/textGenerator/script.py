@@ -54,7 +54,7 @@ def main(*args,**kwargs):
     target_vocab = list(set(dataset))
     t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
-    rnn = textGenerator.RNN(device, len(target_vocab),256).to(device)
+    rnn = textGenerator.RNN(device, len(target_vocab),256, len(target_vocab)).to(device)
 
     loss_train, loss_test = textGenerator.train(rnn, device,dataset,t_vocab, num_epoch=20,
                                                 sequence_size=100, batch_size=64, lr=0.01)
