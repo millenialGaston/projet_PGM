@@ -25,6 +25,7 @@ import matplotlib.pyplot as plt
 import bcolz
 import pickle
 import torchvision
+
 def choose_dataset(name, filtering=False):
 	# load quotes approx 800 000 words
 	if name == "quotes":
@@ -44,6 +45,12 @@ def choose_dataset(name, filtering=False):
 		with open('data/shakes.txt','r') as  file:
 			dataset = file.read()
 		dataset = dataset.lower().split()
+	# load lord of the kind: return of the king
+	if name == "returnoftheking":
+		with open('data/returnoftheking.txt','r') as  file:
+			dataset = file.read()
+		dataset = dataset.lower().split()
+	# filtering
 	if filtering == True:
 		dataset = [dataset[i].translate(
 			str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
@@ -63,7 +70,7 @@ def main(*args,**kwargs):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     torch.cuda.manual_seed(10)
 
-    dataset = choose_dataset("shakes", filtering=True)
+    dataset = choose_dataset("returnoftheking", filtering=True)
     # create the network.
     target_vocab = list(set(dataset))
     t_vocab = {k:v for v,k in enumerate(target_vocab)}
