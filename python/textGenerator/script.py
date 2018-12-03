@@ -70,7 +70,7 @@ def main(*args,**kwargs):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     torch.cuda.manual_seed(10)
 
-    dataset = choose_dataset("returnoftheking", filtering=True)
+    dataset = choose_dataset("returnoftheking", filtering=False)
     # create the network.
     target_vocab = list(set(dataset))
     t_vocab = {k:v for v,k in enumerate(target_vocab)}
