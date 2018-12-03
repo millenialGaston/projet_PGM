@@ -70,8 +70,8 @@ def main(*args,**kwargs):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     torch.cuda.manual_seed(10)
 
-    dataset = choose_dataset("returnoftheking", filtering=False)
-    dataset2 = choose_dataset("hp", filtering=False)
+    dataset2 = choose_dataset("returnoftheking", filtering=False)
+    dataset = choose_dataset("hp", filtering=False)
     print(len(dataset))
     # create the network.
     target_vocab = list(set(dataset+dataset2))
