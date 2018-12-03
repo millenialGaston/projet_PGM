@@ -11,6 +11,8 @@ __email__ = "jim.leroux1@gmail.com, n.laliberte01@gmail.com, "
 __studentid__ = "1024610, 1005803, "
 
 import textGenerator
+import nltk
+from nltk.corpus import brown
 
 import numpy as np
 import pandas as pd
@@ -27,6 +29,7 @@ import argparse
 import random
 from copy import deepcopy
 from collections import namedtuple
+
 Numerical_Parameters = namedtuple('Numerical_Parameters',
                                   'num_epoch sequence_size lr')
 RNN_Parameters = namedtuple('RNN_Parameters',
@@ -108,7 +111,8 @@ def main(*args,**kwargs):
 
   rnn = textGenerator.RNN(device, *rnnParams).to(device)
 
-  modelParams = zip(rnn,device,dataset,t_vocab,target_vocab,cross_dataset)
+  modelParams = zip(rnn,device,dataset,
+                    t_vocab,target_vocab,cross_dataset)
   loss_train, loss_test, loss_cross = \
     textGenerator.train(*modelParams, *numericalParams)
 
