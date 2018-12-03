@@ -115,7 +115,7 @@ def create_data(datas, vocab, sequence_size):
 
     return data, labels
 
-def char_tensor(string):
+def char_tensor(string, target_vocab):
     '''
     Function used to convert a string to a tensor of 'index'.
 
@@ -136,7 +136,8 @@ def char_tensor(string):
 
     return tensor
 
-def evaluate(model,device, init_str='W', predict_len=100, temperature=0.7):
+def evaluate(model,device, target_vocab, init_str='W', predict_len=100,
+        temperature=0.7):
     '''
     Function generating a sequence of length predict_len from our model. We
     start by propagating an init_str in the model to build an initial hidden
@@ -158,7 +159,7 @@ def evaluate(model,device, init_str='W', predict_len=100, temperature=0.7):
     model.eval()
     with torch.no_grad():
         hidden = model.init_hidden(1)
-        init = char_tensor(init_str)
+        init = char_tensor(init_str, target_vocab)
         predicted = init_str+' '
 
         # Build up the hidden state with inputs.
@@ -179,8 +180,8 @@ def evaluate(model,device, init_str='W', predict_len=100, temperature=0.7):
 
     return predicted
 
-def train(model, device, dataset,t_vocab, num_epoch, sequence_size=20, batch_size=200,
-          lr=0.005):
+def train(model, device, dataset,t_vocab, target_vocab, num_epoch,
+        sequence_size=20, batch_size=200, lr=0.005):
     '''
     Function used to train the model on the joke dataset.
 
@@ -269,7 +270,7 @@ def train(model, device, dataset,t_vocab, num_epoch, sequence_size=20, batch_siz
 
         # Print an exemple of generated sequence.
         print('Epoch: {}'.format(epoch))
-        print(evaluate(model,device,'i', 40))
+        print(evaluate(model,device,target_vocab,'i', 40))
         print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
                     loss_train[epoch], loss_test[epoch]))
 
