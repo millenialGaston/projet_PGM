@@ -56,8 +56,8 @@ def main(*args,**kwargs):
 
     rnn = textGenerator.RNN(device, len(target_vocab),256, len(target_vocab)).to(device)
 
-    loss_train, loss_test = textGenerator.train(rnn, device,dataset,t_vocab, num_epoch=20,
-                                                sequence_size=100, batch_size=64, lr=0.01)
+    loss_train, loss_test = textGenerator.train(rnn, device,dataset,t_vocab,
+    	target_vocab, num_epoch=20,sequence_size=100, batch_size=64, lr=0.01)
 
     plt.figure()
     plt.plot(loss_train, 'sk-',label='Trainset')
