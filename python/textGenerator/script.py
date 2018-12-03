@@ -80,12 +80,14 @@ def main(*args,**kwargs):
     rnn = textGenerator.RNN(device, input_size=len(target_vocab), hidden_size=256,
     	output_size=len(target_vocab)).to(device)
 
-    loss_train, loss_test = textGenerator.train(rnn, device,dataset,t_vocab,
-    	target_vocab, num_epoch=20, sequence_size=100, batch_size=32, lr=0.005)
+    loss_train, loss_test, loss_cross = textGenerator.train(rnn, device,dataset,
+    	t_vocab, target_vocab, num_epoch=20, dataset2, sequence_size=100,
+    	batch_size=32, lr=0.005)
 
     plt.figure()
     plt.plot(loss_train, 'sk-',label='Trainset')
     plt.plot(loss_test, 'sr-', label='Testset')
+    plt.plot(loss_cross, 'sb-', label='crossset')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.legend()
