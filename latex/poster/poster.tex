@@ -18,7 +18,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[landscape,a0paper,fontscale=0.285]{baposter} % Adjust the font scale/size here
+\documentclass[landscape,a0paper,fontscale=0.285]{postertemplate} % Adjust the font scale/size here
 
 \usepackage{graphicx} % Required for including images
 \graphicspath{{figures/}} % Directory in which figures are stored
@@ -79,8 +79,8 @@ linewidth=2pt % Width of the border lines around content boxes
 %----------------------------------------------------------------------------------------
 %
 {\includegraphics[height=3em]{milalogo}} % First university/lab logo on the left
-{\bf\textsc{ML and Gaming }\vspace{0.5em}} % Poster title
-{\textsc{J. Leroux, N. Laliberte, O. Malenfant-Thuot and S. Duffort-Labbe \hspace{5pt}\hspace{5pt} }} % Author names and institution
+{\bf\textsc{Applying LSTM to text generation}\vspace{0.5em}} % Poster title
+{\textsc{J. Leroux, N. Laliberte, S. Frederic Boileau \hspace{5pt}\hspace{5pt} }} % Author names and institution
 {\includegraphics[height=3em]{udemlogo}} % Second university/lab logo on the right
 
 %----------------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ where $S$ is the empirical covariance matrix and $\rho$  the regularization term
 
 \headerbox{References}{name=references,column=1,below=method, above=bottom}{
 
-Meinshausen, N., B�hlmann, P., 2010. Stability selection. J Roy Stat Soc B 72, 417$-$473.
+Meinshausen, N., Bhlmann, P., 2010. Stability selection. J Roy Stat Soc B 72, 417$-$473.
 
 \vspace{0.3em} % When there are two boxes, some whitespace may need to be added if the one on the right has more content
 }
@@ -220,7 +220,7 @@ Meinshausen, N., B�hlmann, P., 2010. Stability selection. J Roy Stat Soc B 72,
 %	SIMULATION STUDY 
 %----------------------------------------------------------------------------------------
 
-\headerbox{CIFAR-10}{name=cifar10,
+\headerbox{Results}{name=results,
 column=2,span=2,row=0}{
 
 \vspace{0.05 cm}
@@ -258,7 +258,7 @@ column=2,span=2,row=0}{
 \end{itemize}
 
 \begin{center}
-\includegraphics[width=.65\linewidth]{}
+%\includegraphics[width=.65\linewidth]{}
 \end{center}
 
 
@@ -274,7 +274,7 @@ column=2,span=2,row=0}{
 \end{itemize}
 
 \begin{center}
-\includegraphics[width=.65\linewidth]{}
+%\includegraphics[width=.65\linewidth]{}
 \end{center}
 
 \end{multicols}
@@ -295,7 +295,7 @@ column=2,span=2,row=0}{
 %	REAL DATA 
 %----------------------------------------------------------------------------------------
 
-\headerbox{NHL advanced stats}{name=CLSA,column=2,span=2,below=cifar10, above=bottom}{
+\headerbox{Blablabl}{name=CLSA,column=2,span=2,below=results, above=bottom}{
 \vspace{0.25 cm}
 
 
@@ -308,7 +308,7 @@ column=2,span=2,row=0}{
 
 \vspace{-1 cm}
 \begin{center}
-\includegraphics[width=1.3\linewidth]{}
+%\includegraphics[width=1.3\linewidth]{}
 \end{center}
 
 \end{multicols}
