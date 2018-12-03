@@ -25,6 +25,31 @@ import matplotlib.pyplot as plt
 import bcolz
 import pickle
 import torchvision
+def choose_dataset(name, filtering=False):
+    # load quotes approx 800 000 words
+    if name == "quotes":
+    	dataset = pd.read_csv('data/QUOTE.csv')
+    	dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
+    # load jokes approx xxx 000 words
+    if name == "jokes":  
+   		dataset = pd.read_csv('data/shortjokes.csv')
+    	dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
+    # load harry potter 600 000 words
+    if name == "hp":
+    	with open('data/hp.txt','r') as  file:
+        	dataset = file.read()
+    	dataset = dataset.lower().split()
+    # load shakes 600 000 words
+    if name == "shakes":
+    	with open('data/shakes.txt','r') as  file:
+        	dataset = file.read()
+    	dataset = dataset.lower().split()
+    if filtering == True:
+    	dataset = [dataset[i].translate(
+        	str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
+    	dataset = list(filter(('').__ne__,dataset))
+
+    return dataset
 
 def main(*args,**kwargs):
 
@@ -38,18 +63,7 @@ def main(*args,**kwargs):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     torch.cuda.manual_seed(10)
 
-    # load quotes approx 800 000 words
-    #dataset = pd.read_csv('data/shortjokes.csv')
-    #dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
-
-    # load harry potter 600 000 words
-    with open('data/hp.txt','r') as  file:
-        dataset = file.read()
-    dataset = dataset.lower().split()
-    #dataset = [dataset[i].translate(
-    #    str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
-    #dataset = list(filter(('').__ne__,dataset))
-
+    dataset = choose_dataset("shakes", filtering=False)
     # create the network.
     target_vocab = list(set(dataset))
     t_vocab = {k:v for v,k in enumerate(target_vocab)}
