@@ -180,7 +180,7 @@ def evaluate(model,device, target_vocab, init_str='W', predict_len=100,
 
     return predicted
 
-def cross_loss(model, dataset, t_vocab, sequence_size, batch_size):
+def cross_loss(model, device, dataset, t_vocab, sequence_size, batch_size):
     data, labels = create_data(dataset[:100000], t_vocab, sequence_size)
     testloader = torch.utils.data.DataLoader(quote_dataset(data,labels),
         batch_size=batch_size, shuffle=False, num_workers=0)
@@ -290,7 +290,8 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch,
                 loss = criterion(output.to(device), targets.to(device))
                 loss_avg_test += loss.item()
             loss_test.append(loss_avg_test/len(testloader))
-        loss_cross.append(cross_loss(model, cross_dataset, t_vocab,
+        
+        loss_cross.append(cross_loss(model, device, cross_dataset, t_vocab,
             sequence_size, batch_size))
         # Print an exemple of generated sequence.
         print('Epoch: {}'.format(epoch))
