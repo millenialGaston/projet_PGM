@@ -176,7 +176,7 @@ def evaluate(model,device, target_vocab, init_str='W', predict_len=100,
             # Add predicted character to string and use as next input.
             predicted_char = target_vocab[retained]+' '
             predicted += predicted_char
-            inp = char_tensor(predicted_char)
+            inp = char_tensor(predicted_char, target_vocab)
 
     return predicted
 
