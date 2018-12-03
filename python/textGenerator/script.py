@@ -71,16 +71,17 @@ def main(*args,**kwargs):
     torch.cuda.manual_seed(10)
 
     dataset = choose_dataset("returnoftheking", filtering=False)
+    dataset2 = choose_dataset("hp", filtering=False)
     print(len(dataset))
     # create the network.
-    target_vocab = list(set(dataset))
+    target_vocab = list(set(dataset+dataset2))
     t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
     rnn = textGenerator.RNN(device, input_size=len(target_vocab), hidden_size=256,
     	output_size=len(target_vocab)).to(device)
 
     loss_train, loss_test = textGenerator.train(rnn, device,dataset,t_vocab,
-    	target_vocab, num_epoch=20, sequence_size=200, batch_size=32, lr=0.005)
+    	target_vocab, num_epoch=20, sequence_size=100, batch_size=32, lr=0.005)
 
     plt.figure()
     plt.plot(loss_train, 'sk-',label='Trainset')
