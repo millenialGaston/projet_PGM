@@ -199,12 +199,12 @@ def cross_loss(model, device, dataset, t_vocab, sequence_size, batch_size):
             targets = targets.view(inputs.shape[0] * (sequence_size-1))
             loss = criterion(output.to(device), targets.to(device))
             loss_avg += loss.item()
-        
+
     return loss_avg/len(testloader)
 
 
-def train(model, device, dataset, t_vocab, target_vocab, num_epoch,
-        cross_dataset=None, sequence_size=20, batch_size=200, lr=0.005):
+def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
+          num_epoch=20, sequence_size=20, batch_size=200, lr=0.005):
     '''
     Function used to train the model on the joke dataset.
 
