@@ -43,7 +43,7 @@ def main(*args,**kwargs):
     #dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
 
     # load harry potter 600 000 words
-    with open('hp.txt','r') as  file:
+    with open('data/hp.txt','r') as  file:
         dataset = file.read()
     dataset = dataset.lower().split()
     #dataset = [dataset[i].translate(
