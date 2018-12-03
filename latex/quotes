@@ -25,6 +25,13 @@ to assign extremely high density to the correct training set outputs, resulting 
 cross-entropy approaching negative infinity. Regularization techniques described
 in chapter 7 provide several different ways of modifying the learning problem so
 that the model cannot reap unlimited reward in this way.
-
 cite Deeplearngin, p.179
+-------------------------------------------------------
 
+Unfortunately, mean squared error and mean absolute error often lead to poor
+results when used with gradient-based optimization. Some output units that
+saturate produce very small gradients when combined with these cost functions.
+This is one reason that the cross-entropy cost function is more popular than mean
+squared error or mean absolute error, even when it is not necessary to estimate an
+entire distribution p( y | x ) .
+cite Deeplearngin p.181
