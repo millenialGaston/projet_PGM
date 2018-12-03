@@ -33,12 +33,12 @@ def choose_dataset(name, filtering=False):
     # load jokes approx xxx 000 words
     if name == "jokes":  
    		dataset = pd.read_csv('data/shortjokes.csv')
-    	dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
-    # load harry potter 600 000 words
-    if name == "hp":
-    	with open('data/hp.txt','r') as  file:
-        	dataset = file.read()
-    	dataset = dataset.lower().split()
+   		dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
+	# load harry potter 600 000 words
+	if name == "hp":
+		with open('data/hp.txt','r') as  file:
+			dataset = file.read()
+		dataset = dataset.lower().split()
     # load shakes 600 000 words
     if name == "shakes":
     	with open('data/shakes.txt','r') as  file:
