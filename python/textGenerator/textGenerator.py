@@ -29,7 +29,7 @@ class RNN(nn.Module):
     Define the model structure.
     '''
 
-    def __init__(self, input_size, hidden_size, output_size,
+    def __init__(self, device, input_size, hidden_size, output_size,
             n_layers=1):
         super(RNN, self).__init__()
         self.input_size = input_size    # Size of the character list.
@@ -41,6 +41,7 @@ class RNN(nn.Module):
         self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers,
             batch_first=True)
         self.linear1 = nn.Linear(self.hidden_size, output_size)
+        self.device = device
 
     def forward(self, inputs, hidden, sequence_len, batch_size):
         inputs = inputs.view(batch_size, sequence_len)
@@ -56,8 +57,8 @@ class RNN(nn.Module):
         Initialize the hidden layer to 0s.
         '''
 
-        return (torch.zeros(self.n_layers, batch_size, self.hidden_size).to(device),
-            torch.zeros(self.n_layers, batch_size, self.hidden_size).to(device))
+        return (torch.zeros(self.n_layers, batch_size, self.hidden_size).to(self.device),
+            torch.zeros(self.n_layers, batch_size, self.hidden_size).to(self.device))
 
     def create_emb_layer(self, weights_matrix, non_trainable=False):
         num_embeddings, embedding_dim = weights_matrix.size()
@@ -135,7 +136,7 @@ def char_tensor(string):
 
     return tensor
 
-def evaluate(model, init_str='W', predict_len=100, temperature=0.7):
+def evaluate(model,device, init_str='W', predict_len=100, temperature=0.7):
     '''
     Function generating a sequence of length predict_len from our model. We
     start by propagating an init_str in the model to build an initial hidden
@@ -178,7 +179,8 @@ def evaluate(model, init_str='W', predict_len=100, temperature=0.7):
 
     return predicted
 
-def train(model, num_epoch, sequence_size=20, batch_size=200, lr=0.005):
+def train(model, device, dataset,t_vocab, num_epoch, sequence_size=20, batch_size=200,
+          lr=0.005):
     '''
     Function used to train the model on the joke dataset.
 
@@ -267,7 +269,7 @@ def train(model, num_epoch, sequence_size=20, batch_size=200, lr=0.005):
 
         # Print an exemple of generated sequence.
         print('Epoch: {}'.format(epoch))
-        print(evaluate(model,'i', 40))
+        print(evaluate(model,device,'i', 40))
         print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
                     loss_train[epoch], loss_test[epoch]))
 

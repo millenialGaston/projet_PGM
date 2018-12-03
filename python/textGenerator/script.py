@@ -10,7 +10,21 @@ __maintainer__ = "Jimmy Leroux, Nicolas Laliberte, Frederic Boileau"
 __email__ = "jim.leroux1@gmail.com, n.laliberte01@gmail.com, "
 __studentid__ = "1024610, 1005803, "
 
-from textGenerator import *
+
+import textGenerator
+import numpy as np
+import pandas as pd
+import unidecode
+import string
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.autograd import Variable
+import random
+import matplotlib.pyplot as plt
+import bcolz
+import pickle
+import torchvision
 
 def main(*args,**kwargs):
 
@@ -25,13 +39,13 @@ def main(*args,**kwargs):
     torch.cuda.manual_seed(10)
 
     # load quotes approx 800 000 words
-    #dataset = pd.read_csv('QUOTE.csv')
-    #dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
+    dataset = pd.read_csv('data/shortjokes.csv')
+    dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
 
     # load harry potter 600 000 words
-    with open('hp.txt','r') as  file:
-        dataset = file.read()
-    dataset = dataset.lower().split()
+    #with open('hp.txt','r') as  file:
+    #    dataset = file.read()
+    #dataset = dataset.lower().split()
     #dataset = [dataset[i].translate(
     #    str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
     #dataset = list(filter(('').__ne__,dataset))
@@ -40,11 +54,11 @@ def main(*args,**kwargs):
     target_vocab = list(set(dataset))
     t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
-    rnn = RNN(input_size=len(target_vocab),
+    rnn = textGenerator.RNN(device, input_size=len(target_vocab),
         hidden_size=256, output_size=len(target_vocab), n_layers=1).to(device)
 
-    loss_train, loss_test = train(rnn, num_epoch=20, sequence_size=100,
-        batch_size=64, lr=0.01)
+    loss_train, loss_test = textGenerator.train(rnn, device,dataset,t_vocab, num_epoch=20,
+                                                sequence_size=100, batch_size=64, lr=0.01)
 
     plt.figure()
     plt.plot(loss_train, 'sk-',label='Trainset')
