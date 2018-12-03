@@ -39,13 +39,13 @@ def main(*args,**kwargs):
     torch.cuda.manual_seed(10)
 
     # load quotes approx 800 000 words
-    dataset = pd.read_csv('data/shortjokes.csv')
-    dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
+    #dataset = pd.read_csv('data/shortjokes.csv')
+    #dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
 
     # load harry potter 600 000 words
-    #with open('hp.txt','r') as  file:
-    #    dataset = file.read()
-    #dataset = dataset.lower().split()
+    with open('hp.txt','r') as  file:
+        dataset = file.read()
+    dataset = dataset.lower().split()
     #dataset = [dataset[i].translate(
     #    str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
     #dataset = list(filter(('').__ne__,dataset))
