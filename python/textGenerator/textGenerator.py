@@ -291,14 +291,17 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch,
                 loss = criterion(output.to(device), targets.to(device))
                 loss_avg_test += loss.item()
             loss_test.append(loss_avg_test/len(testloader))
-        
-        loss_cross.append(cross_loss(model, device, cross_dataset, t_vocab,
-            sequence_size, batch_size))
+        if cross_dataset is not None:
+            loss_cross.append(cross_loss(model, device, cross_dataset, t_vocab,
+                sequence_size, batch_size))
         # Print an exemple of generated sequence.
         print('Epoch: {}'.format(epoch))
         print(evaluate(model,device,target_vocab,'i', 40))
         print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
                     loss_train[epoch], loss_test[epoch]))
-
+        if cross_dataset is not None:
+            print('Train error: {0:.2f} Test error: {1:.2f} Cross error: {2:.2f}\
+                \n'.format(loss_train[epoch], loss_test[epoch],
+                loss_cross[epoch]))
     return loss_train, loss_test, loss_cross
 
