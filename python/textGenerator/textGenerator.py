@@ -180,8 +180,30 @@ def evaluate(model,device, target_vocab, init_str='W', predict_len=100,
 
     return predicted
 
-def train(model, device, dataset,t_vocab, target_vocab, num_epoch,
-        sequence_size=20, batch_size=200, lr=0.005):
+def cross_loss(model, dataset, t_vocab, sequence_size, batch_size):
+    data, labels = create_data(dataset[:100000], t_vocab, sequence_size)
+    testloader = torch.utils.data.DataLoader(quote_dataset(data,labels),
+        batch_size=batch_size, shuffle=False, num_workers=0)
+
+    model.eval()
+    loss_avg = 0
+    with torch.no_grad():
+        # Calculate the training loss
+        for i, data in enumerate(testloader):
+            inputs, targets = data
+            hidden = model.init_hidden(inputs.shape[0])
+            output, hidden = model(inputs.to(device), hidden,
+                sequence_size-1, inputs.shape[0])
+            targets = targets.contiguous()
+            targets = targets.view(inputs.shape[0] * (sequence_size-1))
+            loss = criterion(output.to(device), targets.to(device))
+            loss_avg += loss.item()
+        
+    return loss_avg/len(testloader)
+
+
+def train(model, device, dataset, t_vocab, target_vocab, num_epoch,
+        cross_dataset=None, sequence_size=20, batch_size=200, lr=0.005):
     '''
     Function used to train the model on the joke dataset.
 
@@ -215,6 +237,7 @@ def train(model, device, dataset,t_vocab, target_vocab, num_epoch,
 
     loss_train = []
     loss_test = []
+    loss_cross = []
     for epoch in range(num_epoch):
         loss_avg_train = 0
         loss_avg_test = 0
@@ -267,12 +290,13 @@ def train(model, device, dataset,t_vocab, target_vocab, num_epoch,
                 loss = criterion(output.to(device), targets.to(device))
                 loss_avg_test += loss.item()
             loss_test.append(loss_avg_test/len(testloader))
-
+        loss_cross.append(cross_loss(model, cross_dataset, t_vocab,
+            sequence_size, batch_size))
         # Print an exemple of generated sequence.
         print('Epoch: {}'.format(epoch))
         print(evaluate(model,device,target_vocab,'i', 40))
         print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
                     loss_train[epoch], loss_test[epoch]))
 
-    return loss_train, loss_test
+    return loss_train, loss_test, loss_cross
 
