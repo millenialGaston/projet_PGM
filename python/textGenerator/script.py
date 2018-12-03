@@ -14,32 +14,45 @@ from textGenerator import *
 
 def main(*args,**kwargs):
 
-  plt.style.use('ggplot')
-  plt.rc('xtick', labelsize=15)
-  plt.rc('ytick', labelsize=15)
-  plt.rc('axes', labelsize=15)
 
-  # To use GPU if available.
-  device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-  torch.cuda.manual_seed(10)
-  # Our dictionary / alphabet.
-  all_characters = string.printable
-  n_characters = len(all_characters)
-  # load the dataset.
-  dataset = pd.read_csv('data/shortjokes.csv')
-  dataset = ' '.join(dataset.values[:,1].tolist())
-  # create the network.
-  rnn = RNN(input_size=n_characters, hidden_size=512, output_size=n_characters,
-      n_layers=1).to(device)
+    plt.style.use('ggplot')
+    plt.rc('xtick', labelsize=15)
+    plt.rc('ytick', labelsize=15)
+    plt.rc('axes', labelsize=15)
 
-  losses = train(dataset, rnn, num_epoch=200, mini_batch_size=200, lr=0.01)
+    # To use GPU if available.
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    torch.cuda.manual_seed(10)
 
-  plt.figure()
-  plt.plot(losses, 'sk-')
-  plt.xlabel('Epoch')
-  plt.ylabel('Loss')
-  plt.show()
+    # load quotes approx 800 000 words
+    #dataset = pd.read_csv('QUOTE.csv')
+    #dataset = ' '.join(dataset.values[:,1].tolist()).lower().split()
 
+    # load harry potter 600 000 words
+    with open('hp.txt','r') as  file:
+        dataset = file.read()
+    dataset = dataset.lower().split()
+    #dataset = [dataset[i].translate(
+    #    str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
+    #dataset = list(filter(('').__ne__,dataset))
+
+    # create the network.
+    target_vocab = list(set(dataset))
+    t_vocab = {k:v for v,k in enumerate(target_vocab)}
+
+    rnn = RNN(input_size=len(target_vocab),
+        hidden_size=256, output_size=len(target_vocab), n_layers=1).to(device)
+
+    loss_train, loss_test = train(rnn, num_epoch=20, sequence_size=100,
+        batch_size=64, lr=0.01)
+
+    plt.figure()
+    plt.plot(loss_train, 'sk-',label='Trainset')
+    plt.plot(loss_test, 'sr-', label='Testset')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.show()
 
 if __name__ == '__main__':
   main()
