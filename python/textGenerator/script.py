@@ -140,7 +140,7 @@ def main(*args,**kwargs):
     						hidden_size=256,
     						output_size=len(target_vocab))
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
-  modelParams = [lotrmodel,device,dataset,
+  modelParams = [lotrmodel,device,dataset2,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
     num_epoch = 2,
@@ -155,7 +155,7 @@ def main(*args,**kwargs):
     						hidden_size=256,
     						output_size=len(target_vocab))
   quotemodel = tg.RNN(device, *rnnParams).to(device)
-  modelParams = [quotemodel,device,dataset,
+  modelParams = [quotemodel,device,dataset3,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
     num_epoch = 2,
@@ -170,7 +170,7 @@ def main(*args,**kwargs):
     						hidden_size=256,
     						output_size=len(target_vocab))
   shakesmodel = tg.RNN(device, *rnnParams).to(device)
-  modelParams = [shakesmodel,device,dataset,
+  modelParams = [shakesmodel,device,dataset4,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
     num_epoch = 2,
