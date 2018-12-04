@@ -338,8 +338,12 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
             optimizer.step()
         # Pout the model on eval to calculate the losses   
         model.eval()
+        err_train = []
+        err_test = []
         with torch.no_grad():
             # Calculate the training loss
+            correct = 0.
+            total = 0.            
             for i, data in enumerate(trainloader):
                 inputs, targets = data
                 hidden = model.init_hidden(inputs.shape[0])
@@ -348,12 +352,18 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                 targets = targets.contiguous()
                 if mode=="classification":
                     targets = targets.view(inputs.shape[0])
+                    _, predicted = torch.max(output.data, 1)
+                    total += targets.size(0)
+                    correct += (predicted == targets.to(device)).sum().item()
                 if mode=="textgen":
                     targets = targets.view(inputs.shape[0] * (sequence_size-1))
                 loss = criterion(output.to(device), targets.to(device))
                 loss_avg_train += loss.item()
             loss_train.append(loss_avg_train/len(trainloader))
+            if mode=="classification": err_train.append(1-correct/total) 
             # Calculate the test loss
+            correct = 0.
+            total = 0.
             for i, data in enumerate(testloader):
                 inputs, targets = data
                 hidden = model.init_hidden(inputs.shape[0])
@@ -362,11 +372,15 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                 targets = targets.contiguous()
                 if mode=="classification":
                     targets = targets.view(inputs.shape[0])
+                    _, predicted = torch.max(output.data, 1)
+                    total += targets.size(0)
+                    correct += (predicted == targets.to(device)).sum().item()
                 if mode=="textgen":
                     targets = targets.view(inputs.shape[0] * (sequence_size-1))
                 loss = criterion(output.to(device), targets.to(device))
                 loss_avg_test += loss.item()
             loss_test.append(loss_avg_test/len(testloader))
+            if mode=="classification": err_test.append(1-correct/total)
         if cross_dataset is not None:
             loss_cross.append(cross_loss(model, device, cross_dataset, t_vocab,
                 sequence_size, batch_size))
@@ -418,13 +432,21 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                     class_total[label] += 1
                     confusion[label,predicted[i].item()] += 1
                     count += 1
-            plt.imshow(confusion/torch.tensor(class_total).view(numclass,1))
-            plt.colorbar()
-            #plt.yticks(range(numclass), classes)
-            #plt.xticks(range(numclass), classes, rotation='vertical')
-            plt.xlabel('Predicted')
-            plt.ylabel('True')
+        plt.imshow(confusion/torch.tensor(class_total).view(numclass,1))
+        plt.colorbar()
+        #plt.yticks(range(numclass), classes)
+        #plt.xticks(range(numclass), classes, rotation='vertical')
+        plt.xlabel('Predicted')
+        plt.ylabel('True')
         
+        x = range(1,epoch+1)
+        plt.figure()
+        plt.plot(x, err_train,"sk-", label="Trainset")
+        plt.plot(x, err_test,"sr-", label="Testset")
+        plt.xlabel("Epoch")
+        plt.ylabel("Error")
+        plt.legend()
+        plt.show()
         for i in range(numclass):
             if class_total[i]!=0:
                 print('Accuracy of %5s : %2d %%' % (
@@ -432,5 +454,6 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
             else:
                 print('Accuracy of %5s : %2d %%' % (
                     i, 100 * class_correct[i]))
+
 
     return loss_train, loss_test, loss_cross
