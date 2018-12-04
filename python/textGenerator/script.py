@@ -180,5 +180,9 @@ def main(*args,**kwargs):
  
   loss_train, loss_test = \
   	tg.train(*modelParams, *numericalParams, mode="textgen")
+  # -------------------------------------------------------------------------
+  models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
+  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,100000)
+  evaluate_texgen(classifier, device, (d,l), 16)
 if __name__ == '__main__':
   main()
