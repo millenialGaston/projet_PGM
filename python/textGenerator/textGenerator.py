@@ -59,15 +59,6 @@ class RNN(nn.Module):
         return (torch.zeros(self.n_layers, batch_size, self.hidden_size).to(self.device),
             torch.zeros(self.n_layers, batch_size, self.hidden_size).to(self.device))
 
-    def create_emb_layer(self, weights_matrix, non_trainable=False):
-        num_embeddings, embedding_dim = weights_matrix.size()
-        emb_layer = nn.Embedding(num_embeddings, embedding_dim)
-        emb_layer.load_state_dict({'weight': weights_matrix})
-        if non_trainable:
-            emb_layer.weight.requires_grad = False
-
-        return emb_layer, num_embeddings, embedding_dim
-
 class sequence_classifier(RNN):
     
     def __init__(self, device, input_size, hidden_size, output_size,
