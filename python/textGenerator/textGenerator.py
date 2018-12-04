@@ -219,7 +219,7 @@ def evaluate(model,device, target_vocab, t_vocab, init_str='W', predict_len=100,
     model.eval()
     with torch.no_grad():
         hidden = model.init_hidden(1)
-        init = char_tensor(init_str, t_vocab)
+        init = char_tensor(init_str.lower(), t_vocab)
         predicted = init_str+' '
 
         # Build up the hidden state with inputs.
