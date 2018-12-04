@@ -117,10 +117,10 @@ def main(*args,**kwargs):
 
   modelParams = [rnn,device,dataset,
                     t_vocab,target_vocab,cross_dataset]
-  loss_train, loss_test, loss_cross = \
-    textGenerator.train(*modelParams, *numericalParams)
+  #loss_train, loss_test, loss_cross = \
+  #  textGenerator.train(*modelParams, *numericalParams)
 
-  plotting(loss_train, loss_test, loss_cross)
+  #plotting(loss_train, loss_test, loss_cross)
 
 if __name__ == '__main__':
   main()
