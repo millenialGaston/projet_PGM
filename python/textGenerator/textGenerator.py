@@ -432,13 +432,19 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                     class_total[label] += 1
                     confusion[label,predicted[i].item()] += 1
                     count += 1
+        
+        classes = ["hp","lotr","quote","shakes"]
         plt.imshow(confusion/torch.tensor(class_total).view(numclass,1))
         plt.colorbar()
-        #plt.yticks(range(numclass), classes)
-        #plt.xticks(range(numclass), classes, rotation='vertical')
+        plt.yticks(range(numclass), classes)
+        plt.xticks(range(numclass), classes, rotation='vertical')
         plt.xlabel('Predicted')
         plt.ylabel('True')
         
+        plt.style.use('ggplot')
+        plt.rc('xtick', labelsize=15)
+        plt.rc('ytick', labelsize=15)
+        plt.rc('axes', labelsize=15)
         x = range(1,num_epoch+1)
         plt.figure()
         plt.plot(x, err_train,"sk-", label="Trainset")
