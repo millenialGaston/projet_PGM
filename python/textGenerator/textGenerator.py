@@ -50,7 +50,7 @@ class RNN(nn.Module):
         inputs = inputs.contiguous()
         print(inputs.shape)
         output = self.linear1(inputs.view(batch_size*sequence_len,-1))
-
+        print(output.shape)
         return output, hidden
 
     def init_hidden(self, batch_size):
