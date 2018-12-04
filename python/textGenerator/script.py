@@ -69,10 +69,10 @@ def hardCode():
   dataset3 = fetchData("QUOTE","csv", filtering=False)
   dataset4 = fetchData("shakes","txt", filtering=False)
   numericalParams = Numerical_Parameters(
-      num_epoch = 3,
+      num_epoch = 10,
       sequence_size = 100,
       batch_size = 32,
-      lr = 0.005)
+      lr = 0.0000001)
 
   return dataset, dataset2, dataset3, dataset4, numericalParams
 
@@ -109,7 +109,7 @@ def main(*args,**kwargs):
   #dataset = fetchData("hp","txt", filtering=False)
   
   # testinggggggg
-  t,l=textGenerator.create_class_data([dataset,dataset2,dataset3,dataset4],t_vocab,100,1000)
+  t,l=textGenerator.create_class_data([dataset,dataset2,dataset3,dataset4],t_vocab,100,100000)
   print(t.shape)
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
                              hidden_size=256,
