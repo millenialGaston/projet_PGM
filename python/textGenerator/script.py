@@ -105,7 +105,8 @@ def main(*args,**kwargs):
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
                              hidden_size=256,
                              output_size=4)
-  modelParams = [rnn,device,(d,l),
+  classifier = tg.sequence_classifier(device, *rnnParams).to(device)
+  modelParams = [classifier,device,(d,l),
   	t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
     num_epoch = 20,
@@ -113,7 +114,6 @@ def main(*args,**kwargs):
     batch_size = 32,
     lr = 0.0001)
 
-  classifier = tg.sequence_classifier(device, *rnnParams).to(device)
   #loss_train, loss_test = \
   #  tg.train(*modelParams, *numericalParams, mode="classification")
 
@@ -123,15 +123,15 @@ def main(*args,**kwargs):
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
     						hidden_size=256,
     						output_size=4)
-  modelParams = [rnn,device,dataset,
+  hpmodel = tg.RNN(device, *rnnParams).to(device)
+  modelParams = [hpmodel,device,dataset,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
     num_epoch = 20,
     sequence_size = 100,
     batch_size = 32,
     lr = 0.0001)
-  
-  hpmodel = tg.RNN(device, *rnnParams).to(device)
+ 
   loss_train, loss_test = \
   	tg.train(*modelParams, *numericalParams, mode="textgen")
 if __name__ == '__main__':
