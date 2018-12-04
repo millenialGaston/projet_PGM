@@ -439,7 +439,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
         plt.xlabel('Predicted')
         plt.ylabel('True')
         
-        x = range(1,epoch+1)
+        x = range(1,epoch)
         plt.figure()
         plt.plot(x, err_train,"sk-", label="Trainset")
         plt.plot(x, err_test,"sr-", label="Testset")
