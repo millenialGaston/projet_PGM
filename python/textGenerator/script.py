@@ -108,7 +108,7 @@ def main(*args,**kwargs):
   dataset = fetchData("hp","txt", filtering=False)
   
   # testinggggggg
-  t,l=textGenerator.create_class_data([dataset,dataset2],t_vocab,100,200000)
+  t,l=textGenerator.create_class_data([dataset,dataset2],t_vocab,100,300000)
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
                              hidden_size=256,
                              output_size=2)
