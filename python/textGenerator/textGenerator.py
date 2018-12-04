@@ -330,7 +330,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
             loss.backward()
             # make a step.
             optimizer.step()
-            print(labels.item())
+            print(labels)
         # Pout the model on eval to calculate the losses   
         model.eval()
         with torch.no_grad():
