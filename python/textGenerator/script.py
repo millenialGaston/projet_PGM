@@ -128,9 +128,9 @@ def main(*args,**kwargs):
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
     num_epoch = 20,
-    sequence_size = 100,
+    sequence_size = 50,
     batch_size = 32,
-    lr = 0.0001)
+    lr = 0.001)
  
   loss_train, loss_test = \
   	tg.train(*modelParams, *numericalParams, mode="textgen")
