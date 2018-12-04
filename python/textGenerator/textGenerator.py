@@ -389,7 +389,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                 hidden = model.init_hidden(inputs.shape[0])
                 output, hidden = model(inputs.to(device), hidden,
                     sequence_size-1, inputs.shape[0])
-                _, predicted = torch.max(outputs.data, 1)
+                _, predicted = torch.max(output.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels.to(device)).sum().item()
         print('Accuracy of the network on the 1000 test images: %d %%' % (
@@ -405,7 +405,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                 hidden = model.init_hidden(inputs.shape[0])
                 output, hidden = model(inputs.to(device), hidden,
                     sequence_size-1, inputs.shape[0])
-                _, predicted = torch.max(outputs, 1)
+                _, predicted = torch.max(output, 1)
                 c = (predicted == labels.to(device)).squeeze()
                 for i in range(c.shape[0]):
                     label = labels[i]
