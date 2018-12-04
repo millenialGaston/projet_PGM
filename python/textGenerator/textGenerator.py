@@ -164,12 +164,12 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
 def create_texgen_data(models,device, target_vocab, vocab, sequence_size,
         dataset_size):
     k = len(models) # number of models/classes
-    data = torch.zeros(dataset_size, sequence_size-1).long()
+    data = torch.zeros(dataset_size, sequence_size).long()
     labels = torch.zeros(dataset_size).long()
     for i in range(dataset_size):
         cur_model = models[i%k]
         data[i,:] = char_tensor(evaluate(cur_model,device,target_vocab,
-            vocab, "i"),vocab)
+            vocab, "i", predict_len=99),vocab)
         labels[i] = i%k
 
     return data, labels
