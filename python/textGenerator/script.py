@@ -93,18 +93,15 @@ def cliParsing():
   args = parser.parse_args()
 
 def main(*args,**kwargs):
-
+  # CREATE THE DICTIONARIES ----------------------------------------------
   torch.cuda.manual_seed(10)
   dataset,dataset2,dataset3,dataset4, numericalParams = hardCode()
   target_vocab = list(set(dataset+dataset2+dataset3+dataset4))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
-  #dataset2 = fetchData("returnoftheking","txt", filtering=False)
-  #dataset = fetchData("hp","txt", filtering=False)
-  
-  # testinggggggg
+  # ----------------------------------------------------------------------
+  # TRAIN CLASSIFIER -----------------------------------------------------
   d,l=tg.create_class_data([dataset,dataset2,dataset3,dataset4],
-  	t_vocab,100,100000)
-
+    t_vocab,100,100000)
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
                              hidden_size=256,
                              output_size=4)
@@ -116,11 +113,26 @@ def main(*args,**kwargs):
     batch_size = 32,
     lr = 0.0001)
 
-  rnn = tg.sequence_classifier(device, *rnnParams).to(device)
+  classifier = tg.sequence_classifier(device, *rnnParams).to(device)
+  #loss_train, loss_test = \
+  #  tg.train(*modelParams, *numericalParams, mode="classification")
+
+  #plotting(loss_train, loss_test)
+  # -----------------------------------------------------------------------
+  # TRAIN THE MODELS ------------------------------------------------------
+  rnnParams = RNN_Parameters(input_size=len(target_vocab),
+    						hidden_size=256,
+    						output_size=4)
+  modelParams = [rnn,device,dataset,
+    t_vocab,target_vocab]
+  numericalParams = Numerical_Parameters(
+    num_epoch = 20,
+    sequence_size = 100,
+    batch_size = 32,
+    lr = 0.0001)
+  
+  hpmodel = tg.RNN(device, *rnnParams).to(device)
   loss_train, loss_test = \
-    tg.train(*modelParams, *numericalParams, mode="classification")
-
-  plotting(loss_train, loss_test)
-
+  	tg.train(*modelParams, *numericalParams, mode="textgen")
 if __name__ == '__main__':
   main()
