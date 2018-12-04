@@ -114,8 +114,8 @@ def main(*args,**kwargs):
     batch_size = 32,
     lr = 0.0001)
 
-  #loss_train, loss_test = \
-  #  tg.train(*modelParams, *numericalParams, mode="classification")
+  loss_train, loss_test = \
+    tg.train(*modelParams, *numericalParams, mode="classification")
 
   #plotting(loss_train, loss_test)
   # -----------------------------------------------------------------------
@@ -182,7 +182,7 @@ def main(*args,**kwargs):
   	tg.train(*modelParams, *numericalParams, mode="textgen")
   # -------------------------------------------------------------------------
   models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
-  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,100000)
+  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,4000)
   evaluate_texgen(classifier, device, (d,l), 16)
 if __name__ == '__main__':
   main()
