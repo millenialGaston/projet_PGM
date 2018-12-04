@@ -285,7 +285,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
         trainloader = torch.utils.data.DataLoader(text_dataset(
             datas[int(0.8*n):],labels[int(0.8*n):]),
             batch_size=batch_size, shuffle=False, num_workers=0)
-    else:    
+    if mode="textgen":    
         data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
         trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
             batch_size=batch_size, shuffle=True, num_workers=0)
@@ -322,7 +322,10 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
             # calculate the loss.
             print(targets.shape)
             targets = targets.contiguous()
-            targets = targets.view(inputs.shape[0] * (sequence_size-1))
+            if mode=="classification"
+                targets = targets.view(inputs.shape[0])
+            if mode=="textgen":
+                targets = targets.view(inputs.shape[0] * (sequence_size-1))
             loss = criterion(output.to(device), targets.to(device))
             # populate the gradients.
             loss.backward()
@@ -339,7 +342,10 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                 output, hidden = model(inputs.to(device), hidden,
                     sequence_size-1, inputs.shape[0])
                 targets = targets.contiguous()
-                targets = targets.view(inputs.shape[0] * (sequence_size-1))
+                if mode=="classification"
+                    targets = targets.view(inputs.shape[0])
+                if mode=="textgen":
+                    targets = targets.view(inputs.shape[0] * (sequence_size-1))
                 loss = criterion(output.to(device), targets.to(device))
                 loss_avg_train += loss.item()
             loss_train.append(loss_avg_train/len(trainloader))
@@ -350,7 +356,10 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                 output, hidden = model(inputs.to(device), hidden,
                     sequence_size-1, inputs.shape[0])
                 targets = targets.contiguous()
-                targets = targets.view(inputs.shape[0] * (sequence_size-1))
+                if mode=="classification"
+                    targets = targets.view(inputs.shape[0])
+                if mode=="textgen":
+                    targets = targets.view(inputs.shape[0] * (sequence_size-1))
                 loss = criterion(output.to(device), targets.to(device))
                 loss_avg_test += loss.item()
             loss_test.append(loss_avg_test/len(testloader))
