@@ -66,7 +66,7 @@ def fetchData(name : str,extension : str, filtering=False):
 def hardCode():
   dataset2 = fetchData("returnoftheking","txt", filtering=False)
   dataset = fetchData("hp","txt", filtering=False)
-  dataset3 = fetchData("QUOTE","txt", filtering=False)
+  dataset3 = fetchData("QUOTE","csv", filtering=False)
 
   numericalParams = Numerical_Parameters(
       num_epoch = 20,
