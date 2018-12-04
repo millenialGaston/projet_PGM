@@ -98,6 +98,7 @@ def main(*args,**kwargs):
   dataset,dataset2,dataset3,dataset4 = hardCode()
   target_vocab = list(set(dataset+dataset2+dataset3+dataset4))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
+  print(len(dataset.split()),len(dataset2.split()),len(dataset3.split()),len(dataset4.split()))
   # ----------------------------------------------------------------------
   # TRAIN CLASSIFIER -----------------------------------------------------
   d,l=tg.create_class_data([dataset,dataset2,dataset3,dataset4],
