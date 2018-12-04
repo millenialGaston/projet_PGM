@@ -115,12 +115,12 @@ def main(*args,**kwargs):
 
   rnn = textGenerator.RNN(device, *rnnParams).to(device)
 
-  modelParams = [rnn,device,dataset,
+  modelParams = [rnn,device,(t,l),
                     t_vocab,target_vocab,cross_dataset]
-  #loss_train, loss_test, loss_cross = \
-  #  textGenerator.train(*modelParams, *numericalParams)
+  loss_train, loss_test, loss_cross = \
+    textGenerator.train(*modelParams, *numericalParams)
 
-  #plotting(loss_train, loss_test, loss_cross)
+  plotting(loss_train, loss_test, loss_cross)
 
 if __name__ == '__main__':
   main()
