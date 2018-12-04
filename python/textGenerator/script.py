@@ -116,7 +116,7 @@ def main(*args,**kwargs):
   rnn = textGenerator.sequence_classifier(device, *rnnParams).to(device)
 
   modelParams = [rnn,device,(t,l),
-                    t_vocab,target_vocab,cross_dataset]
+                    t_vocab,target_vocab]
   loss_train, loss_test, loss_cross = \
     textGenerator.train(*modelParams, *numericalParams, mode="classification")
 
