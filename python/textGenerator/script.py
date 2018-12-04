@@ -129,10 +129,10 @@ def main(*args,**kwargs):
   modelParams = [hpmodel,device,dataset,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 2,
+    num_epoch = 3,
     sequence_size = 100,
     batch_size = 16,
-    lr = 0.01)
+    lr = 0.001)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -144,10 +144,10 @@ def main(*args,**kwargs):
   modelParams = [lotrmodel,device,dataset2,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 2,
+    num_epoch = 3,
     sequence_size = 100,
     batch_size = 16,
-    lr = 0.01)
+    lr = 0.001)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -159,10 +159,10 @@ def main(*args,**kwargs):
   modelParams = [quotemodel,device,dataset3,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 2,
+    num_epoch = 3,
     sequence_size = 100,
     batch_size = 16,
-    lr = 0.01)
+    lr = 0.001)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -174,16 +174,17 @@ def main(*args,**kwargs):
   modelParams = [shakesmodel,device,dataset4,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 2,
+    num_epoch = 3,
     sequence_size = 100,
     batch_size = 16,
-    lr = 0.01)
+    lr = 0.001)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
   # -------------------------------------------------------------------------
   models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
-  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,400)
+  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,800)
   tg.evaluate_texgen(classifier, device, (d,l),100, 16)
+  plt.show()
 if __name__ == '__main__':
   main()
