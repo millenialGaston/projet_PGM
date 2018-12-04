@@ -110,6 +110,7 @@ def main(*args,**kwargs):
   
   # testinggggggg
   t,l=textGenerator.create_class_data([dataset,dataset2,dataset3,dataset4],t_vocab,100,1000)
+  print(t.shape)
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
                              hidden_size=256,
                              output_size=4)
