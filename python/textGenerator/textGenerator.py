@@ -155,7 +155,7 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
     labels = torch.zeros(dataset_size).long()
     datasets = []
     for i, dat in enumerate(datas):
-        datasets.append((create_data(dat, vocab, sequence_size),i))
+        datasets.append((create_data(dat, vocab, sequence_size)[0],i))
     
     i = 0
     while i<dataset_size:
