@@ -164,7 +164,7 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
 
     for i in range(k*mini):
         data[i,:], labels[i] = datasets[i%k][i//k,:], i%k
-         
+
     return data, labels
 
 def char_tensor(string, target_vocab):
@@ -255,9 +255,9 @@ def cross_loss(model, device, dataset, t_vocab, sequence_size, batch_size):
 
     return loss_avg/len(testloader)
 
-
 def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
-          num_epoch=20, sequence_size=20, batch_size=200, lr=0.005):
+          num_epoch=20, sequence_size=20, batch_size=200, lr=0.005,
+          mode="textgen"):
     '''
     Function used to train the model on the joke dataset.
 
@@ -277,13 +277,24 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
     '''
 
     # Create DataLoaders to facilitate the data manipulation via minibatches.
-    data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
-    trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
-        batch_size=batch_size, shuffle=True, num_workers=0)
+    if mode=="classification":
+        n = dataset.shape[0]
+        datas, labels = dataset
+        trainloader = torch.utils.data.DataLoader(text_dataset(
+            datas[:int(0.8*n)],labels[:int(0.8*n)]),
+            batch_size=batch_size, shuffle=True, num_workers=0)
 
-    data, labels = create_data(dataset[350000:400000], t_vocab, sequence_size)
-    testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
-        batch_size=batch_size, shuffle=False, num_workers=0)
+        trainloader = torch.utils.data.DataLoader(text_dataset(
+            datas[int(0.8*n):],labels[int(0.8*n):]),
+            batch_size=batch_size, shuffle=False, num_workers=0)
+    else:    
+        data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
+        trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
+            batch_size=batch_size, shuffle=True, num_workers=0)
+
+        data, labels = create_data(dataset[350000:400000], t_vocab, sequence_size)
+        testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
+            batch_size=batch_size, shuffle=False, num_workers=0)
 
     # We use Cross entropy loss. This combine negative loss likelihood with a
     # softmax function for the prediction.
@@ -349,11 +360,16 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                 sequence_size, batch_size))
         # Print an exemple of generated sequence.
         print('Epoch: {}'.format(epoch))
-        print(evaluate(model,device,target_vocab,'i', 40))
+        
+        if mode=="textgen":
+            print(evaluate(model,device,target_vocab,'i', 40))
+
         print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
                     loss_train[epoch], loss_test[epoch]))
+        
         if cross_dataset is not None:
             print('Train error: {0:.2f} Test error: {1:.2f} Cross error: {2:.2f}\
                 \n'.format(loss_train[epoch], loss_test[epoch],
                 loss_cross[epoch]))
+
     return loss_train, loss_test, loss_cross
