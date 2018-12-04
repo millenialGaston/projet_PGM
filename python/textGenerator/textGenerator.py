@@ -289,6 +289,7 @@ def evaluate_texgen(model, device, dataset, sequence_size, batch_size):
     plt.rc('xtick', labelsize=15)
     plt.rc('ytick', labelsize=15)
     plt.rc('axes', labelsize=15)
+    plt.figure()
     plt.imshow(confusion/torch.tensor(class_total).view(numclass,1))
     plt.colorbar()
     plt.yticks(range(numclass), classes)
