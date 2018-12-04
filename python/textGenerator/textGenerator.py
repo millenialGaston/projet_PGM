@@ -174,15 +174,16 @@ def char_tensor(string, target_vocab):
     tensor: Tensor containing the indices (in our dictionary) of each character
             of string.
     '''
+
     string = string.split()
     tensor = torch.zeros(len(string)).long()
     for c in range(len(string)):
-        tensor[c] = target_vocab.index(string[c])
+        tensor[c] = target_vocab[string[c]]
         #tensor[c] = all_characters.index(string[c])   
 
     return tensor
 
-def evaluate(model,device, target_vocab, init_str='W', predict_len=100,
+def evaluate(model,device, target_vocab, t_vocab, init_str='W', predict_len=100,
         temperature=0.7):
     '''
     Function generating a sequence of length predict_len from our model. We
@@ -351,7 +352,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         print('Epoch: {}'.format(epoch))
         
         if mode=="textgen":
-            print(evaluate(model,device,target_vocab,'i', 40))
+            print(evaluate(model,device,target_vocab, t_vocab,'i', 40))
 
         print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
                     loss_train[epoch], loss_test[epoch]))
