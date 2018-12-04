@@ -150,14 +150,21 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
 
     # Calculate the number of sequences.
     # Initialize the tensors.
+    k = len(datas) # number on classes.
     data = torch.zeros(dataset_size, sequence_size-1).long()
     labels = torch.zeros(dataset_size).long()
-    num_per_class = dataset_size // len(datas)
+    num_per_class = dataset_size // k
     datasets = []
-    for i, dat in enumerate(datas):
+    for dat in datas:
         d, _ = create_data(dat, vocab, sequence_size)
-        datasets.append((d,i))
+        datasets.append(d)
+    
+    mini = min([i.shape[0] for i in datasets])
+    assert(mini*k<dataset_size), "Requested dataset_size too big"
 
+    for i in range(k*mini):
+        data[i,:], labels[i] = datasets[i%k][i//k,:], i%k
+         
     return data, labels
 
 def char_tensor(string, target_vocab):
@@ -226,6 +233,7 @@ def evaluate(model,device, target_vocab, init_str='W', predict_len=100,
     return predicted
 
 def cross_loss(model, device, dataset, t_vocab, sequence_size, batch_size):
+    # hardcoded bad function to test things
     data, labels = create_data(dataset[:100000], t_vocab, sequence_size)
     testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
         batch_size=batch_size, shuffle=False, num_workers=0)
