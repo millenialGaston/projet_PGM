@@ -241,7 +241,7 @@ def evaluate(model,device, target_vocab, t_vocab, init_str='W', predict_len=100,
 
     return predicted
 
-def evaluate_texgen(model, device, dataset, batch_size):
+def evaluate_texgen(model, device, dataset, sequence_size, batch_size):
     n = dataset[0].shape[0]
     numclass = max(dataset[1]).item()+1
     datas, labels = dataset
@@ -258,7 +258,7 @@ def evaluate_texgen(model, device, dataset, batch_size):
             inputs, labels = data
             hidden = model.init_hidden(inputs.shape[0])
             output, hidden = model(inputs.to(device), hidden,
-                sequence_size-1, inputs.shape[0])
+                sequence_size, inputs.shape[0])
             _, predicted = torch.max(output.data, 1)
             total += labels.size(0)
             correct += (predicted == labels.to(device)).sum().item()
@@ -274,7 +274,7 @@ def evaluate_texgen(model, device, dataset, batch_size):
             inputs, labels = data
             hidden = model.init_hidden(inputs.shape[0])
             output, hidden = model(inputs.to(device), hidden,
-                sequence_size-1, inputs.shape[0])
+                sequence_size, inputs.shape[0])
             _, predicted = torch.max(output.data, 1)
             c = (predicted == labels.to(device)).squeeze()
             for i in range(c.shape[0]):
