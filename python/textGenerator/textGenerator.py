@@ -157,8 +157,6 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
     for i, dat in enumerate(datas):
         datasets.append((create_data(dat, vocab, sequence_size),i))
     
-    mini = min([dat[0][0].shape[0] for dat in datasets])
-    assert(dataset_size<(mini*len(datas))), "dataset_size too long" 
     i = 0
     while i<dataset_size:
         data[i,:] , labels[i] = \
