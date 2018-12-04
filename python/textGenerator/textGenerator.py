@@ -132,13 +132,13 @@ def create_data(datas, vocab, sequence_size):
 
     return data, labels
 
-def create_class_data(datas, vocab, sequence_size):
+def create_class_data(datas, vocab, sequence_size, dataset_size):
     '''
     Format the datas in sequences.
 
     Parameters:
     -----------
-    datas: The data we want to split in sequences.
+    datas: list of the datas we want to split in sequences.
     vocab: Dictionary of the words in datas.
     sequence_size: The length of the output sequences.
 
@@ -149,18 +149,24 @@ def create_class_data(datas, vocab, sequence_size):
     '''
 
     # Calculate the number of sequences.
-    num_data = (len(datas) - sequence_size) // sequence_size
     # Initialize the tensors.
+    mini = min([dat.shape[0] for dat in datas])
+    assert(dataset_size<(mini*len(datas))), "dataset_size too long"
     sequence = torch.zeros(sequence_size).long()
     data = torch.zeros(num_data, sequence_size-1).long()
-    labels = torch.zeros(num_data, sequence_size-1).long()
-    for i in range(num_data):
-        for s in range(sequence_size):
-            sequence[s] = vocab[datas[i * sequence_size + s]]
-        data[i,:] , labels[i,:] = sequence[:-1], sequence[1:]
-
-    return data, labels
+    labels = torch.zeros(num_data).long()
+    datasets = []
+    for i, dat in enumerate(datas):
+        datasets.append((create_data(dat, vocab, sequence_size),i))
     
+    i = 0
+    while i<dataset_size:
+        data[i,:] , labels[i] = \
+            datasets[i%len(datas)][i//len(datas)], i%len(datas)
+        i += 1
+    
+    return data, labels
+
 def char_tensor(string, target_vocab):
     '''
     Function used to convert a string to a tensor of 'index'.
