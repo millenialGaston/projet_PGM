@@ -161,6 +161,19 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
 
     return data, labels
 
+def create_texgen_data(models,device, target_vocab, vocab, sequence_size,
+        dataset_size):
+    k = len(models) # number of models/classes
+    data = torch.zeros(dataset_size, sequence_size-1).long()
+    labels = torch.zeros(dataset_size).long()
+    for i in range(dataset_size):
+        cur_model = models[i%k]
+        data[i,:] = char_tensor(evaluate(cur_model,device,target_vocab,
+            vocab))
+        labels[i] = i%k
+
+    return data, labels
+
 def char_tensor(string, target_vocab):
     '''
     Function used to convert a string to a tensor of 'index'.
@@ -226,6 +239,69 @@ def evaluate(model,device, target_vocab, t_vocab, init_str='W', predict_len=100,
             inp = char_tensor(predicted_char, t_vocab)
 
     return predicted
+
+def evaluate_texgen(model, device, dataset, batch_size):
+    n = dataset[0].shape[0]
+    numclass = max(dataset[1]).item()+1
+    datas, labels = dataset
+
+    testloader = torch.utils.data.DataLoader(text_dataset(
+        datas,labels),
+        batch_size=batch_size, shuffle=False, num_workers=0)
+    
+    correct = 0.
+    total = 0.        
+    model.eval()
+    with torch.no_grad():
+        for data in testloader:
+            inputs, labels = data
+            hidden = model.init_hidden(inputs.shape[0])
+            output, hidden = model(inputs.to(device), hidden,
+                sequence_size-1, inputs.shape[0])
+            _, predicted = torch.max(output.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels.to(device)).sum().item()
+    print('Accuracy of the network: %d %%' % (
+        100 * correct / total))
+
+    class_correct = list(0. for i in range(numclass))
+    class_total = list(0. for i in range(numclass))
+    confusion = torch.zeros(numclass,numclass)
+    count = 0  
+    with torch.no_grad():
+        for data in testloader:
+            inputs, labels = data
+            hidden = model.init_hidden(inputs.shape[0])
+            output, hidden = model(inputs.to(device), hidden,
+                sequence_size-1, inputs.shape[0])
+            _, predicted = torch.max(output.data, 1)
+            c = (predicted == labels.to(device)).squeeze()
+            for i in range(c.shape[0]):
+                label = labels[i]
+                class_correct[label] += c[i].item()
+                class_total[label] += 1
+                confusion[label,predicted[i].item()] += 1
+                count += 1
+        
+    classes = ["hp","lotr","quote","shakes"]
+    plt.style.use('ggplot')
+    plt.rc('xtick', labelsize=15)
+    plt.rc('ytick', labelsize=15)
+    plt.rc('axes', labelsize=15)
+    plt.imshow(confusion/torch.tensor(class_total).view(numclass,1))
+    plt.colorbar()
+    plt.yticks(range(numclass), classes)
+    plt.xticks(range(numclass), classes, rotation='vertical')
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.show()
+    for i in range(numclass):
+        if class_total[i]!=0:
+            print('Accuracy of %5s : %2d %%' % (
+                i, 100 * class_correct[i]/class_total[i]))
+        else:
+            print('Accuracy of %5s : %2d %%' % (
+                i, 100 * class_correct[i]))
 
 def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         sequence_size=20, batch_size=200, lr=0.005, mode="textgen"):
@@ -370,7 +446,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
                 _, predicted = torch.max(output.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels.to(device)).sum().item()
-        print('Accuracy of the network on the 1000 test images: %d %%' % (
+        print('Accuracy of the network: %d %%' % (
             100 * correct / total))
 
         class_correct = list(0. for i in range(numclass))
