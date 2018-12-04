@@ -322,7 +322,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
             # calculate the loss.
             print(targets.shape)
             targets = targets.contiguous()
-            if mode=="classification"
+            if mode=="classification":
                 targets = targets.view(inputs.shape[0])
             if mode=="textgen":
                 targets = targets.view(inputs.shape[0] * (sequence_size-1))
