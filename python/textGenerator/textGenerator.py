@@ -320,7 +320,6 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
             output, hidden = model(inputs.to(device), hidden, sequence_size-1,
                 inputs.shape[0])
             # calculate the loss.
-            print(targets.shape)
             targets = targets.contiguous()
             if mode=="classification":
                 targets = targets.view(inputs.shape[0])
