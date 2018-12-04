@@ -114,8 +114,8 @@ def main(*args,**kwargs):
     batch_size = 32,
     lr = 0.0001)
 
-  loss_train, loss_test = \
-    tg.train(*modelParams, *numericalParams, mode="classification")
+  #loss_train, loss_test = \
+  #  tg.train(*modelParams, *numericalParams, mode="classification")
 
   #plotting(loss_train, loss_test)
   # -----------------------------------------------------------------------
@@ -133,8 +133,8 @@ def main(*args,**kwargs):
     batch_size = 16,
     lr = 0.01)
  
-  loss_train, loss_test = \
-  	tg.train(*modelParams, *numericalParams, mode="textgen")
+  #loss_train, loss_test = \
+  #	tg.train(*modelParams, *numericalParams, mode="textgen")
   # -------- lotr ----------------------------------------------------------
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
     						hidden_size=256,
@@ -148,8 +148,8 @@ def main(*args,**kwargs):
     batch_size = 16,
     lr = 0.01)
  
-  loss_train, loss_test = \
-  	tg.train(*modelParams, *numericalParams, mode="textgen")
+  #loss_train, loss_test = \
+  #	tg.train(*modelParams, *numericalParams, mode="textgen")
  # --------- quote ---------------------------------------------------------
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
     						hidden_size=256,
@@ -163,8 +163,8 @@ def main(*args,**kwargs):
     batch_size = 16,
     lr = 0.01)
  
-  loss_train, loss_test = \
-  	tg.train(*modelParams, *numericalParams, mode="textgen")
+  #loss_train, loss_test = \
+   # tg.train(*modelParams, *numericalParams, mode="textgen")
   # -------- shakes --------------------------------------------------------
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
     						hidden_size=256,
@@ -178,11 +178,11 @@ def main(*args,**kwargs):
     batch_size = 16,
     lr = 0.01)
  
-  loss_train, loss_test = \
-  	tg.train(*modelParams, *numericalParams, mode="textgen")
+  #loss_train, loss_test = \
+  #	tg.train(*modelParams, *numericalParams, mode="textgen")
   # -------------------------------------------------------------------------
   models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
-  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,4000)
-  evaluate_texgen(classifier, device, (d,l), 16)
+  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,400)
+  tg.evaluate_texgen(classifier, device, (d,l), 16)
 if __name__ == '__main__':
   main()
