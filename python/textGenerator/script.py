@@ -64,10 +64,10 @@ def fetchData(name : str,extension : str, filtering=False):
   return dataset
 
 def hardCode():
-  dataset = fetchData("hp","txt", filtering=True)
-  dataset2 = fetchData("returnoftheking","txt", filtering=True)
-  dataset3 = fetchData("QUOTE","csv", filtering=True)
-  dataset4 = fetchData("shakes","txt", filtering=True)
+  dataset = fetchData("hp","txt", filtering=False)
+  dataset2 = fetchData("returnoftheking","txt", filtering=False)
+  dataset3 = fetchData("QUOTE","csv", filtering=False)
+  dataset4 = fetchData("shakes","txt", filtering=False)
 
   return dataset, dataset2, dataset3, dataset4
 
@@ -129,7 +129,7 @@ def main(*args,**kwargs):
   modelParams = [hpmodel,device,dataset,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 3,
+    num_epoch = 5,
     sequence_size = 100,
     batch_size = 16,
     lr = 0.01)
@@ -144,7 +144,7 @@ def main(*args,**kwargs):
   modelParams = [lotrmodel,device,dataset2,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 3,
+    num_epoch = 5,
     sequence_size = 100,
     batch_size = 16,
     lr = 0.01)
@@ -159,7 +159,7 @@ def main(*args,**kwargs):
   modelParams = [quotemodel,device,dataset3,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 3,
+    num_epoch = 5,
     sequence_size = 100,
     batch_size = 16,
     lr = 0.01)
@@ -174,7 +174,7 @@ def main(*args,**kwargs):
   modelParams = [shakesmodel,device,dataset4,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 3,
+    num_epoch = 5,
     sequence_size = 100,
     batch_size = 16,
     lr = 0.01)
