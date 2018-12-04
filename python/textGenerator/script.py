@@ -122,7 +122,7 @@ def main(*args,**kwargs):
   # TRAIN THE MODELS ------------------------------------------------------
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
     						hidden_size=256,
-    						output_size=4)
+    						output_size=len(target_vocab))
   hpmodel = tg.RNN(device, *rnnParams).to(device)
   modelParams = [hpmodel,device,dataset,
     t_vocab,target_vocab]
