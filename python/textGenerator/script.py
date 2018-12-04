@@ -64,10 +64,10 @@ def fetchData(name : str,extension : str, filtering=False):
   return dataset
 
 def hardCode():
-  dataset = fetchData("hp","txt", filtering=False)
-  dataset2 = fetchData("returnoftheking","txt", filtering=False)
-  dataset3 = fetchData("QUOTE","csv", filtering=False)
-  dataset4 = fetchData("shakes","txt", filtering=False)
+  dataset = fetchData("hp","txt", filtering=True)
+  dataset2 = fetchData("returnoftheking","txt", filtering=True)
+  dataset3 = fetchData("QUOTE","csv", filtering=True)
+  dataset4 = fetchData("shakes","txt", filtering=True)
 
   return dataset, dataset2, dataset3, dataset4
 
