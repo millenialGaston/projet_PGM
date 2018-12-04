@@ -405,7 +405,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                 hidden = model.init_hidden(inputs.shape[0])
                 output, hidden = model(inputs.to(device), hidden,
                     sequence_size-1, inputs.shape[0])
-                _, predicted = torch.max(output, 1)
+                _, predicted = torch.max(output.data, 1)
                 c = (predicted == labels.to(device)).squeeze()
                 for i in range(c.shape[0]):
                     label = labels[i]
