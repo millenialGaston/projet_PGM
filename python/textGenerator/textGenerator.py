@@ -277,6 +277,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
     # Create DataLoaders to facilitate the data manipulation via minibatches.
     if mode=="classification":
         n = dataset[0].shape[0]
+        numclass = max(dataset[1]).item()+1
         datas, labels = dataset
         trainloader = torch.utils.data.DataLoader(text_dataset(
             datas[:int(0.8*n)],labels[:int(0.8*n)]),
@@ -377,5 +378,50 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
             print('Train error: {0:.2f} Test error: {1:.2f} Cross error: {2:.2f}\
                 \n'.format(loss_train[epoch], loss_test[epoch],
                 loss_cross[epoch]))
+    
+    if mode=="classification":
+        correct = 0
+        total = 0
+        model.eval()
+        with torch.no_grad():
+            for data in testloader:
+                inputs, labels = data
+                outputs = model(inputs.to(device))
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels.to(device)).sum().item()
+        print('Accuracy of the network on the 1000 test images: %d %%' % (
+            100 * correct / total))
+
+        class_correct = list(0. for i in range(numclass))
+        class_total = list(0. for i in range(numclass))
+        confusion = torch.zeros(numclass,numclass)
+        count = 0  
+        with torch.no_grad():
+            for data in testloader:
+                images, labels = data
+                outputs = model(images.to(device))
+                _, predicted = torch.max(outputs, 1)
+                c = (predicted == labels.to(device)).squeeze()
+                for i in range(c.shape[0]):
+                    label = labels[i]
+                    class_correct[label] += c[i].item()
+                    class_total[label] += 1
+                    confusion[label,predicted[i].item()] += 1
+                    count += 1
+            plt.imshow(confusion/torch.tensor(class_total).view(numclass,1))
+            plt.colorbar()
+            #plt.yticks(range(numclass), classes)
+            #plt.xticks(range(numclass), classes, rotation='vertical')
+            plt.xlabel('Predicted')
+            plt.ylabel('True')
+        
+        for i in range(10):
+            if class_total[i]!=0:
+                print('Accuracy of %5s : %2d %%' % (
+                    i, 100 * class_correct[i]/class_total[i]))
+            else:
+                print('Accuracy of %5s : %2d %%' % (
+                    i, 100 * class_correct[i]))
 
     return loss_train, loss_test, loss_cross
