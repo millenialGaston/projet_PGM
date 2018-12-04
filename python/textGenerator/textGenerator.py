@@ -156,11 +156,10 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
         datasets.append(d)
     
     mini = min([i.shape[0] for i in datasets])
-    data = torch.zeros(k*mini, sequence_size-1).long()
-    labels = torch.zeros(k*mini).long()
     assert(mini*k>dataset_size), "Requested dataset_size too big"
-
-    for i in range(k*mini):
+    data = torch.zeros(dataset_size, sequence_size-1).long()
+    labels = torch.zeros(dataset_size).long()
+    for i in range(dataset_size):
         data[i,:], labels[i] = datasets[i%k][i//k,:], i%k
 
     return data, labels
