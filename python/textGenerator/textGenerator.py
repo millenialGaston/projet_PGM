@@ -359,7 +359,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         for i, data in enumerate(trainloader):
             model.train()
             # Learning rate decay.
-            lrd = lr * (1./(1 + 9 * epoch / num_epoch))
+            lrd = lr * (1./(1 + 4 * epoch / num_epoch))
             # Define the optimizing method and pass the parameters to optimize.
             optimizer = torch.optim.Adam(model.parameters(), lr=lrd)
             # zero the gradient after each step.
@@ -488,7 +488,6 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         plt.xlabel("Epoch")
         plt.ylabel("Error")
         plt.legend()
-        plt.show()
         for i in range(numclass):
             if class_total[i]!=0:
                 print('Accuracy of %5s : %2d %%' % (
