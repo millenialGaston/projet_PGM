@@ -278,7 +278,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
 
     # Create DataLoaders to facilitate the data manipulation via minibatches.
     if mode=="classification":
-        n = dataset.shape[0]
+        n = dataset[0].shape[0]
         datas, labels = dataset
         trainloader = torch.utils.data.DataLoader(text_dataset(
             datas[:int(0.8*n)],labels[:int(0.8*n)]),
