@@ -307,6 +307,8 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
     loss_train = []
     loss_test = []
     loss_cross = []
+    err_train = []
+    err_test = []    
     for epoch in range(num_epoch):
         loss_avg_train = 0
         loss_avg_test = 0
@@ -338,8 +340,6 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
             optimizer.step()
         # Pout the model on eval to calculate the losses   
         model.eval()
-        err_train = []
-        err_test = []
         with torch.no_grad():
             # Calculate the training loss
             correct = 0.
