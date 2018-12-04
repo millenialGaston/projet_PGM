@@ -386,7 +386,9 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
         with torch.no_grad():
             for data in testloader:
                 inputs, labels = data
-                outputs = model(inputs.to(device))
+                hidden = model.init_hidden(inputs.shape[0])
+                output, hidden = model(inputs.to(device), hidden,
+                    sequence_size-1, inputs.shape[0])
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels.to(device)).sum().item()
@@ -400,7 +402,9 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
         with torch.no_grad():
             for data in testloader:
                 images, labels = data
-                outputs = model(images.to(device))
+                hidden = model.init_hidden(inputs.shape[0])
+                output, hidden = model(inputs.to(device), hidden,
+                    sequence_size-1, inputs.shape[0])
                 _, predicted = torch.max(outputs, 1)
                 c = (predicted == labels.to(device)).squeeze()
                 for i in range(c.shape[0]):
