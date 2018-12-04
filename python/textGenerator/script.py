@@ -113,7 +113,7 @@ def main(*args,**kwargs):
                              hidden_size=256,
                              output_size=len(target_vocab))
 
-  rnn = textGenerator.RNN(device, *rnnParams).to(device)
+  rnn = textGenerator.sequence_classifier(device, *rnnParams).to(device)
 
   modelParams = [rnn,device,(t,l),
                     t_vocab,target_vocab,cross_dataset]
