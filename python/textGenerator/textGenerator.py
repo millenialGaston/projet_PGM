@@ -149,8 +149,6 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
     # Calculate the number of sequences.
     # Initialize the tensors.
     k = len(datas) # number on classes.
-    data = torch.zeros(dataset_size, sequence_size-1).long()
-    labels = torch.zeros(dataset_size).long()
     num_per_class = dataset_size // k
     datasets = []
     for dat in datas:
@@ -158,6 +156,8 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
         datasets.append(d)
     
     mini = min([i.shape[0] for i in datasets])
+    data = torch.zeros(k*mini, sequence_size-1).long()
+    labels = torch.zeros(k*mini).long()
     assert(mini*k<dataset_size), "Requested dataset_size too big"
 
     for i in range(k*mini):
