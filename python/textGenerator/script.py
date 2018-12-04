@@ -118,7 +118,7 @@ def main(*args,**kwargs):
   modelParams = [rnn,device,(t,l),
                     t_vocab,target_vocab,cross_dataset]
   loss_train, loss_test, loss_cross = \
-    textGenerator.train(*modelParams, *numericalParams)
+    textGenerator.train(*modelParams, *numericalParams, mode="classification")
 
   plotting(loss_train, loss_test, loss_cross)
 
