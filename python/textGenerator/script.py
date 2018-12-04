@@ -95,7 +95,7 @@ def cliParsing():
 def main(*args,**kwargs):
   # CREATE THE DICTIONARIES ----------------------------------------------
   torch.cuda.manual_seed(10)
-  dataset,dataset2,dataset3,dataset4, numericalParams = hardCode()
+  dataset,dataset2,dataset3,dataset4 = hardCode()
   target_vocab = list(set(dataset+dataset2+dataset3+dataset4))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
   # ----------------------------------------------------------------------
