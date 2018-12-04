@@ -57,8 +57,8 @@ def fetchData(name : str,extension : str, filtering=False):
 
   # filtering
   if filtering == True:
-    for datum in dataset:
-      datum.translate(str.maketrans("","",string.punctuation))
+    dataset = [dataset[i].translate(
+        str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
     dataset = list(filter(('').__ne__,dataset))
 
   return dataset
@@ -132,7 +132,7 @@ def main(*args,**kwargs):
     num_epoch = 3,
     sequence_size = 100,
     batch_size = 16,
-    lr = 0.001)
+    lr = 0.01)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -147,7 +147,7 @@ def main(*args,**kwargs):
     num_epoch = 3,
     sequence_size = 100,
     batch_size = 16,
-    lr = 0.001)
+    lr = 0.01)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -162,7 +162,7 @@ def main(*args,**kwargs):
     num_epoch = 3,
     sequence_size = 100,
     batch_size = 16,
-    lr = 0.001)
+    lr = 0.01)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -177,7 +177,7 @@ def main(*args,**kwargs):
     num_epoch = 3,
     sequence_size = 100,
     batch_size = 16,
-    lr = 0.001)
+    lr = 0.01)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
