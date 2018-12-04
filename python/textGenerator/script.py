@@ -120,14 +120,60 @@ def main(*args,**kwargs):
   #plotting(loss_train, loss_test)
   # -----------------------------------------------------------------------
   # TRAIN THE MODELS ------------------------------------------------------
+  # -------- HP -----------------------------------------------------------
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
-    						hidden_size=512,
+    						hidden_size=256,
     						output_size=len(target_vocab))
   hpmodel = tg.RNN(device, *rnnParams).to(device)
   modelParams = [hpmodel,device,dataset,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 20,
+    num_epoch = 2,
+    sequence_size = 100,
+    batch_size = 16,
+    lr = 0.01)
+ 
+  loss_train, loss_test = \
+  	tg.train(*modelParams, *numericalParams, mode="textgen")
+  # -------- lotr ----------------------------------------------------------
+  rnnParams = RNN_Parameters(input_size=len(target_vocab),
+    						hidden_size=256,
+    						output_size=len(target_vocab))
+  lotrmodel = tg.RNN(device, *rnnParams).to(device)
+  modelParams = [lotr,device,dataset,
+    t_vocab,target_vocab]
+  numericalParams = Numerical_Parameters(
+    num_epoch = 2,
+    sequence_size = 100,
+    batch_size = 16,
+    lr = 0.01)
+ 
+  loss_train, loss_test = \
+  	tg.train(*modelParams, *numericalParams, mode="textgen")
+ # --------- quote ---------------------------------------------------------
+  rnnParams = RNN_Parameters(input_size=len(target_vocab),
+    						hidden_size=256,
+    						output_size=len(target_vocab))
+  quotemodel = tg.RNN(device, *rnnParams).to(device)
+  modelParams = [quotemodel,device,dataset,
+    t_vocab,target_vocab]
+  numericalParams = Numerical_Parameters(
+    num_epoch = 2,
+    sequence_size = 100,
+    batch_size = 16,
+    lr = 0.01)
+ 
+  loss_train, loss_test = \
+  	tg.train(*modelParams, *numericalParams, mode="textgen")
+  # -------- shakes --------------------------------------------------------
+  rnnParams = RNN_Parameters(input_size=len(target_vocab),
+    						hidden_size=256,
+    						output_size=len(target_vocab))
+  shakesmodel = tg.RNN(device, *rnnParams).to(device)
+  modelParams = [shakesmodel,device,dataset,
+    t_vocab,target_vocab]
+  numericalParams = Numerical_Parameters(
+    num_epoch = 2,
     sequence_size = 100,
     batch_size = 16,
     lr = 0.01)
