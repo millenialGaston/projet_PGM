@@ -150,20 +150,14 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
 
     # Calculate the number of sequences.
     # Initialize the tensors.
-    sequence = torch.zeros(sequence_size).long()
     data = torch.zeros(dataset_size, sequence_size-1).long()
     labels = torch.zeros(dataset_size).long()
+    num_per_class = dataset_size // len(datas)
     datasets = []
     for i, dat in enumerate(datas):
         d, _ = create_data(dat, vocab, sequence_size)
         datasets.append((d,i))
-    i = 0
-    while i<dataset_size:
-        data[i,:] , labels[i] = \
-            datasets[i%len(datas)][0][i//len(datas)], i%len(datas)
-        i += 1
-        print(i)
-    
+
     return data, labels
 
 def char_tensor(string, target_vocab):
