@@ -81,12 +81,12 @@ class sequence_classifier(RNN):
         inputs = inputs.view(batch_size, sequence_len)
         inputs = self.encoder(inputs)
         inputs, hidden = self.lstm(inputs, hidden)
-        inputs = inputs.contiguous()
-        output = self.linear1(inputs.view(batch_size*sequence_len,-1))
+        inputs = inputs.contiguous()[:,-1,:]
+        output = self.linear1(inputs.view(batch_size*1,-1))
 
         return output, hidden      
 
-class quote_dataset(torch.utils.data.dataset.Dataset):
+class text_dataset(torch.utils.data.dataset.Dataset):
     '''
     Create a Dataset to use with DataLoaders. We need to define __getitem__
     and __len__.
@@ -132,6 +132,35 @@ def create_data(datas, vocab, sequence_size):
 
     return data, labels
 
+def create_class_data(datas, vocab, sequence_size):
+    '''
+    Format the datas in sequences.
+
+    Parameters:
+    -----------
+    datas: The data we want to split in sequences.
+    vocab: Dictionary of the words in datas.
+    sequence_size: The length of the output sequences.
+
+    Returns:
+    --------
+    data: tensor containing the data, shape(number of sequence, sequence_size-1)
+    labels: tensor containing the labels, same shape as data
+    '''
+
+    # Calculate the number of sequences.
+    num_data = (len(datas) - sequence_size) // sequence_size
+    # Initialize the tensors.
+    sequence = torch.zeros(sequence_size).long()
+    data = torch.zeros(num_data, sequence_size-1).long()
+    labels = torch.zeros(num_data, sequence_size-1).long()
+    for i in range(num_data):
+        for s in range(sequence_size):
+            sequence[s] = vocab[datas[i * sequence_size + s]]
+        data[i,:] , labels[i,:] = sequence[:-1], sequence[1:]
+
+    return data, labels
+    
 def char_tensor(string, target_vocab):
     '''
     Function used to convert a string to a tensor of 'index'.
@@ -199,7 +228,7 @@ def evaluate(model,device, target_vocab, init_str='W', predict_len=100,
 
 def cross_loss(model, device, dataset, t_vocab, sequence_size, batch_size):
     data, labels = create_data(dataset[:100000], t_vocab, sequence_size)
-    testloader = torch.utils.data.DataLoader(quote_dataset(data,labels),
+    testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
         batch_size=batch_size, shuffle=False, num_workers=0)
 
     criterion = nn.CrossEntropyLoss()
@@ -242,11 +271,11 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
 
     # Create DataLoaders to facilitate the data manipulation via minibatches.
     data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
-    trainloader = torch.utils.data.DataLoader(quote_dataset(data,labels),
+    trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
         batch_size=batch_size, shuffle=True, num_workers=0)
 
     data, labels = create_data(dataset[350000:400000], t_vocab, sequence_size)
-    testloader = torch.utils.data.DataLoader(quote_dataset(data,labels),
+    testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
         batch_size=batch_size, shuffle=False, num_workers=0)
 
     # We use Cross entropy loss. This combine negative loss likelihood with a
