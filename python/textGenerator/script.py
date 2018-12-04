@@ -183,6 +183,6 @@ def main(*args,**kwargs):
   # -------------------------------------------------------------------------
   models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
   d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,400)
-  tg.evaluate_texgen(classifier, device, (d,l), 16)
+  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
 if __name__ == '__main__':
   main()
