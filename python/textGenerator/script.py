@@ -72,7 +72,7 @@ def hardCode():
       num_epoch = 10,
       sequence_size = 100,
       batch_size = 32,
-      lr = 0.0000001)
+      lr = 0.0001)
 
   return dataset, dataset2, dataset3, dataset4, numericalParams
 
