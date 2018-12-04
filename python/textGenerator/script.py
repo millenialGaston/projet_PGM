@@ -84,7 +84,7 @@ def plotting(loss_train,loss_test,loss_cross):
   plt.figure()
   plt.plot(loss_train, 'sk-',label='Trainset')
   plt.plot(loss_test, 'sr-', label='Testset')
-  plt.plot(loss_cross, 'sb-', label='crossset')
+  #plt.plot(loss_cross, 'sb-', label='crossset')
   plt.xlabel('Epoch')
   plt.ylabel('Loss')
   plt.legend()
