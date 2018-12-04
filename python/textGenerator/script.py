@@ -130,7 +130,7 @@ def main(*args,**kwargs):
     num_epoch = 20,
     sequence_size = 50,
     batch_size = 32,
-    lr = 0.001)
+    lr = 0.01)
  
   loss_train, loss_test = \
   	tg.train(*modelParams, *numericalParams, mode="textgen")
