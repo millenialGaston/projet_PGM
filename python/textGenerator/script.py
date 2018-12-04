@@ -140,7 +140,7 @@ def main(*args,**kwargs):
     						hidden_size=256,
     						output_size=len(target_vocab))
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
-  modelParams = [lotr,device,dataset,
+  modelParams = [lotrmodel,device,dataset,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
     num_epoch = 2,
