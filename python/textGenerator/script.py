@@ -31,7 +31,7 @@ from copy import deepcopy
 from collections import namedtuple
 
 Numerical_Parameters = namedtuple('Numerical_Parameters',
-                                  'num_epoch sequence_size lr')
+                                  'num_epoch sequence_size batch_size lr')
 RNN_Parameters = namedtuple('RNN_Parameters',
                               'input_size hidden_size output_size')
 
