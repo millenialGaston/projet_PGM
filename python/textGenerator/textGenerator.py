@@ -420,7 +420,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
             plt.xlabel('Predicted')
             plt.ylabel('True')
         
-        for i in range(10):
+        for i in range(numclass):
             if class_total[i]!=0:
                 print('Accuracy of %5s : %2d %%' % (
                     i, 100 * class_correct[i]/class_total[i]))
