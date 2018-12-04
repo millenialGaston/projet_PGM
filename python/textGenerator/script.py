@@ -111,8 +111,8 @@ def main(*args,**kwargs):
 
   rnn = textGenerator.RNN(device, *rnnParams).to(device)
 
-  modelParams = zip(rnn,device,dataset,
-                    t_vocab,target_vocab,cross_dataset)
+  modelParams = [rnn,device,dataset,
+                    t_vocab,target_vocab,cross_dataset]
   loss_train, loss_test, loss_cross = \
     textGenerator.train(*modelParams, *numericalParams)
 
