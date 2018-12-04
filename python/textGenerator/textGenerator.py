@@ -48,6 +48,7 @@ class RNN(nn.Module):
         inputs = self.encoder(inputs)
         inputs, hidden = self.lstm(inputs, hidden)
         inputs = inputs.contiguous()
+        print(inputs.shape)
         output = self.linear1(inputs.view(batch_size*sequence_len,-1))
 
         return output, hidden
@@ -68,6 +69,22 @@ class RNN(nn.Module):
             emb_layer.weight.requires_grad = False
 
         return emb_layer, num_embeddings, embedding_dim
+
+class sequence_classifier(RNN):
+    
+    def __init__(self, device, input_size, hidden_size, output_size,
+            n_layers=1):
+        super(sequence_classifier, self).__init__(device, input_size,
+            hidden_size, output_size, n_layers=1)
+
+    def forward(self, inputs, hidden, sequence_len, batch_size):
+        inputs = inputs.view(batch_size, sequence_len)
+        inputs = self.encoder(inputs)
+        inputs, hidden = self.lstm(inputs, hidden)
+        inputs = inputs.contiguous()
+        output = self.linear1(inputs.view(batch_size*sequence_len,-1))
+
+        return output, hidden      
 
 class quote_dataset(torch.utils.data.dataset.Dataset):
     '''
@@ -304,4 +321,3 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                 \n'.format(loss_train[epoch], loss_test[epoch],
                 loss_cross[epoch]))
     return loss_train, loss_test, loss_cross
-
