@@ -69,7 +69,7 @@ def hardCode():
   dataset3 = fetchData("QUOTE","csv", filtering=False)
   dataset4 = fetchData("shakes","txt", filtering=False)
   numericalParams = Numerical_Parameters(
-      num_epoch = 10,
+      num_epoch = 15,
       sequence_size = 100,
       batch_size = 32,
       lr = 0.0001)
