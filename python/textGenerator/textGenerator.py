@@ -151,8 +151,8 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
     # Calculate the number of sequences.
     # Initialize the tensors.
     sequence = torch.zeros(sequence_size).long()
-    data = torch.zeros(num_data, sequence_size-1).long()
-    labels = torch.zeros(num_data).long()
+    data = torch.zeros(dataset_size, sequence_size-1).long()
+    labels = torch.zeros(dataset_size).long()
     datasets = []
     for i, dat in enumerate(datas):
         datasets.append((create_data(dat, vocab, sequence_size),i))
