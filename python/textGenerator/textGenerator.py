@@ -156,7 +156,7 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
     datasets = []
     for i, dat in enumerate(datas):
         datasets.append((create_data(dat, vocab, sequence_size)[0],i))
-    
+    print(datasets[0][0])
     i = 0
     while i<dataset_size:
         data[i,:] , labels[i] = \
