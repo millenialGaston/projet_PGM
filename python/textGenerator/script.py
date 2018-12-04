@@ -10,7 +10,7 @@ __maintainer__ = "Jimmy Leroux, Nicolas Laliberte, Frederic Boileau"
 __email__ = "jim.leroux1@gmail.com, n.laliberte01@gmail.com, "
 __studentid__ = "1024610, 1005803, "
 
-import textGenerator
+import textGenerator as tg
 import nltk
 from nltk.corpus import brown
 
@@ -64,17 +64,12 @@ def fetchData(name : str,extension : str, filtering=False):
   return dataset
 
 def hardCode():
-  dataset2 = fetchData("returnoftheking","txt", filtering=False)
   dataset = fetchData("hp","txt", filtering=False)
+  dataset2 = fetchData("returnoftheking","txt", filtering=False)
   dataset3 = fetchData("QUOTE","csv", filtering=False)
   dataset4 = fetchData("shakes","txt", filtering=False)
-  numericalParams = Numerical_Parameters(
-      num_epoch = 20,
-      sequence_size = 100,
-      batch_size = 32,
-      lr = 0.0001)
 
-  return dataset, dataset2, dataset3, dataset4, numericalParams
+  return dataset, dataset2, dataset3, dataset4
 
 def plotting(loss_train,loss_test,loss_cross):
   plt.style.use('ggplot')
@@ -84,7 +79,6 @@ def plotting(loss_train,loss_test,loss_cross):
   plt.figure()
   plt.plot(loss_train, 'sk-',label='Trainset')
   plt.plot(loss_test, 'sr-', label='Testset')
-  #plt.plot(loss_cross, 'sb-', label='crossset')
   plt.xlabel('Epoch')
   plt.ylabel('Loss')
   plt.legend()
@@ -101,28 +95,32 @@ def cliParsing():
 def main(*args,**kwargs):
 
   torch.cuda.manual_seed(10)
-  dataset, dataset2, dataset3,dataset4, numericalParams = hardCode()
-  cross_dataset = None
+  dataset,dataset2,dataset3,dataset4, numericalParams = hardCode()
   target_vocab = list(set(dataset+dataset2+dataset3+dataset4))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
   #dataset2 = fetchData("returnoftheking","txt", filtering=False)
   #dataset = fetchData("hp","txt", filtering=False)
   
   # testinggggggg
-  t,l=textGenerator.create_class_data([dataset,dataset2,dataset3,dataset4],t_vocab,100,100000)
-  print(t.shape)
+  d,l=tg.create_class_data([dataset,dataset2,dataset3,dataset4],
+  	t_vocab,100,100000)
+
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
                              hidden_size=256,
                              output_size=4)
+  modelParams = [rnn,device,(d,l),
+  	t_vocab,target_vocab]
+  numericalParams = Numerical_Parameters(
+    num_epoch = 20,
+    sequence_size = 100,
+    batch_size = 32,
+    lr = 0.0001)
 
-  rnn = textGenerator.sequence_classifier(device, *rnnParams).to(device)
+  rnn = tg.sequence_classifier(device, *rnnParams).to(device)
+  loss_train, loss_test = \
+    tg.train(*modelParams, *numericalParams, mode="classification")
 
-  modelParams = [rnn,device,(t,l),
-                    t_vocab,target_vocab,cross_dataset]
-  loss_train, loss_test, loss_cross = \
-    textGenerator.train(*modelParams, *numericalParams, mode="classification")
-
-  plotting(loss_train, loss_test, loss_cross)
+  plotting(loss_train, loss_test)
 
 if __name__ == '__main__':
   main()
