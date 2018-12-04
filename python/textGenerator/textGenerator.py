@@ -48,9 +48,7 @@ class RNN(nn.Module):
         inputs = self.encoder(inputs)
         inputs, hidden = self.lstm(inputs, hidden)
         inputs = inputs.contiguous()
-        print(inputs.shape)
         output = self.linear1(inputs.view(batch_size*sequence_len,-1))
-        print(output.shape)
         return output, hidden
 
     def init_hidden(self, batch_size):
@@ -322,6 +320,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
             output, hidden = model(inputs.to(device), hidden, sequence_size-1,
                 inputs.shape[0])
             # calculate the loss.
+            print(targets.shape)
             targets = targets.contiguous()
             targets = targets.view(inputs.shape[0] * (sequence_size-1))
             loss = criterion(output.to(device), targets.to(device))
