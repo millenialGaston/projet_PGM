@@ -401,7 +401,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
         count = 0  
         with torch.no_grad():
             for data in testloader:
-                images, labels = data
+                inputs, labels = data
                 hidden = model.init_hidden(inputs.shape[0])
                 output, hidden = model(inputs.to(device), hidden,
                     sequence_size-1, inputs.shape[0])
