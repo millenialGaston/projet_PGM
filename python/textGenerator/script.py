@@ -106,8 +106,9 @@ def main(*args,**kwargs):
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
   dataset2 = fetchData("returnoftheking","txt", filtering=False)
   dataset = fetchData("hp","txt", filtering=False)
+  
+  # testinggggggg
   t,l=textGenerator.create_class_data([dataset,dataset2],t_vocab,100,200000)
-  print(t.shape,l.shape)
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
                              hidden_size=256,
                              output_size=len(target_vocab))
