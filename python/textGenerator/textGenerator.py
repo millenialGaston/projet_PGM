@@ -285,7 +285,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
         trainloader = torch.utils.data.DataLoader(text_dataset(
             datas[int(0.8*n):],labels[int(0.8*n):]),
             batch_size=batch_size, shuffle=False, num_workers=0)
-    if mode="textgen":    
+    if mode=="textgen":    
         data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
         trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
             batch_size=batch_size, shuffle=True, num_workers=0)
