@@ -128,8 +128,8 @@ def main(*args,**kwargs):
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
     num_epoch = 20,
-    sequence_size = 50,
-    batch_size = 32,
+    sequence_size = 100,
+    batch_size = 16,
     lr = 0.01)
  
   loss_train, loss_test = \
