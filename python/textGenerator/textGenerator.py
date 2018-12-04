@@ -235,32 +235,8 @@ def evaluate(model,device, target_vocab, init_str='W', predict_len=100,
 
     return predicted
 
-def cross_loss(model, device, dataset, t_vocab, sequence_size, batch_size):
-    # hardcoded bad function to test things
-    data, labels = create_data(dataset[:100000], t_vocab, sequence_size)
-    testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
-        batch_size=batch_size, shuffle=False, num_workers=0)
-
-    criterion = nn.CrossEntropyLoss()
-    model.eval()
-    loss_avg = 0
-    with torch.no_grad():
-        # Calculate the training loss
-        for i, data in enumerate(testloader):
-            inputs, targets = data
-            hidden = model.init_hidden(inputs.shape[0])
-            output, hidden = model(inputs.to(device), hidden,
-                sequence_size-1, inputs.shape[0])
-            targets = targets.contiguous()
-            targets = targets.view(inputs.shape[0] * (sequence_size-1))
-            loss = criterion(output.to(device), targets.to(device))
-            loss_avg += loss.item()
-
-    return loss_avg/len(testloader)
-
-def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
-          num_epoch=20, sequence_size=20, batch_size=200, lr=0.005,
-          mode="textgen"):
+def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
+        sequence_size=20, batch_size=200, lr=0.005, mode="textgen"):
     '''
     Function used to train the model on the joke dataset.
 
@@ -306,7 +282,6 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
 
     loss_train = []
     loss_test = []
-    loss_cross = []
     err_train = []
     err_test = []    
     for epoch in range(num_epoch):
@@ -381,9 +356,6 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                 loss_avg_test += loss.item()
             loss_test.append(loss_avg_test/len(testloader))
             if mode=="classification": err_test.append(1-correct/total)
-        if cross_dataset is not None:
-            loss_cross.append(cross_loss(model, device, cross_dataset, t_vocab,
-                sequence_size, batch_size))
         # Print an exemple of generated sequence.
         print('Epoch: {}'.format(epoch))
         
@@ -392,12 +364,7 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
 
         print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
                     loss_train[epoch], loss_test[epoch]))
-        
-        if cross_dataset is not None:
-            print('Train error: {0:.2f} Test error: {1:.2f} Cross error: {2:.2f}\
-                \n'.format(loss_train[epoch], loss_test[epoch],
-                loss_cross[epoch]))
-    
+            
     if mode=="classification":
         correct = 0
         total = 0
@@ -462,4 +429,4 @@ def train(model, device, dataset, t_vocab, target_vocab, cross_dataset=None,
                     i, 100 * class_correct[i]))
 
 
-    return loss_train, loss_test, loss_cross
+    return loss_train, loss_test
