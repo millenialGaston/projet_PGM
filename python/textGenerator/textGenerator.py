@@ -162,6 +162,7 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
         data[i,:] , labels[i] = \
             datasets[i%len(datas)][0][i//len(datas)], i%len(datas)
         i += 1
+        print(i)
     
     return data, labels
 
