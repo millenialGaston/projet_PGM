@@ -169,12 +169,12 @@ def create_texgen_data(models,device, target_vocab, vocab, sequence_size,
     for i in range(dataset_size):
         cur_model = models[i%k]
         data[i,:] = char_tensor(evaluate(cur_model,device,target_vocab,
-            vocab, "i"))
+            vocab, "i"),vocab)
         labels[i] = i%k
 
     return data, labels
 
-def char_tensor(string, target_vocab):
+def char_tensor(string, vocab):
     '''
     Function used to convert a string to a tensor of 'index'.
 
@@ -191,7 +191,7 @@ def char_tensor(string, target_vocab):
     string = string.split()
     tensor = torch.zeros(len(string)).long()
     for c in range(len(string)):
-        tensor[c] = target_vocab[string[c]]
+        tensor[c] = vocab[string[c]]
         #tensor[c] = all_characters.index(string[c])   
 
     return tensor
