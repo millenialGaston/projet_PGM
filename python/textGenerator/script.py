@@ -67,14 +67,14 @@ def hardCode():
   dataset2 = fetchData("returnoftheking","txt", filtering=False)
   dataset = fetchData("hp","txt", filtering=False)
   dataset3 = fetchData("QUOTE","csv", filtering=False)
-
+  dataset4 = fetchData("shakes","txt", filtering=False)
   numericalParams = Numerical_Parameters(
       num_epoch = 3,
       sequence_size = 100,
       batch_size = 32,
       lr = 0.005)
 
-  return dataset, dataset2, dataset3, numericalParams
+  return dataset, dataset2, dataset3, dataset4, numericalParams
 
 def plotting(loss_train,loss_test,loss_cross):
   plt.style.use('ggplot')
@@ -101,18 +101,18 @@ def cliParsing():
 def main(*args,**kwargs):
 
   torch.cuda.manual_seed(10)
-  dataset, dataset2, dataset3,numericalParams = hardCode()
+  dataset, dataset2, dataset3,dataset4, numericalParams = hardCode()
   cross_dataset = None
-  target_vocab = list(set(dataset+dataset2+dataset3))
+  target_vocab = list(set(dataset+dataset2+dataset3+dataset4))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
   #dataset2 = fetchData("returnoftheking","txt", filtering=False)
   #dataset = fetchData("hp","txt", filtering=False)
   
   # testinggggggg
-  t,l=textGenerator.create_class_data([dataset,dataset2,dataset3],t_vocab,100,600000)
+  t,l=textGenerator.create_class_data([dataset,dataset2,dataset3,dataset4],t_vocab,100,700000)
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
                              hidden_size=256,
-                             output_size=3)
+                             output_size=4)
 
   rnn = textGenerator.sequence_classifier(device, *rnnParams).to(device)
 
