@@ -286,9 +286,9 @@ def evaluate_texgen(model, device, dataset, sequence_size, batch_size):
         
     classes = ["hp","lotr","quote","shakes"]
     plt.style.use('ggplot')
-    plt.rc('xtick', labelsize=15)
-    plt.rc('ytick', labelsize=15)
-    plt.rc('axes', labelsize=15)
+    plt.rc('xtick', labelsize=25)
+    plt.rc('ytick', labelsize=25)
+    plt.rc('axes', labelsize=25)
     plt.figure()
     plt.imshow(confusion/torch.tensor(class_total).view(numclass,1))
     plt.colorbar()
@@ -473,9 +473,9 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         
         classes = ["hp","lotr","quote","shakes"]
         plt.style.use('ggplot')
-        plt.rc('xtick', labelsize=15)
-        plt.rc('ytick', labelsize=15)
-        plt.rc('axes', labelsize=15)
+        plt.rc('xtick', labelsize=25)
+        plt.rc('ytick', labelsize=25)
+        plt.rc('axes', labelsize=25)
         plt.imshow(confusion/torch.tensor(class_total).view(numclass,1))
         plt.colorbar()
         plt.yticks(range(numclass), classes)
@@ -491,7 +491,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         plt.tight_layout()
         plt.xlabel("Epoch")
         plt.ylabel("Error")
-        plt.legend()
+        plt.legend(fontsize=25)
         for i in range(numclass):
             if class_total[i]!=0:
                 print('Accuracy of %5s : %2d %%' % (
