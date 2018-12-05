@@ -227,15 +227,31 @@ column=2,span=2,row=0}{
 \begin{center}
 \subsection*{Network Structure}
 We implemented a LSTM network
+\begin{tabular}{|l|l|l|}
+	\hline
+	Parameters & Classification & TextGen \\
+	\hline
+	Input dim & 150k & 150k/xx \\
+	Embedding dim & 128 & 128 \\
+	Hidden/cell dim & 256 & 256 \\
+	Output dim & 4 & 150k/xx\\
+	Learning rate & 0.0001 & 0.01\\
+	Sequence length &100 & 100\\
+	Batch size & 32 & 16\\
+	\hline
+\end{tabular}
 \end{center}
 \begin{multicols}{2}
 
 \begin{center}
 \subsection*{Classification of sequences}
+\begin{center}
+	\includegraphics[width=.65\linewidth]{classification}
+\end{center}
 \end{center}
 
 \begin{itemize}\compresslist
-\item Simulate pairwise dependencies between a set of binary variables.
+\item 93\% fucking beast
 \end{itemize}
 
 \begin{center}
@@ -246,17 +262,14 @@ We implemented a LSTM network
 %------------------------------------------------
 
 \begin{center}
-\subsection*{Scenario 2 : Gaussian Networks}
-\end{center}
-
-
-\begin{itemize}\compresslist
-\item Simulate continuous variables following multivariate Gaussian distribution with sparse covariance matrix.
-\end{itemize}
-
+\subsection*{TextGen and Classification}
 \begin{center}
-%\includegraphics[width=.65\linewidth]{}
+	\includegraphics[width=.65\linewidth]{confusiontextgenwithpunc}
 \end{center}
+\end{center}
+\begin{itemize}\compresslist
+\item rocking this shit with 87\%
+\end{itemize}
 
 \end{multicols}
 
@@ -266,8 +279,8 @@ We implemented a LSTM network
 \end{center}
 
 \begin{itemize}\compresslist
-\item Stability selection algorithm stabilizes the graphical model estimation on artificial datasets.
-\item Graphical Lasso outperforms GRaFo algorithm.
+\item we love you simon
+\item best project 100\%
 \end{itemize}
 % When there are two boxes, some whitespace may need to be added if the one on the right has more content
 }
