@@ -73,16 +73,16 @@ def hardCode():
 
 def plotting(loss_train,loss_test,loss_cross):
   plt.style.use('ggplot')
-  plt.rc('xtick', labelsize=15)
-  plt.rc('ytick', labelsize=15)
-  plt.rc('axes', labelsize=15)
+  plt.rc('xtick', labelsize=25)
+  plt.rc('ytick', labelsize=25)
+  plt.rc('axes', labelsize=25)
   plt.figure()
   plt.plot(loss_train, 'sk-',label='Trainset')
   plt.plot(loss_test, 'sr-', label='Testset')
   plt.tight_layout()
   plt.xlabel('Epoch')
   plt.ylabel('Loss')
-  plt.legend()
+  plt.legend(fontsize=25)
   plt.show()
 
 def cliParsing():
