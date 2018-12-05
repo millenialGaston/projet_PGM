@@ -294,6 +294,7 @@ def evaluate_texgen(model, device, dataset, sequence_size, batch_size):
     plt.colorbar()
     plt.yticks(range(numclass), classes)
     plt.xticks(range(numclass), classes, rotation='vertical')
+    plt.tight_layout()
     plt.xlabel('Predicted')
     plt.ylabel('True')
     plt.show()
@@ -479,6 +480,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         plt.colorbar()
         plt.yticks(range(numclass), classes)
         plt.xticks(range(numclass), classes, rotation='vertical')
+        plt.tight_layout()
         plt.xlabel('Predicted')
         plt.ylabel('True')
         
@@ -486,6 +488,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         plt.figure()
         plt.plot(x, err_train,"sk-", label="Trainset")
         plt.plot(x, err_test,"sr-", label="Testset")
+        plt.tight_layout()
         plt.xlabel("Epoch")
         plt.ylabel("Error")
         plt.legend()
