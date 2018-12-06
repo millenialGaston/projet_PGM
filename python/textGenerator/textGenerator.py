@@ -36,7 +36,7 @@ class RNN(nn.Module):
         self.hidden_size = hidden_size  # Size of the hidden layer.
         self.output_size = output_size  # Size of output, here same as input.
         self.n_layers = n_layers
-        self.embedding_dim = 256
+        self.embedding_dim = 128
         self.encoder= nn.Embedding(input_size, self.embedding_dim) # Encode inputs.
         self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers,
             batch_first=True)
@@ -361,9 +361,9 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         for i, data in enumerate(trainloader):
             model.train()
             # Learning rate decay.
-            #lrd = lr * (1./(1 + 4 * epoch / num_epoch))
+            lrd = lr * (1./(1 + 4 * epoch / num_epoch))
             # Define the optimizing method and pass the parameters to optimize.
-            optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+            optimizer = torch.optim.Adam(model.parameters(), lr=lrd)
             # zero the gradient after each step.
             model.zero_grad()
             # get a training exemple.
