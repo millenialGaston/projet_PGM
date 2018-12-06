@@ -134,7 +134,7 @@ def main(*args,**kwargs):
     num_epoch = 10,
     sequence_size = 100,
     batch_size = 8,
-    lr = 0.0001)
+    lr = 0.001)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -149,7 +149,7 @@ def main(*args,**kwargs):
     num_epoch = 10,
     sequence_size = 100,
     batch_size = 8,
-    lr = 0.0001)
+    lr = 0.001)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -164,7 +164,7 @@ def main(*args,**kwargs):
     num_epoch = 10,
     sequence_size = 100,
     batch_size = 8,
-    lr = 0.0001)
+    lr = 0.001)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -179,7 +179,7 @@ def main(*args,**kwargs):
     num_epoch = 10,
     sequence_size = 100,
     batch_size = 8,
-    lr = 0.0001)
+    lr = 0.001)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
