@@ -115,7 +115,7 @@ def main(*args,**kwargs):
     num_epoch = 20,
     sequence_size = 100,
     batch_size = 32,
-    lr = 0.0005)
+    lr = 0.0001)
 
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="classification")
@@ -131,10 +131,10 @@ def main(*args,**kwargs):
   modelParams = [hpmodel,device,dataset,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 10,
-    sequence_size = 100,
-    batch_size = 16,
-    lr = 0.005)
+    num_epoch = 5,
+    sequence_size = 50,
+    batch_size = 32,
+    lr = 0.01)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -146,10 +146,10 @@ def main(*args,**kwargs):
   modelParams = [lotrmodel,device,dataset2,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 10,
-    sequence_size = 100,
-    batch_size = 16,
-    lr = 0.005)
+    num_epoch = 5,
+    sequence_size = 50,
+    batch_size = 32,
+    lr = 0.01)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -161,10 +161,10 @@ def main(*args,**kwargs):
   modelParams = [quotemodel,device,dataset3,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 10,
-    sequence_size = 100,
-    batch_size = 16,
-    lr = 0.005)
+    num_epoch = 5,
+    sequence_size = 50,
+    batch_size = 32,
+    lr = 0.01)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
@@ -176,10 +176,10 @@ def main(*args,**kwargs):
   modelParams = [shakesmodel,device,dataset4,
     t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 10,
-    sequence_size = 100,
-    batch_size = 16,
-    lr = 0.005)
+    num_epoch = 5,
+    sequence_size = 50,
+    batch_size = 32,
+    lr = 0.01)
  
   loss_train, loss_test = \
     tg.train(*modelParams, *numericalParams, mode="textgen")
