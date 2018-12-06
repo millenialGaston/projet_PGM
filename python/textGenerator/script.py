@@ -117,8 +117,8 @@ def main(*args,**kwargs):
     batch_size = 32,
     lr = 0.0001)
 
-  loss_train, loss_test = \
-    tg.train(*modelParams, *numericalParams, mode="classification")
+  #loss_train, loss_test = \
+  #  tg.train(*modelParams, *numericalParams, mode="classification")
 
   #plotting(loss_train, loss_test)
   # -----------------------------------------------------------------------
