@@ -125,7 +125,7 @@ def main(*args,**kwargs):
   # TRAIN THE MODELS ------------------------------------------------------
   # -------- HP -----------------------------------------------------------
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
-    						hidden_size=512,
+    						hidden_size=256,
     						output_size=len(target_vocab))
   hpmodel = tg.RNN(device, *rnnParams).to(device)
   modelParams = [hpmodel,device,dataset,
@@ -140,7 +140,7 @@ def main(*args,**kwargs):
     tg.train(*modelParams, *numericalParams, mode="textgen")
   # -------- lotr ----------------------------------------------------------
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
-    						hidden_size=512,
+    						hidden_size=256,
     						output_size=len(target_vocab))
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
   modelParams = [lotrmodel,device,dataset2,
@@ -155,7 +155,7 @@ def main(*args,**kwargs):
     tg.train(*modelParams, *numericalParams, mode="textgen")
  # --------- quote ---------------------------------------------------------
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
-    						hidden_size=512,
+    						hidden_size=256,
     						output_size=len(target_vocab))
   quotemodel = tg.RNN(device, *rnnParams).to(device)
   modelParams = [quotemodel,device,dataset3,
@@ -170,7 +170,7 @@ def main(*args,**kwargs):
     tg.train(*modelParams, *numericalParams, mode="textgen")
   # -------- shakes --------------------------------------------------------
   rnnParams = RNN_Parameters(input_size=len(target_vocab),
-    						hidden_size=512,
+    						hidden_size=256,
     						output_size=len(target_vocab))
   shakesmodel = tg.RNN(device, *rnnParams).to(device)
   modelParams = [shakesmodel,device,dataset4,
