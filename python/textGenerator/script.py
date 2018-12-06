@@ -112,7 +112,7 @@ def main(*args,**kwargs):
   modelParams = [classifier,device,(d,l),
   	t_vocab,target_vocab]
   numericalParams = Numerical_Parameters(
-    num_epoch = 20,
+    num_epoch = 5,
     sequence_size = 100,
     batch_size = 32,
     lr = 0.0001)
