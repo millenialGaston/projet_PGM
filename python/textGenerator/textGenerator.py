@@ -39,6 +39,8 @@ class RNN(nn.Module):
         self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers, batch_first=True)
         self.linear1 = nn.Linear(self.hidden_size, output_size)
         self.device = device
+        self.loss_train = None
+        self.loss_test = None
 
     def forward(self, inputs, hidden, sequence_len, batch_size):
         inputs = inputs.view(batch_size, sequence_len)
@@ -349,6 +351,8 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
 
     loss_train = []
     loss_test = []
+    model.loss_train = loss_train
+    model.loss_test = loss_test
     err_train = []
     err_test = []
     for epoch in range(num_epoch):

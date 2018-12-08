@@ -10,6 +10,7 @@ __maintainer__ = "Jimmy Leroux, Nicolas Laliberte, Frederic Boileau"
 __email__ = "jim.leroux1@gmail.com, n.laliberte01@gmail.com, "
 __studentid__ = "1024610, 1005803, "
 
+from pathlib import Path
 import unidecode
 import string
 import argparse
@@ -18,7 +19,7 @@ from copy import deepcopy
 from collections import namedtuple
 import dataclasses
 from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple
 import operator
 from functools import reduce
 
@@ -33,6 +34,8 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 from nltk.corpus import gutenberg as gut
+from IPython.core import debugger
+Idebug = debugger.Pdb().set_trace
 
 import textGenerator as tg
 
@@ -79,62 +82,56 @@ def fetchData(name : str, extension : str, filtering=False) -> str:
   return dataset
 
 def localDataFetchDriver(toFetch: Text_Fetch_Parameters = None) -> List[str]:
-  if toFetchParams is None:
-    toFetchParams = list(Text_Fetch_Parameters("shakes","txt",False))
-  data = [fetchData(*p) for p in toFetchParams]
+  if toFetch is None:
+    toFetch = [Text_Fetch_Parameters("shakes","txt",False)]
+  data = [(p.name,fetchData(*p)) for p in toFetch]
   return data
-
 
 def main(*args,**kwargs):
 
-  # CREATE THE DICTIONARIES ----------------------------------------------
   torch.cuda.manual_seed(10)
-  data : List[str] = localDataFetchDriver
-  target_vocab = list(set(reduce(operator.concat, data)))
+
+  #data is list of tuples, the first entry is the
+  #name of the text file wihout #extension and the
+  #second is the raw text data.
+  #Idealement meme quand on change de facon ou de sorte
+  # de data set on garderait la structure List[Tuple(name, rawtext)]
+
+  data : List[Tuple(str,str)] = localDataFetchDriver()
+  Idebug()
+  listOfRawData = [d[1] for d in data]
+  target_vocab = list(set(reduce(operator.concat, listOfRawData)))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
+  # Train GENERATORS-----------------------------------------------------
+  for d in data :
+    rnnParams = RNN_Parameters(len(target_vocab),256,len(target_vocab))
+    model = tg.RNN(device, *rnnParams).to(device)
+    fileCheck = Path('models/' + d[0])
+    cached = fileCheck.exists()
+    if cached:
+      model.load_state_dict(torch.load('models/' + d[0]))
+    else:
+      modelParam = [model ,device, d[1] , t_vocab,target_vocab]
+      numParam = Numerical_Parameters(5,100,16,0.01)
+      loss_train, loss_test = tg.train(*modelParam, *numParam, mode="textgen")
+      torch.save(model.state_dict(),'models/' + d[0])
+
   # TRAIN CLASSIFIER -----------------------------------------------------
-  rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
-  dataTensor, labelsTensor = tg.create_class_data(data , t_vocab,100,100000)
+  #rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
+  #dataTensor, labelsTensor = tg.create_class_data(data , t_vocab,100,100000)
 
-  classifier = tg.sequence_classifier(device, *rnnParams).to(device)
-  modelParams = [classifier,device, (dataTensor,labelsTensor),
-                 t_vocab, target_vocab]
+  #classifier = tg.sequence_classifier(device, *rnnParams).to(device)
+  #mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
+  #numParam = Numerical_Parameters(10,100,32,0.0001)
+  #loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
 
-  numericalParamsClassifier = Numerical_Parameters(
-    num_epoch = 10,
-    sequence_size = 100,
-    batch_size = 32,
-    lr = 0.0001)
-
-  loss_train, loss_test = \
-    tg.train(*modelParams, *numericalParamsClassifier, mode="classification")
-
-  # Train GENERATORS
-  # -------- shakes --------------------------------------------------------
-  rnnParams = RNN_Parameters(
-              input_size=len(target_vocab),
-                hidden_size=256,
-                output_size=len(target_vocab))
-
-  shakesmodel = tg.RNN(device, *rnnParams).to(device)
-  modelParams = [shakesmodel,device,dataset4,
-    t_vocab,target_vocab]
-  numericalParamsGenerator = Numerical_Parameters(
-    num_epoch = 5,
-    sequence_size = 100,
-    batch_size = 16,
-    lr = 0.01)
-
-  loss_train, loss_test = \
-    tg.train(*modelParams, *numericalParamsGenerator, mode="textgen")
-
-  #Classify syntethic data
-  # -------------------------------------------------------------------------
-  models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
-  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1600)
-  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
-  plt.show()
+  ##Classify syntethic data
+  ## -------------------------------------------------------------------------
+  #models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
+  #d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1600)
+  #tg.evaluate_texgen(classifier, device, (d,l),100, 16)
+  #plt.show()
 
 
 def plotting(loss_train,loss_test,loss_cross):
