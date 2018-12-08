@@ -111,9 +111,9 @@ def main(*args,**kwargs):
 
     names = list(set(user_input) & set(gut_names))
     if not names:
-      print("Error no text selected")
+      print("Error no text selected ===> Try again Please \n\n")
 
-
+  print("==============================")
   print("OK thanks training started\n\n")
   raw_data = [gut.raw(name) for name in names]
   data = list(zip(names,raw_data))
@@ -134,11 +134,8 @@ def main(*args,**kwargs):
       loss_train, loss_test = tg.train(*modelParam, *numParam, mode="textgen")
       torch.save(model.state_dict(),'models/' + d[0])
 
-<<<<<<< HEAD
     print(tg.evaluate(model,device,target_vocab, t_vocab,'i', 40))
 
-=======
->>>>>>> eb9f9b1e7a51c71a3a65f96d72d22cac78e88ad8
   # TRAIN CLASSIFIER -----------------------------------------------------
   #rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
   #dataTensor, labelsTensor = tg.create_class_data(data , t_vocab,100,100000)
