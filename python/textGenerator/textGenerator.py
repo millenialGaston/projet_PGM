@@ -28,18 +28,15 @@ class RNN(nn.Module):
     '''
     Define the model structure.
     '''
-
-    def __init__(self, device, input_size, hidden_size, output_size,
-            n_layers=1):
+    def __init__(self, device, input_size, hidden_size, output_size, n_layers=1):
         super(RNN, self).__init__()
         self.input_size = input_size    # Size of the character list.
         self.hidden_size = hidden_size  # Size of the hidden layer.
         self.output_size = output_size  # Size of output, here same as input.
         self.n_layers = n_layers
         self.embedding_dim = 128
-        self.encoder= nn.Embedding(input_size, self.embedding_dim) # Encode inputs.
-        self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers,
-            batch_first=True)
+        self.encoder = nn.Embedding(input_size, self.embedding_dim) # Encode inputs.
+        self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers, batch_first=True)
         self.linear1 = nn.Linear(self.hidden_size, output_size)
         self.device = device
 
@@ -60,9 +57,8 @@ class RNN(nn.Module):
             torch.zeros(self.n_layers, batch_size, self.hidden_size).to(self.device))
 
 class sequence_classifier(RNN):
-    
-    def __init__(self, device, input_size, hidden_size, output_size,
-            n_layers=1):
+
+    def __init__(self, device, input_size, hidden_size, output_size, n_layers=1):
         super(sequence_classifier, self).__init__(device, input_size,
             hidden_size, output_size, n_layers=1)
 
@@ -73,7 +69,7 @@ class sequence_classifier(RNN):
         inputs = inputs.contiguous()[:,-1,:]
         output = self.linear1(inputs.view(batch_size*1,-1))
 
-        return output, hidden      
+        return output, hidden
 
 class text_dataset(torch.utils.data.dataset.Dataset):
     '''
@@ -145,7 +141,7 @@ def create_class_data(datas, vocab, sequence_size, dataset_size):
     for dat in datas:
         d, _ = create_data(dat, vocab, sequence_size)
         datasets.append(d)
-    
+
     mini = min([i.shape[0] for i in datasets])
     if (mini*k)<(num_per_class*k):
         print("Requested size too big, size put to {}".format(mini*k))
@@ -193,7 +189,7 @@ def char_tensor(string, vocab):
     tensor = torch.zeros(len(string)).long()
     for c in range(len(string)):
         tensor[c] = vocab[string[c]]
-        #tensor[c] = all_characters.index(string[c])   
+        #tensor[c] = all_characters.index(string[c])
 
     return tensor
 
@@ -249,9 +245,9 @@ def evaluate_texgen(model, device, dataset, sequence_size, batch_size):
     testloader = torch.utils.data.DataLoader(text_dataset(
         datas,labels),
         batch_size=batch_size, shuffle=False, num_workers=0)
-    
+
     correct = 0.
-    total = 0.        
+    total = 0.
     model.eval()
     with torch.no_grad():
         for data in testloader:
@@ -268,7 +264,7 @@ def evaluate_texgen(model, device, dataset, sequence_size, batch_size):
     class_correct = list(0. for i in range(numclass))
     class_total = list(0. for i in range(numclass))
     confusion = torch.zeros(numclass,numclass)
-    count = 0  
+    count = 0
     with torch.no_grad():
         for data in testloader:
             inputs, labels = data
@@ -283,7 +279,7 @@ def evaluate_texgen(model, device, dataset, sequence_size, batch_size):
                 class_total[label] += 1
                 confusion[label,predicted[i].item()] += 1
                 count += 1
-        
+
     classes = ["hp","lotr","quote","shakes"]
     plt.style.use('ggplot')
     plt.rc('xtick', labelsize=25)
@@ -338,7 +334,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         testloader = torch.utils.data.DataLoader(text_dataset(
             datas[int(0.8*n):],labels[int(0.8*n):]),
             batch_size=batch_size, shuffle=False, num_workers=0)
-    if mode=="textgen":    
+    if mode=="textgen":
         data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
         trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
             batch_size=batch_size, shuffle=True, num_workers=0)
@@ -354,7 +350,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
     loss_train = []
     loss_test = []
     err_train = []
-    err_test = []    
+    err_test = []
     for epoch in range(num_epoch):
         loss_avg_train = 0
         loss_avg_test = 0
@@ -384,12 +380,12 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
             loss.backward()
             # make a step.
             optimizer.step()
-        # Pout the model on eval to calculate the losses   
+        # Pout the model on eval to calculate the losses
         model.eval()
         with torch.no_grad():
             # Calculate the training loss
             correct = 0.
-            total = 0.            
+            total = 0.
             for i, data in enumerate(trainloader):
                 inputs, targets = data
                 hidden = model.init_hidden(inputs.shape[0])
@@ -406,7 +402,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
                 loss = criterion(output.to(device), targets.to(device))
                 loss_avg_train += loss.item()
             loss_train.append(loss_avg_train/len(trainloader))
-            if mode=="classification": err_train.append(1-correct/total) 
+            if mode=="classification": err_train.append(1-correct/total)
             # Calculate the test loss
             correct = 0.
             total = 0.
@@ -429,13 +425,13 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
             if mode=="classification": err_test.append(1-correct/total)
         # Print an exemple of generated sequence.
         print('Epoch: {}'.format(epoch))
-        
+
         if mode=="textgen":
             print(evaluate(model,device,target_vocab, t_vocab,'i', 40))
 
         print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
                     loss_train[epoch], loss_test[epoch]))
-            
+
     if mode=="classification":
         correct = 0
         total = 0
@@ -455,7 +451,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         class_correct = list(0. for i in range(numclass))
         class_total = list(0. for i in range(numclass))
         confusion = torch.zeros(numclass,numclass)
-        count = 0  
+        count = 0
         with torch.no_grad():
             for data in testloader:
                 inputs, labels = data
@@ -470,7 +466,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
                     class_total[label] += 1
                     confusion[label,predicted[i].item()] += 1
                     count += 1
-        
+
         classes = ["hp","lotr","quote","shakes"]
         plt.style.use('ggplot')
         plt.rc('xtick', labelsize=25)
@@ -483,7 +479,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         plt.tight_layout()
         plt.xlabel('Predicted')
         plt.ylabel('True')
-        
+
         x = range(1,num_epoch+1)
         plt.figure()
         plt.plot(x, err_train,"sk-", label="Trainset")
