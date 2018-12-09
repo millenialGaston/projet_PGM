@@ -165,22 +165,22 @@ def main(*args,**kwargs):
   # TRAIN MODELS
   rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
   
-  numParam = Numerical_Parameters(5,50,64,0.005)
+  numParam = Numerical_Parameters(5,50,64,0.001)
   hpmodel = tg.RNN(device, *rnnParams).to(device)
   modelParam = [hpmodel ,device, dat1 , t_vocab,target_vocab]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
   
-  numParam = Numerical_Parameters(5,50,64,0.005)
+  numParam = Numerical_Parameters(5,50,64,0.001)
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
   modelParam = [lotrmodel ,device, dat2 , t_vocab,target_vocab]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
 
-  numParam = Numerical_Parameters(5,50,64,0.005)
+  numParam = Numerical_Parameters(5,50,64,0.001)
   quotemodel = tg.RNN(device, *rnnParams).to(device)
   modelParam = [quotemodel ,device, dat3 , t_vocab,target_vocab]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
 
-  numParam = Numerical_Parameters(5,50,64,0.005)
+  numParam = Numerical_Parameters(5,50,64,0.001)
   shakesmodel = tg.RNN(device, *rnnParams).to(device)
   modelParam = [shakesmodel ,device, dat4 , t_vocab,target_vocab]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
