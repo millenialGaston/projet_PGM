@@ -73,7 +73,7 @@ def main(*args,**kwargs):
   models = uglyTrainGenerators(data,target_vocab,t_vocab)
   d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
   tg.evaluate_texgen(classifier, device, (d,l),100, 16)
-
+  
   #Save
   saveModels(models)
   torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
