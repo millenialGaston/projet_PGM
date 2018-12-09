@@ -118,7 +118,7 @@ def create_data(datas, vocab, sequence_size):
     labels = torch.zeros(num_data, sequence_size-1).long()
     for i in range(num_data):
         for s in range(sequence_size):
-            sequence[s] = vocab[datas[i * sequence_size + s]]
+            sequence[s] = vocab[datas[i * sequenceence_size + s]]
         data[i,:] , labels[i,:] = sequence[:-1], sequence[1:]
 
     return data, labels
@@ -339,14 +339,23 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
             datas[int(0.8*n):],labels[int(0.8*n):]),
             batch_size=batch_size, shuffle=False, num_workers=0)
     if mode=="textgen":
-        data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
-        trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
-            batch_size=batch_size, shuffle=True, num_workers=0)
+        n = dataset[0].shape[0]
+        if n>400000:
+            data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
+            trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
+                batch_size=batch_size, shuffle=True, num_workers=0)
 
-        data, labels = create_data(dataset[350000:400000], t_vocab, sequence_size)
-        testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
-            batch_size=batch_size, shuffle=False, num_workers=0)
+            data, labels = create_data(dataset[350000:400000], t_vocab, sequence_size)
+            testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
+                batch_size=batch_size, shuffle=False, num_workers=0)
+        else:
+            data, labels = create_data(dataset[:int(0.8*n)], t_vocab, sequence_size)
+            trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
+                batch_size=batch_size, shuffle=True, num_workers=0)
 
+            data, labels = create_data(dataset[int(0.8*n):], t_vocab, sequence_size)
+            testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
+                batch_size=batch_size, shuffle=False, num_workers=0)
     # We use Cross entropy loss. This combine negative loss likelihood with a
     # softmax function for the prediction.
     criterion = nn.CrossEntropyLoss()
