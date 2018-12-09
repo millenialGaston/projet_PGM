@@ -76,11 +76,11 @@ def fetchData(name : str, extension : str, filtering=False) -> str:
 
   # filtering
   if filtering == True:
-    punc = [p for p in string.punctuation]
-    dataset = [dataset[i].translate(
-        str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
-    dataset = list(filter(('').__ne__,dataset)) + punc
-
+    #punc = [p for p in string.punctuation]
+    #dataset = [dataset[i].translate(
+    #    str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
+    #dataset = list(filter(('').__ne__,dataset)) + punc
+    dataset = nltk.word_tokenize(dataset)
   return dataset
 
 def localDataFetchDriver(toFetch: Text_Fetch_Parameters = None) -> List[str]:
