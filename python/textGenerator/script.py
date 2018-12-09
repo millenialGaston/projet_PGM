@@ -149,18 +149,18 @@ def main(*args,**kwargs):
   dat4 = fetchData("shakes","txt",True)
   data = dat1+dat2+dat3+dat4
   print(len(dat1),len(dat2),len(dat3),len(dat4))
-  target_vocab = list(set(data))
+  target_vocab = list(set(data1))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
   # TRAIN CLASSIFIER -----------------------------------------------------
   rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
 
-  dataTensor, labelsTensor = tg.create_class_data([dat1,dat2,dat3,dat4], t_vocab,100,100000)
+  #dataTensor, labelsTensor = tg.create_class_data([dat1,dat2,dat3,dat4], t_vocab,100,100000)
 
-  classifier = tg.sequence_classifier(device, *rnnParams).to(device)
-  mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
-  numParam = Numerical_Parameters(1,100,32,0.0001)
-  loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
+  #classifier = tg.sequence_classifier(device, *rnnParams).to(device)
+  #mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
+  #numParam = Numerical_Parameters(1,100,32,0.0001)
+  #loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
 
   # TRAIN MODELS
   rnnParams = RNN_Parameters(len(target_vocab), 256, len(target_vocab))
