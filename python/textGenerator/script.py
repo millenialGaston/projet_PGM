@@ -143,7 +143,7 @@ def main(*args,**kwargs):
   # -------------------------------------------------------------------------------
   
   # UGLY STUFF BUT WORKING FOR NOW -----------------------------------------------
-  dat1 = fetchData("newhp","txt",True)
+  dat1 = fetchData("hpnew2","txt",True)
   dat2 = fetchData("returnoftheking","txt",True)
   dat3 = fetchData("QUOTE","csv",True)
   dat4 = fetchData("shakes","txt",True)
