@@ -191,11 +191,11 @@ def main(*args,**kwargs):
   d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
   tg.evaluate_texgen(classifier, device, (d,l),100, 16)
   
-  torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop' + 'classifier')
-  torch.save(hpmodel.state_dict(),'C:/Users/Jimmy/Desktop' + 'hpmodel')
-  torch.save(lotrmodel.state_dict(),'C:/Users/Jimmy/Desktop' + 'lotrmodel')
-  torch.save(quotemodel.state_dict(),'C:/Users/Jimmy/Desktop' + 'quotemodel')
-  torch.save(shakesmodel.state_dict(),'C:/Users/Jimmy/Desktop' + 'shakesmodel')
+  torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
+  torch.save(hpmodel.state_dict(),'C:/Users/Jimmy/Desktop/' + 'hpmodel')
+  torch.save(lotrmodel.state_dict(),'C:/Users/Jimmy/Desktop/' + 'lotrmodel')
+  torch.save(quotemodel.state_dict(),'C:/Users/Jimmy/Desktop/' + 'quotemodel')
+  torch.save(shakesmodel.state_dict(),'C:/Users/Jimmy/Desktop/' + 'shakesmodel')
   plt.show()
 
 
