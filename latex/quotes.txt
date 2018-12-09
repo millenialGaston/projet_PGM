@@ -1,3 +1,34 @@
+Character-level language modelling with neural networks has recently been
+considered [30, 24], and found to give slightly worse performance than equiv-
+alent word-level models. 
+p.6
+
+\cite{gravesGenerating}
+
+In principle a large enough RNN should be sufficient to generate sequences
+of arbitrary complexity. In practice however, standard RNNs are unable to
+store information about past inputs for very long [15]. As well as diminishing
+their ability to model long-range structure, this ‘amnesia’ makes them prone to
+instability when generating sequences. The problem (common to all conditional
+generative models) is that if the network’s predictions are only based on the last
+few inputs, and these inputs were themselves predicted by the network, it has
+little opportunity to recover from past mistakes. Having a longer memory has
+a stabilising effect, because even if the network cannot make sense of its recent
+history, it can look further back in the past to formulate its predictions. The
+problem of instability is especially acute with real-valued data, where it is easy
+for the predictions to stray from the manifold on which the training data lies.
+One remedy that has been proposed for conditional models is to inject noise into
+the predictions before feeding them back into the model [31], thereby increasing
+the model’s robustness to surprising inputs. However we believe that a better
+memory is a more profound and effective solution.
+Long Short-term Memory (LSTM) [16] is an RNN architecture designed to
+be better at storing and accessing information than standard RNNs. LSTM has
+recently given state-of-the-art results in a variety of sequence processing tasks,
+including speech and handwriting recognition [10, 12].
+
+\cite{gravesGenerating} p.2
+
+
 An advantage of this approach of deriving the cost function from maximum
 likelihood is that it removes the burden of designing cost functions for each model.
 Specifying a model p(y | x ) automatically determines a cost function log p(y | x ).
@@ -25,8 +56,7 @@ to assign extremely high density to the correct training set outputs, resulting 
 cross-entropy approaching negative infinity. Regularization techniques described
 in chapter 7 provide several different ways of modifying the learning problem so
 that the model cannot reap unlimited reward in this way.
-cite Deeplearngin, p.179
--------------------------------------------------------
+\cite{Deeplearngin} p.179
 
 Unfortunately, mean squared error and mean absolute error often lead to poor
 results when used with gradient-based optimization. Some output units that
@@ -34,4 +64,4 @@ saturate produce very small gradients when combined with these cost functions.
 This is one reason that the cross-entropy cost function is more popular than mean
 squared error or mean absolute error, even when it is not necessary to estimate an
 entire distribution p( y | x ) .
-cite Deeplearngin p.181
+\cite{Deeplearngin} p.181
