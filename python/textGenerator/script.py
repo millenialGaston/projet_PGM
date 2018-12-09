@@ -146,8 +146,8 @@ def main(*args,**kwargs):
   dat3 = fetchData("QUOTE","csv",False)
   dat4 = fetchData("shakes","txt",False)
   data = dat1+dat2+dat3+dat4
-  print(len(dat1),len(dat2),len(dat3),len(dat4),)
-  target_vocab = list(set(dat1+dat2+dat3+dat4))
+  print(len(dat1),len(dat2),len(dat3),len(dat4))
+  target_vocab = list(set(data))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
   # TRAIN CLASSIFIER -----------------------------------------------------
@@ -161,6 +161,7 @@ def main(*args,**kwargs):
   loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
 
   # TRAIN MODELS
+  rnnParams = RNN_Parameters(len(target_vocab), 256, len(target_vocab))
   numParam = Numerical_Parameters(1,100,16,0.01)
   hpmodel = tg.RNN(device, *rnnParams).to(device)
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
