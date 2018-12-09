@@ -37,7 +37,7 @@ class RNN(nn.Module):
         self.hidden_size = hidden_size  # Size of the hidden layer.
         self.output_size = output_size  # Size of output, here same as input.
         self.n_layers = n_layers
-        self.embedding_dim = 128
+        self.embedding_dim = 512
         self.encoder = nn.Embedding(input_size, self.embedding_dim) # Encode inputs.
         self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers, batch_first=True)
         self.linear1 = nn.Linear(self.hidden_size, output_size)
