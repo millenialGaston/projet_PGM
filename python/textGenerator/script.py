@@ -158,12 +158,12 @@ def main(*args,**kwargs):
 
   classifier = tg.sequence_classifier(device, *rnnParams).to(device)
   mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
-  numParam = Numerical_Parameters(1,100,32,0.0001)
+  numParam = Numerical_Parameters(10,100,32,0.0001)
   loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
 
   # TRAIN MODELS
   rnnParams = RNN_Parameters(len(target_vocab), 256, len(target_vocab))
-  numParam = Numerical_Parameters(1,100,16,0.01)
+  numParam = Numerical_Parameters(5,100,16,0.01)
   hpmodel = tg.RNN(device, *rnnParams).to(device)
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
   quotemodel = tg.RNN(device, *rnnParams).to(device)
