@@ -16,10 +16,12 @@ import string
 import argparse
 import random
 from copy import deepcopy
+
 from collections import namedtuple
 import dataclasses
 from dataclasses import dataclass
 from typing import List, Tuple
+
 import operator
 from functools import reduce
 import nltk
@@ -42,8 +44,6 @@ import textGenerator as tg
 
 # To use GPU if available.
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-#Containers
 Numerical_Parameters = namedtuple('Numerical_Parameters',
                                   'num_epoch sequence_size batch_size lr')
 RNN_Parameters = namedtuple('RNN_Parameters',
@@ -56,6 +56,27 @@ class Text_Fetch_Parameters:
   #Enables unpacking
   def __iter__(self):
         yield from dataclasses.astuple(self)
+
+
+def main(*args,**kwargs):
+  torch.cuda.manual_seed(10)
+
+  #beauty local text files
+  #data : List[Tuple(str,str)] = localDataFetchDriver()
+  #beauty gut text files
+  #data, target_vocab, t_vocab = fetchGutData()
+  #beautyTrain(data,target_vocab,t_vocab)
+
+  data : List[List[str]] = None
+  data,target_vocab,t_vocab = fetchUglyData()
+  classifier, loss_train, loss_test = uglyTrainClassifier(data,target_vocab,t_vocab)
+  models = uglyTrainGenerators(data,target_vocab,t_vocab)
+  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
+  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
+
+  #Save
+  saveModels(models)
+  torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
 
 def fetchData(name : str, extension : str, filtering=False) -> str:
   dataPath = 'data/'
@@ -84,69 +105,6 @@ def fetchData(name : str, extension : str, filtering=False) -> str:
   dataset = dataset.split()
   return dataset
 
-def localDataFetchDriver(toFetch: Text_Fetch_Parameters = None) -> List[Tuple(str,str)]:
-  if toFetch is None:
-    toFetch = [Text_Fetch_Parameters("shakes","txt",False)]
-  data = [(p.name,fetchData(*p)) for p in toFetch]
-  return data
-
-def main(*args,**kwargs):
-  torch.cuda.manual_seed(10)
-
-  #beauty local text files
-  #data : List[Tuple(str,str)] = localDataFetchDriver()
-  #beauty gut text files
-  #data, target_vocab, t_vocab = fetchGutData()
-  #beautyTrain(data,target_vocab,t_vocab)
-
-  data : List[List[str]] = None
-  data,target_vocab,t_vocab = fetchUglyData()
-  classifier, loss_train, loss_test = uglyTrainClassifier(data,target_vocab,t_vocab)
-  models = uglyTrainGenerators(data,target_vocab,t_vocab)
-  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
-  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
-
-  #Save
-  saveModels(models)
-  torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
-
-
-def fetchUglyData():
-  dat1 = fetchData("hpnew2","txt",True)
-  dat2 = fetchData("returnoftheking2","txt",True)
-  dat3 = fetchData("QUOTE","csv",True)
-  dat4 = fetchData("shakes","txt",True)
-  data = dat1+dat2+dat3+dat4
-  target_vocab = list(set(data))
-  t_vocab = {k:v for v,k in enumerate(target_vocab)}
-  return [dat1,dat2,dat3,dat4], target_vocab, t_vocab
-
-def uglyTrainClassifier(data,target_vocab,t_vocab):
-  rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
-  dataTensor, labelsTensor = tg.create_class_data(data,t_vocab,100,100000)
-
-  classifier = tg.sequence_classifier(device, *rnnParams).to(device)
-  mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
-  numParam = Numerical_Parameters(5,100,32,0.0001)
-  loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
-  return classifier, loss_train, loss_test
-
-def uglyTrainGenerators(data,target_vocab,t_vocab):
-  rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
-  numParam = Numerical_Parameters(5,50,64,0.005)
-  models = list()
-  for d in data:
-    models.append(tg.RNN(device, *rnnParams).to(device))
-    modelParam = [hpmodel ,device, d, t_vocab,target_vocab]
-    _,_ = tg.train(*modelParam, *numParam, mode="textgen")
-  return models
-
-def saveModels(models):
-  torch.save(models[0].state_dict(),'C:/Users/Jimmy/Desktop/' + 'hpmodel')
-  torch.save(models[1].state_dict(),'C:/Users/Jimmy/Desktop/' + 'lotrmodel')
-  torch.save(models[2].state_dict(),'C:/Users/Jimmy/Desktop/' + 'quotemodel')
-  torch.save(models[3].state_dict(),'C:/Users/Jimmy/Desktop/' + 'shakesmodel')
-
 def fetchGutData():
   names = []
   gut_names = gut.fileids()
@@ -174,7 +132,30 @@ def fetchGutData():
 
   return data, target_vocab, t_vocab
 
-def beautyTrain(data,target_vocab,t_vocab):
+def fetchUglyData():
+  dat1 = fetchData("hpnew2","txt",True)
+  dat2 = fetchData("returnoftheking2","txt",True)
+  dat3 = fetchData("QUOTE","csv",True)
+  dat4 = fetchData("shakes","txt",True)
+  data = dat1+dat2+dat3+dat4
+  target_vocab = list(set(data))
+  t_vocab = {k:v for v,k in enumerate(target_vocab)}
+  return [dat1,dat2,dat3,dat4], target_vocab, t_vocab
+
+def beautyTrainClassifier(data,target_vocab,t_vocab):
+  pass
+
+def uglyTrainClassifier(data,target_vocab,t_vocab):
+  rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
+  dataTensor, labelsTensor = tg.create_class_data(data,t_vocab,100,100000)
+
+  classifier = tg.sequence_classifier(device, *rnnParams).to(device)
+  mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
+  numParam = Numerical_Parameters(5,100,32,0.0001)
+  loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
+  return classifier, loss_train, loss_test
+
+def beautyTrainGenerator(data,target_vocab,t_vocab):
   for d in data :
     rnnParams = RNN_Parameters(len(target_vocab),256,len(target_vocab))
     model = tg.RNN(device, *rnnParams).to(device)
@@ -189,6 +170,31 @@ def beautyTrain(data,target_vocab,t_vocab):
       torch.save(model.state_dict(),'models/' + d[0] + '.model')
 
     print(tg.evaluate(model,device,target_vocab, t_vocab,'i', 40))
+
+def uglyTrainGenerators(data,target_vocab,t_vocab):
+  rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
+  numParam = Numerical_Parameters(5,50,64,0.005)
+  models = list()
+  for d in data:
+    models.append(tg.RNN(device, *rnnParams).to(device))
+    modelParam = [hpmodel ,device, d, t_vocab,target_vocab]
+    _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+  return models
+
+def saveModels(models):
+  torch.save(models[0].state_dict(),'C:/Users/Jimmy/Desktop/' + 'hpmodel')
+  torch.save(models[1].state_dict(),'C:/Users/Jimmy/Desktop/' + 'lotrmodel')
+  torch.save(models[2].state_dict(),'C:/Users/Jimmy/Desktop/' + 'quotemodel')
+  torch.save(models[3].state_dict(),'C:/Users/Jimmy/Desktop/' + 'shakesmodel')
+
+
+
+
+def localDataFetchDriver(toFetch: Text_Fetch_Parameters = None) -> List[Tuple[str,str]]:
+  if toFetch is None:
+    toFetch = [Text_Fetch_Parameters("shakes","txt",False)]
+  data = [(p.name,fetchData(*p)) for p in toFetch]
+  return data
 
 def plotting(loss_train,loss_test,loss_cross):
   plt.style.use('ggplot')
