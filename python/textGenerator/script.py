@@ -177,7 +177,7 @@ def uglyTrainGenerators(data,target_vocab,t_vocab):
   models = list()
   for d in data:
     models.append(tg.RNN(device, *rnnParams).to(device))
-    modelParam = [hpmodel ,device, d, t_vocab,target_vocab]
+    modelParam = [models[-1],device, d, t_vocab,target_vocab]
     _,_ = tg.train(*modelParam, *numParam, mode="textgen")
   return models
 
