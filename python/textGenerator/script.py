@@ -76,9 +76,10 @@ def fetchData(name : str, extension : str, filtering=False) -> str:
 
   # filtering
   if filtering == True:
+    punc = [p for p in string.punctuation]
     dataset = [dataset[i].translate(
         str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
-    dataset = list(filter(('').__ne__,dataset))
+    dataset = list(filter(('').__ne__,dataset)) + punc
 
   return dataset
 
@@ -141,10 +142,10 @@ def main(*args,**kwargs):
   # -------------------------------------------------------------------------------
   
   # UGLY STUFF BUT WORKING FOR NOW -----------------------------------------------
-  dat1 = fetchData("newhp","txt",False)
-  dat2 = fetchData("returnoftheking","txt",False)
-  dat3 = fetchData("QUOTE","csv",False)
-  dat4 = fetchData("shakes","txt",False)
+  dat1 = fetchData("newhp","txt",True)
+  dat2 = fetchData("returnoftheking","txt",True)
+  dat3 = fetchData("QUOTE","csv",True)
+  dat4 = fetchData("shakes","txt",True)
   data = dat1+dat2+dat3+dat4
   print(len(dat1),len(dat2),len(dat3),len(dat4))
   target_vocab = list(set(data))
