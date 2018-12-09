@@ -202,7 +202,7 @@ def main(*args,**kwargs):
   ##Classify syntethic data
   ## -------------------------------------------------------------------------
   models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
-  d,l = tg.create_texgen_data(models, device, target_vocabs, t_vocabs,100,10)
+  d,l = tg.create_texgen_data(models, device, target_vocabs, t_vocabs,100,1000)
   tg.evaluate_texgen(classifier, device, (d,l),100, 16)
   plt.show()
 
