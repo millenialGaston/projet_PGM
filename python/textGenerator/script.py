@@ -141,7 +141,7 @@ def main(*args,**kwargs):
   # -------------------------------------------------------------------------------
   
   # UGLY STUFF BUT WORKING FOR NOW -----------------------------------------------
-  dat1 = fetchData("hp","txt",False)
+  dat1 = fetchData("newhp","txt",False)
   dat2 = fetchData("returnoftheking","txt",False)
   dat3 = fetchData("QUOTE","csv",False)
   dat4 = fetchData("shakes","txt",False)
