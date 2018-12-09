@@ -163,14 +163,14 @@ def main(*args,**kwargs):
   #loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
 
   # TRAIN MODELS
+  target_vocab = list(set(dat1))
+  t_vocab = {k:v for v,k in enumerate(target_vocab)}
   rnnParams = RNN_Parameters(len(target_vocab), 256, len(target_vocab))
   numParam = Numerical_Parameters(10,50,64,0.005)
   hpmodel = tg.RNN(device, *rnnParams).to(device)
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
   quotemodel = tg.RNN(device, *rnnParams).to(device)
   shakesmodel = tg.RNN(device, *rnnParams).to(device)
-  target_vocab = list(set(dat1))
-  t_vocab = {k:v for v,k in enumerate(target_vocab)}
   modelParam = [hpmodel ,device, dat1 , t_vocab,target_vocab]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
   target_vocab = list(set(dat2))
