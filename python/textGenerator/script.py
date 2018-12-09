@@ -160,7 +160,6 @@ def main(*args,**kwargs):
   loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
 
   # TRAIN MODELS
-  modelParam = [hpmodel ,device, dat1 , t_vocab,target_vocab]
   numParam = Numerical_Parameters(1,100,16,0.01)
   hpmodel = tg.RNN(device, *rnnParams).to(device)
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
