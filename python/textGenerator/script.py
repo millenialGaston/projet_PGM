@@ -61,7 +61,7 @@ def fetchData(name : str, extension : str, filtering=False) -> str:
   dataPath = 'data/'
   dataset = None
   setNeedsColumnParsing = {"QUOTE","shortjokes"}
-  setRegularParsing = {"hp","shakes","returnoftheking"}
+  setRegularParsing = {"newhp","shakes","returnoftheking"}
   fullPath = dataPath + name + '.' + extension
 
   if name in setNeedsColumnParsing:
