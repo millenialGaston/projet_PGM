@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from typing import List, Tuple
 import operator
 from functools import reduce
-
+import nltk
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -61,25 +61,27 @@ def fetchData(name : str, extension : str, filtering=False) -> str:
   dataPath = 'data/'
   dataset = None
   setNeedsColumnParsing = {"QUOTE","shortjokes"}
-  setRegularParsing = {"hp","shakes","returnoftheking"}
+  setRegularParsing = {"hpnew2","shakes","returnoftheking2"}
   fullPath = dataPath + name + '.' + extension
 
   if name in setNeedsColumnParsing:
     dataset = pd.read_csv(fullPath)
     dataset = ' '.join(
-      dataset.values[:,1].tolist()).lower().split()
+      dataset.values[:,1].tolist()).lower()
 
   elif name in setRegularParsing:
     with open(fullPath,'r') as  file:
       dataset = file.read()
-    dataset = dataset.lower().split()
+    dataset = dataset.lower()
 
   # filtering
   if filtering == True:
-    dataset = [dataset[i].translate(
-        str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
-    dataset = list(filter(('').__ne__,dataset))
-
+    #punc = [p for p in string.punctuation]
+    #dataset = [dataset[i].translate(
+    #    str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
+    #dataset = list(filter(('').__ne__,dataset)) + punc
+    return nltk.word_tokenize(dataset)
+  dataset = dataset.split()
   return dataset
 
 def localDataFetchDriver(toFetch: Text_Fetch_Parameters = None) -> List[str]:
@@ -92,67 +94,110 @@ def main(*args,**kwargs):
 
   torch.cuda.manual_seed(10)
 
+# UNCOMMENT FOR GENERALIZZZZZEDDDDDDD  STUFFFF -------------------------------
   #data : List[Tuple(str,str)] = localDataFetchDriver()
 
 
   # Data selection ---------------------------------------------------
-  names = []
-  gut_names = gut.fileids()
-  while not names:
-    print("================================================\n")
-    print("List of available text to train textGenerator:\n")
-    print(gut_names)
-    print("\n\n" + "Enter filenames seperated by whitespaces : ")
-    user_input = [str(x) for x in input().split()]
-    for user_in in user_input:
-      if user_in not in gut_names:
-        print("\n Error not found : " + user_in + "\n")
+  # names = []
+  # gut_names = gut.fileids()
+  # while not names:
+  #   print("================================================\n")
+  #   print("List of available text to train textGenerator:\n")
+  #   print(gut_names)
+  #   print("\n\n" + "Enter filenames seperated by whitespaces : ")
+  #   user_input = [str(x) for x in input().split()]
+  #   for user_in in user_input:
+  #     if user_in not in gut_names:
+  #       print("\n Error not found : " + user_in + "\n")
 
-    names = list(set(user_input) & set(gut_names))
-    if not names:
-      print("Error no text selected ===> Try again Please \n\n")
+  #   names = list(set(user_input) & set(gut_names))
+  #   if not names:
+  #     print("Error no text selected ===> Try again Please \n\n")
 
-  print("==============================")
-  print("OK thanks training started\n\n")
-  word_data: List[List[str]] = [[w.lower() for w in gut.words(name)]
-                                           for name in names]
-  data = list(zip(names,word_data))
-  target_vocab = list(set(reduce(operator.concat,word_data)))
-  t_vocab = {k:v for v,k in enumerate(target_vocab)}
+  # print("==============================")
+  # print("OK thanks training started\n\n")
+  # word_data: List[List[str]] = [[w.lower() for w in gut.words(name)]
+  #                                          for name in names]
+  # data = list(zip(names,word_data))
+  #target_vocab = list(set(reduce(operator.concat,word_data)))
+  #t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
 
   # Train GENERATORS-----------------------------------------------------
-  for d in data :
-    Idebug()
-    rnnParams = RNN_Parameters(len(target_vocab),256,len(target_vocab))
-    model = tg.RNN(device, *rnnParams).to(device)
-    fileCheck = Path('models/' + d[0])
-    cached = fileCheck.exists()
-    if cached:
-      model.load_state_dict(torch.load('models/' + d[0]))
-    else:
-      modelParam = [model ,device, d[1] , t_vocab,target_vocab]
-      numParam = Numerical_Parameters(1,20,16,0.01)
-      loss_train, loss_test = tg.train(*modelParam, *numParam, mode="textgen")
-      torch.save(model.state_dict(),'models/' + d[0])
+  # for d in data :
+  #   Idebug()
+  #   rnnParams = RNN_Parameters(len(target_vocab),256,len(target_vocab))
+  #   model = tg.RNN(device, *rnnParams).to(device)
+  #   fileCheck = Path('models/' + d[0])
+  #   cached = fileCheck.exists()
+  #   if cached:
+  #     model.load_state_dict(torch.load('models/' + d[0]))
+  #   else:
+  #     modelParam = [model ,device, d[1] , t_vocab,target_vocab]
+  #     numParam = Numerical_Parameters(1,20,16,0.01)
+  #     loss_train, loss_test = tg.train(*modelParam, *numParam, mode="textgen")
+  #     torch.save(model.state_dict(),'models/' + d[0])
 
-    print(tg.evaluate(model,device,target_vocab, t_vocab,'i', 40))
+  #   print(tg.evaluate(model,device,target_vocab, t_vocab,'i', 40))
+  # -------------------------------------------------------------------------------
+  
+  # UGLY STUFF BUT WORKING FOR NOW -----------------------------------------------
+  dat1 = fetchData("hpnew2","txt",True)
+  dat2 = fetchData("returnoftheking2","txt",True)
+  dat3 = fetchData("QUOTE","csv",True)
+  dat4 = fetchData("shakes","txt",True)
+  data = dat1+dat2+dat3+dat4
+  print(len(dat1),len(dat2),len(dat3),len(dat4))
+  target_vocab = list(set(data))
+  t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
   # TRAIN CLASSIFIER -----------------------------------------------------
-  #rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
-  #dataTensor, labelsTensor = tg.create_class_data(data , t_vocab,100,100000)
+  rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
 
-  #classifier = tg.sequence_classifier(device, *rnnParams).to(device)
-  #mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
-  #numParam = Numerical_Parameters(10,100,32,0.0001)
-  #loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
+  dataTensor, labelsTensor = tg.create_class_data([dat1,dat2,dat3,dat4], t_vocab,100,100000)
+
+  classifier = tg.sequence_classifier(device, *rnnParams).to(device)
+  mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
+  numParam = Numerical_Parameters(5,100,32,0.0001)
+  loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
+
+  # TRAIN MODELS
+  rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
+  
+  numParam = Numerical_Parameters(5,50,64,0.005)
+  hpmodel = tg.RNN(device, *rnnParams).to(device)
+  modelParam = [hpmodel ,device, dat1 , t_vocab,target_vocab]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+  
+  numParam = Numerical_Parameters(5,50,64,0.005)
+  lotrmodel = tg.RNN(device, *rnnParams).to(device)
+  modelParam = [lotrmodel ,device, dat2 , t_vocab,target_vocab]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+
+  numParam = Numerical_Parameters(5,50,64,0.005)
+  quotemodel = tg.RNN(device, *rnnParams).to(device)
+  modelParam = [quotemodel ,device, dat3 , t_vocab,target_vocab]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+
+  numParam = Numerical_Parameters(5,50,64,0.005)
+  shakesmodel = tg.RNN(device, *rnnParams).to(device)
+  modelParam = [shakesmodel ,device, dat4 , t_vocab,target_vocab]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
 
   ##Classify syntethic data
   ## -------------------------------------------------------------------------
-  #models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
-  #d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1600)
-  #tg.evaluate_texgen(classifier, device, (d,l),100, 16)
-  #plt.show()
+  models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
+  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
+  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
+  
+  torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop' + 'classifier')
+  torch.save(hpmodel.state_dict(),'C:/Users/Jimmy/Desktop' + 'hpmodel')
+  torch.save(lotrmodel.state_dict(),'C:/Users/Jimmy/Desktop' + 'lotrmodel')
+  torch.save(quotemodel.state_dict(),'C:/Users/Jimmy/Desktop' + 'quotemodel')
+  torch.save(shakesmodel.state_dict(),'C:/Users/Jimmy/Desktop' + 'shakesmodel')
+  plt.show()
+
 
 
 def plotting(loss_train,loss_test,loss_cross):
@@ -163,7 +208,6 @@ def plotting(loss_train,loss_test,loss_cross):
   plt.figure()
   plt.plot(loss_train, 'sk-',label='Trainset')
   plt.plot(loss_test, 'sr-', label='Testset')
-  plt.tight_layout()
   plt.xlabel('Epoch')
   plt.ylabel('Loss')
   plt.legend(fontsize=25)

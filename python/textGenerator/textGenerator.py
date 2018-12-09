@@ -37,7 +37,7 @@ class RNN(nn.Module):
         self.hidden_size = hidden_size  # Size of the hidden layer.
         self.output_size = output_size  # Size of output, here same as input.
         self.n_layers = n_layers
-        self.embedding_dim = 128
+        self.embedding_dim = 256
         self.encoder = nn.Embedding(input_size, self.embedding_dim) # Encode inputs.
         self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers, batch_first=True)
         self.linear1 = nn.Linear(self.hidden_size, output_size)
@@ -113,7 +113,7 @@ def create_data(datas, vocab, sequence_size):
     num_data = (len(datas) - sequence_size) // sequence_size
     # Initialize the tensors.
     sequence = torch.zeros(sequence_size).long()
-    Idebug()
+    #Idebug()
     data = torch.zeros(num_data, sequence_size-1).long()
     labels = torch.zeros(num_data, sequence_size-1).long()
     for i in range(num_data):
@@ -294,7 +294,6 @@ def evaluate_texgen(model, device, dataset, sequence_size, batch_size):
     plt.colorbar()
     plt.yticks(range(numclass), classes)
     plt.xticks(range(numclass), classes, rotation='vertical')
-    plt.tight_layout()
     plt.xlabel('Predicted')
     plt.ylabel('True')
     plt.show()
@@ -339,25 +338,25 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
             datas[int(0.8*n):],labels[int(0.8*n):]),
             batch_size=batch_size, shuffle=False, num_workers=0)
     if mode=="textgen":
-        Idebug()
+        #Idebug()
         n = len(dataset)
-        if n>400000:
+        if n>1000000:
             print("if")
-            Idebug()
-            data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
+            #Idebug()
+            data, labels = create_data(dataset[:900000], t_vocab, sequence_size)
             trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=True, num_workers=0)
 
-            data, labels = create_data(dataset[350000:400000], t_vocab, sequence_size)
+            data, labels = create_data(dataset[900000:1000000], t_vocab, sequence_size)
             testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=False, num_workers=0)
         else:
-            Idebug()
-            data, labels = create_data(dataset[:int(0.8*n)], t_vocab, sequence_size)
+            #Idebug()
+            data, labels = create_data(dataset[:int(0.9*n)], t_vocab, sequence_size)
             trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=True, num_workers=0)
 
-            data, labels = create_data(dataset[int(0.8*n):], t_vocab, sequence_size)
+            data, labels = create_data(dataset[int(0.9*n):], t_vocab, sequence_size)
             testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=False, num_workers=0)
     # We use Cross entropy loss. This combine negative loss likelihood with a
@@ -495,7 +494,6 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         plt.colorbar()
         plt.yticks(range(numclass), classes)
         plt.xticks(range(numclass), classes, rotation='vertical')
-        plt.tight_layout()
         plt.xlabel('Predicted')
         plt.ylabel('True')
 
@@ -503,7 +501,6 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         plt.figure()
         plt.plot(x, err_train,"sk-", label="Trainset")
         plt.plot(x, err_test,"sr-", label="Testset")
-        plt.tight_layout()
         plt.xlabel("Epoch")
         plt.ylabel("Error")
         plt.legend(fontsize=25)
