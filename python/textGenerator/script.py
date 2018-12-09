@@ -67,12 +67,12 @@ def fetchData(name : str, extension : str, filtering=False) -> str:
   if name in setNeedsColumnParsing:
     dataset = pd.read_csv(fullPath)
     dataset = ' '.join(
-      dataset.values[:,1].tolist()).lower().split()
+      dataset.values[:,1].tolist()).lower()
 
   elif name in setRegularParsing:
     with open(fullPath,'r') as  file:
       dataset = file.read()
-    dataset = dataset.lower().split()
+    dataset = dataset.lower()
 
   # filtering
   if filtering == True:
@@ -80,7 +80,8 @@ def fetchData(name : str, extension : str, filtering=False) -> str:
     #dataset = [dataset[i].translate(
     #    str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
     #dataset = list(filter(('').__ne__,dataset)) + punc
-    dataset = nltk.word_tokenize(dataset)
+    return nltk.word_tokenize(dataset)
+  dataset = dataset.split()
   return dataset
 
 def localDataFetchDriver(toFetch: Text_Fetch_Parameters = None) -> List[str]:
