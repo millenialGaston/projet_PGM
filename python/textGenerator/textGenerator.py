@@ -31,7 +31,7 @@ class RNN(nn.Module):
     '''
     Define the model structure.
     '''
-    def __init__(self, device, input_size, hidden_size, output_size, n_layers=3):
+    def __init__(self, device, input_size, hidden_size, output_size, n_layers=1):
         super(RNN, self).__init__()
         self.input_size = input_size    # Size of the character list.
         self.hidden_size = hidden_size  # Size of the hidden layer.
@@ -495,7 +495,6 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         plt.colorbar()
         plt.yticks(range(numclass), classes)
         plt.xticks(range(numclass), classes, rotation='vertical')
-        plt.tight_layout()
         plt.xlabel('Predicted')
         plt.ylabel('True')
 
@@ -503,7 +502,6 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
         plt.figure()
         plt.plot(x, err_train,"sk-", label="Trainset")
         plt.plot(x, err_test,"sr-", label="Testset")
-        plt.tight_layout()
         plt.xlabel("Epoch")
         plt.ylabel("Error")
         plt.legend(fontsize=25)
