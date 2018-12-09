@@ -140,16 +140,18 @@ def main(*args,**kwargs):
   #   print(tg.evaluate(model,device,target_vocab, t_vocab,'i', 40))
   # -------------------------------------------------------------------------------
   
-
+  # UGLY STUFF BUT WORKING FOR NOW -----------------------------------------------
   dat1 = fetchData("hp","txt",False)
   dat2 = fetchData("returnoftheking","txt",False)
   dat3 = fetchData("QUOTE","csv",False)
   dat4 = fetchData("shakes","txt",False)
+  data = dat1+dat2+dat3+dat4
   target_vocab = list(set(dat1+dat2+dat3+dat4))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
   # TRAIN CLASSIFIER -----------------------------------------------------
   rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
+
   dataTensor, labelsTensor = tg.create_class_data(data , t_vocab,100,100000)
 
   classifier = tg.sequence_classifier(device, *rnnParams).to(device)
@@ -157,6 +159,21 @@ def main(*args,**kwargs):
   numParam = Numerical_Parameters(1,100,32,0.0001)
   loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
 
+  # TRAIN MODELS
+  modelParam = [hpmodel ,device, dat1 , t_vocab,target_vocab]
+  numParam = Numerical_Parameters(1,100,16,0.01)
+  hpmodel = tg.RNN(device, *rnnParams).to(device)
+  lotrmodel = tg.RNN(device, *rnnParams).to(device)
+  quotemodel = tg.RNN(device, *rnnParams).to(device)
+  shakesmodel = tg.RNN(device, *rnnParams).to(device)
+  modelParam = [hpmodel ,device, dat1 , t_vocab,target_vocab]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+  modelParam = [lotrmodel ,device, dat2 , t_vocab,target_vocab]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+  modelParam = [quotemodel ,device, dat3 , t_vocab,target_vocab]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+  modelParam = [shakesmodel ,device, dat4 , t_vocab,target_vocab]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
   ##Classify syntethic data
   ## -------------------------------------------------------------------------
   models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
