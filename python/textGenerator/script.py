@@ -35,6 +35,7 @@ from torch.autograd import Variable
 
 from nltk.corpus import gutenberg as gut
 from IPython.core import debugger
+import re
 Idebug = debugger.Pdb().set_trace
 
 import textGenerator as tg
@@ -91,12 +92,10 @@ def main(*args,**kwargs):
 
   torch.cuda.manual_seed(10)
 
-  #data is list of tuples, the first entry is the
-  #name of the text file wihout #extension and the
-  #second is the raw text data.
-  #Idealement meme quand on change de facon ou de sorte
-  # de data set on garderait la structure List[Tuple(name, rawtext)]
   #data : List[Tuple(str,str)] = localDataFetchDriver()
+
+
+  # Data selection ---------------------------------------------------
   names = []
   gut_names = gut.fileids()
   while not names:
@@ -115,10 +114,12 @@ def main(*args,**kwargs):
 
   print("==============================")
   print("OK thanks training started\n\n")
-  raw_data = [gut.raw(name) for name in names]
-  data = list(zip(names,raw_data))
-  target_vocab = list(set(reduce(operator.concat,raw_data)))
+  word_data: List[str] = [list(gut.words(name)) for name in names]
+
+  data = list(zip(names,word_data))
+  target_vocab = list(set(reduce(operator.concat,word_data)))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
+
 
   # Train GENERATORS-----------------------------------------------------
   for d in data :
@@ -129,8 +130,8 @@ def main(*args,**kwargs):
     if cached:
       model.load_state_dict(torch.load('models/' + d[0]))
     else:
-      modelParam = [model ,device, d[1] , t_vocab,target_vocab]
-      numParam = Numerical_Parameters(5,100,16,0.01)
+      modelParam = [model ,device, deepcopy(d[1]) , t_vocab,target_vocab]
+      numParam = Numerical_Parameters(2,20,16,0.01)
       loss_train, loss_test = tg.train(*modelParam, *numParam, mode="textgen")
       torch.save(model.state_dict(),'models/' + d[0])
 
