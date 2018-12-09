@@ -341,14 +341,14 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
     if mode=="textgen":
         #Idebug()
         n = len(dataset)
-        if n>400000:
+        if n>700000:
             print("if")
             #Idebug()
-            data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
+            data, labels = create_data(dataset[:600000], t_vocab, sequence_size)
             trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=True, num_workers=0)
 
-            data, labels = create_data(dataset[350000:400000], t_vocab, sequence_size)
+            data, labels = create_data(dataset[600000:700000], t_vocab, sequence_size)
             testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=False, num_workers=0)
         else:
