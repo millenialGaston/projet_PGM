@@ -200,7 +200,7 @@ def char_tensor(string, vocab):
     return tensor
 
 def evaluate(model,device, target_vocab, t_vocab, init_str='W', predict_len=100,
-        temperature=0.7):
+        temperature=0.8):
     '''
     Function generating a sequence of length predict_len from our model. We
     start by propagating an init_str in the model to build an initial hidden
@@ -222,8 +222,10 @@ def evaluate(model,device, target_vocab, t_vocab, init_str='W', predict_len=100,
     model.eval()
     with torch.no_grad():
         hidden = model.init_hidden(1)
-        init = char_tensor(init_str.lower(), t_vocab)
-        predicted = init_str+' '
+        rand = target_vocab[np.random.randint(0,len(target_vocab))]
+        init = char_tensor(rand.lower(), t_vocab)
+        #init = char_tensor(init_str.lower(), t_vocab)
+        predicted = rand +' '
 
         # Build up the hidden state with inputs.
         _, hidden = model(init.to(device), hidden, len(init),1)
