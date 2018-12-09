@@ -92,67 +92,77 @@ def main(*args,**kwargs):
 
   torch.cuda.manual_seed(10)
 
+# UNCOMMENT FOR GENERALIZZZZZEDDDDDDD  STUFFFF -------------------------------
   #data : List[Tuple(str,str)] = localDataFetchDriver()
 
 
   # Data selection ---------------------------------------------------
-  names = []
-  gut_names = gut.fileids()
-  while not names:
-    print("================================================\n")
-    print("List of available text to train textGenerator:\n")
-    print(gut_names)
-    print("\n\n" + "Enter filenames seperated by whitespaces : ")
-    user_input = [str(x) for x in input().split()]
-    for user_in in user_input:
-      if user_in not in gut_names:
-        print("\n Error not found : " + user_in + "\n")
+  # names = []
+  # gut_names = gut.fileids()
+  # while not names:
+  #   print("================================================\n")
+  #   print("List of available text to train textGenerator:\n")
+  #   print(gut_names)
+  #   print("\n\n" + "Enter filenames seperated by whitespaces : ")
+  #   user_input = [str(x) for x in input().split()]
+  #   for user_in in user_input:
+  #     if user_in not in gut_names:
+  #       print("\n Error not found : " + user_in + "\n")
 
-    names = list(set(user_input) & set(gut_names))
-    if not names:
-      print("Error no text selected ===> Try again Please \n\n")
+  #   names = list(set(user_input) & set(gut_names))
+  #   if not names:
+  #     print("Error no text selected ===> Try again Please \n\n")
 
-  print("==============================")
-  print("OK thanks training started\n\n")
-  word_data: List[List[str]] = [[w.lower() for w in gut.words(name)]
-                                           for name in names]
-  data = list(zip(names,word_data))
-  target_vocab = list(set(reduce(operator.concat,word_data)))
-  t_vocab = {k:v for v,k in enumerate(target_vocab)}
+  # print("==============================")
+  # print("OK thanks training started\n\n")
+  # word_data: List[List[str]] = [[w.lower() for w in gut.words(name)]
+  #                                          for name in names]
+  # data = list(zip(names,word_data))
+  #target_vocab = list(set(reduce(operator.concat,word_data)))
+  #t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
 
   # Train GENERATORS-----------------------------------------------------
-  for d in data :
-    Idebug()
-    rnnParams = RNN_Parameters(len(target_vocab),256,len(target_vocab))
-    model = tg.RNN(device, *rnnParams).to(device)
-    fileCheck = Path('models/' + d[0])
-    cached = fileCheck.exists()
-    if cached:
-      model.load_state_dict(torch.load('models/' + d[0]))
-    else:
-      modelParam = [model ,device, d[1] , t_vocab,target_vocab]
-      numParam = Numerical_Parameters(1,20,16,0.01)
-      loss_train, loss_test = tg.train(*modelParam, *numParam, mode="textgen")
-      torch.save(model.state_dict(),'models/' + d[0])
+  # for d in data :
+  #   Idebug()
+  #   rnnParams = RNN_Parameters(len(target_vocab),256,len(target_vocab))
+  #   model = tg.RNN(device, *rnnParams).to(device)
+  #   fileCheck = Path('models/' + d[0])
+  #   cached = fileCheck.exists()
+  #   if cached:
+  #     model.load_state_dict(torch.load('models/' + d[0]))
+  #   else:
+  #     modelParam = [model ,device, d[1] , t_vocab,target_vocab]
+  #     numParam = Numerical_Parameters(1,20,16,0.01)
+  #     loss_train, loss_test = tg.train(*modelParam, *numParam, mode="textgen")
+  #     torch.save(model.state_dict(),'models/' + d[0])
 
-    print(tg.evaluate(model,device,target_vocab, t_vocab,'i', 40))
+  #   print(tg.evaluate(model,device,target_vocab, t_vocab,'i', 40))
+  # -------------------------------------------------------------------------------
+  
+
+  dat1 = fetchData("hp","txt",False)
+  dat2 = fetchData("returnoftheking","txt",False)
+  dat3 = fetchData("QUOTE","csv",False)
+  dat4 = fetchData("shakes","txt",False)
+  target_vocab = list(set(dat1+dat2+dat3+dat4))
+  t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
   # TRAIN CLASSIFIER -----------------------------------------------------
-  #rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
-  #dataTensor, labelsTensor = tg.create_class_data(data , t_vocab,100,100000)
+  rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
+  dataTensor, labelsTensor = tg.create_class_data(data , t_vocab,100,100000)
 
-  #classifier = tg.sequence_classifier(device, *rnnParams).to(device)
-  #mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
-  #numParam = Numerical_Parameters(10,100,32,0.0001)
-  #loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
+  classifier = tg.sequence_classifier(device, *rnnParams).to(device)
+  mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
+  numParam = Numerical_Parameters(1,100,32,0.0001)
+  loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
 
   ##Classify syntethic data
   ## -------------------------------------------------------------------------
-  #models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
-  #d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1600)
-  #tg.evaluate_texgen(classifier, device, (d,l),100, 16)
-  #plt.show()
+  models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
+  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,10)
+  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
+  plt.show()
 
 
 def plotting(loss_train,loss_test,loss_cross):
