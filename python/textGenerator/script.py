@@ -70,7 +70,7 @@ def main(*args,**kwargs):
   data : List[List[str]] = None
   data,target_vocab,t_vocab = fetchUglyData()
   print("Dictinary size: {}".format(len(t_vocab)))
-  print("Length dataset {}:{}".format(i,len(j) for i,j in enumerate(data)))
+  print("Length dataset {}:{}".format(i,len(j)) for i,j in enumerate(data))
   classifier, loss_train, loss_test = uglyTrainClassifier(data,target_vocab,t_vocab)
   models, losses = uglyTrainGenerators(data,target_vocab,t_vocab)
   d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
