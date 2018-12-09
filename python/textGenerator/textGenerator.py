@@ -31,7 +31,7 @@ class RNN(nn.Module):
     '''
     Define the model structure.
     '''
-    def __init__(self, device, input_size, hidden_size, output_size, n_layers=2):
+    def __init__(self, device, input_size, hidden_size, output_size, n_layers=3):
         super(RNN, self).__init__()
         self.input_size = input_size    # Size of the character list.
         self.hidden_size = hidden_size  # Size of the hidden layer.
