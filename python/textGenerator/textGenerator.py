@@ -353,11 +353,11 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
                 batch_size=batch_size, shuffle=False, num_workers=0)
         else:
             #Idebug()
-            data, labels = create_data(dataset[:int(0.8*n)], t_vocab, sequence_size)
+            data, labels = create_data(dataset[:int(0.9*n)], t_vocab, sequence_size)
             trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=True, num_workers=0)
 
-            data, labels = create_data(dataset[int(0.8*n):], t_vocab, sequence_size)
+            data, labels = create_data(dataset[int(0.9*n):], t_vocab, sequence_size)
             testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=False, num_workers=0)
     # We use Cross entropy loss. This combine negative loss likelihood with a
