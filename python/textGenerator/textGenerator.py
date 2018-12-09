@@ -46,7 +46,6 @@ class RNN(nn.Module):
         self.loss_test = None
 
     def forward(self, inputs, hidden, sequence_len, batch_size):
-        print(inputs.shape)
         inputs = inputs.view(batch_size, sequence_len)
         inputs = self.encoder(inputs)
         inputs, hidden = self.lstm(inputs, hidden)
@@ -339,7 +338,8 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
             datas[int(0.8*n):],labels[int(0.8*n):]),
             batch_size=batch_size, shuffle=False, num_workers=0)
     if mode=="textgen":
-        n = dataset[0].shape[0]
+        Idebug()
+        n = len(dataset[0])
         if n>400000:
             data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
             trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),

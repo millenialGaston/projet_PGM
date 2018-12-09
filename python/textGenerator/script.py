@@ -123,6 +123,7 @@ def main(*args,**kwargs):
 
   # Train GENERATORS-----------------------------------------------------
   for d in data :
+    Idebug()
     rnnParams = RNN_Parameters(len(target_vocab),256,len(target_vocab))
     model = tg.RNN(device, *rnnParams).to(device)
     fileCheck = Path('models/' + d[0])
@@ -130,8 +131,8 @@ def main(*args,**kwargs):
     if cached:
       model.load_state_dict(torch.load('models/' + d[0]))
     else:
-      modelParam = [model ,device, deepcopy(d[1]) , t_vocab,target_vocab]
-      numParam = Numerical_Parameters(2,20,16,0.01)
+      modelParam = [model ,device, d[1] , t_vocab,target_vocab]
+      numParam = Numerical_Parameters(1,20,16,0.01)
       loss_train, loss_test = tg.train(*modelParam, *numParam, mode="textgen")
       torch.save(model.state_dict(),'models/' + d[0])
 
