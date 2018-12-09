@@ -152,8 +152,6 @@ def main(*args,**kwargs):
   target_vocab = list(set(data))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
-
-
   # TRAIN CLASSIFIER -----------------------------------------------------
   rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
 
@@ -165,31 +163,31 @@ def main(*args,**kwargs):
   loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
 
   # TRAIN MODELS
-  numParam = Numerical_Parameters(1,50,64,0.005)
+  numParam = Numerical_Parameters(5,50,64,0.005)
   target_vocab_hp = list(set(dat1))
   t_vocab_hp = {k:v for v,k in enumerate(target_vocab_hp)}
-  rnnParams = RNN_Parameters(len(target_vocab_hp), 256, len(target_vocab_hp))
+  rnnParams = RNN_Parameters(len(target_vocab_hp), 512, len(target_vocab_hp))
   hpmodel = tg.RNN(device, *rnnParams).to(device)
   modelParam = [hpmodel ,device, dat1 , t_vocab_hp,target_vocab_hp]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
   
   target_vocab_lotr = list(set(dat2))
   t_vocab_lotr = {k:v for v,k in enumerate(target_vocab_lotr)}
-  rnnParams = RNN_Parameters(len(target_vocab_lotr), 256, len(target_vocab_lotr))
+  rnnParams = RNN_Parameters(len(target_vocab_lotr), 512, len(target_vocab_lotr))
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
   modelParam = [lotrmodel ,device, dat2 , t_vocab_lotr,target_vocab_lotr]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
 
   target_vocab_quote = list(set(dat3))
   t_vocab_quote = {k:v for v,k in enumerate(target_vocab_quote)}
-  rnnParams = RNN_Parameters(len(target_vocab_quote), 256, len(target_vocab_quote))
+  rnnParams = RNN_Parameters(len(target_vocab_quote), 512, len(target_vocab_quote))
   quotemodel = tg.RNN(device, *rnnParams).to(device)
   modelParam = [quotemodel ,device, dat3 , t_vocab_quote,target_vocab_quote]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
 
   target_vocab_shakes = list(set(dat4))
   t_vocab_shakes = {k:v for v,k in enumerate(target_vocab_shakes)}
-  rnnParams = RNN_Parameters(len(target_vocab_shakes), 256, len(target_vocab_shakes))
+  rnnParams = RNN_Parameters(len(target_vocab_shakes), 512, len(target_vocab_shakes))
   shakesmodel = tg.RNN(device, *rnnParams).to(device)
   modelParam = [shakesmodel ,device, dat4 , t_vocab_shakes,target_vocab_shakes]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
