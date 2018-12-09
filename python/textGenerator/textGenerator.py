@@ -24,6 +24,9 @@ import bcolz
 import pickle
 import torchvision
 
+from IPython.core import debugger
+Idebug = debugger.Pdb().set_trace
+
 class RNN(nn.Module):
     '''
     Define the model structure.
@@ -39,8 +42,11 @@ class RNN(nn.Module):
         self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers, batch_first=True)
         self.linear1 = nn.Linear(self.hidden_size, output_size)
         self.device = device
+        self.loss_train = None
+        self.loss_test = None
 
     def forward(self, inputs, hidden, sequence_len, batch_size):
+        print(inputs.shape)
         inputs = inputs.view(batch_size, sequence_len)
         inputs = self.encoder(inputs)
         inputs, hidden = self.lstm(inputs, hidden)
@@ -223,7 +229,6 @@ def evaluate(model,device, target_vocab, t_vocab, init_str='W', predict_len=100,
         _, hidden = model(init.to(device), hidden, len(init),1)
         # Take the last element of init as input.
         inp = init[-1].reshape(1)
-
         for p in range(predict_len):
             output, hidden = model(inp.to(device), hidden, 1, 1)
             # Sample from the network as a multinomial distribution.
@@ -234,7 +239,6 @@ def evaluate(model,device, target_vocab, t_vocab, init_str='W', predict_len=100,
             predicted_char = target_vocab[retained]+' '
             predicted += predicted_char
             inp = char_tensor(predicted_char, t_vocab)
-
     return predicted
 
 def evaluate_texgen(model, device, dataset, sequence_size, batch_size):
@@ -358,6 +362,8 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
 
     loss_train = []
     loss_test = []
+    model.loss_train = loss_train
+    model.loss_test = loss_test
     err_train = []
     err_test = []
     for epoch in range(num_epoch):
