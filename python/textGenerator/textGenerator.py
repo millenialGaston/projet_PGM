@@ -225,7 +225,7 @@ def evaluate(model,device, target_vocab, t_vocab, init_str='W', predict_len=100,
         rand = target_vocab[np.random.randint(0,len(target_vocab))]
         init = char_tensor(rand.lower(), t_vocab)
         #init = char_tensor(init_str.lower(), t_vocab)
-        predicted = init_str+' '
+        predicted = rand +' '
 
         # Build up the hidden state with inputs.
         _, hidden = model(init.to(device), hidden, len(init),1)
