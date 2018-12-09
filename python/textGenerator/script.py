@@ -121,11 +121,11 @@ def main(*args,**kwargs):
   tg.evaluate_texgen(classifier, device, (d,l),100, 16)
 
   #Save
-  torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop' + 'classifier')
-  torch.save(models[0].state_dict(),'C:/Users/Jimmy/Desktop' + 'hpmodel')
-  torch.save(models[1].state_dict(),'C:/Users/Jimmy/Desktop' + 'lotrmodel')
-  torch.save(models[2].state_dict(),'C:/Users/Jimmy/Desktop' + 'quotemodel')
-  torch.save(models[3].state_dict(),'C:/Users/Jimmy/Desktop' + 'shakesmodel')
+  torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
+  torch.save(models[0].state_dict(),'C:/Users/Jimmy/Desktop/' + 'hpmodel')
+  torch.save(models[1].state_dict(),'C:/Users/Jimmy/Desktop/' + 'lotrmodel')
+  torch.save(models[2].state_dict(),'C:/Users/Jimmy/Desktop/' + 'quotemodel')
+  torch.save(models[3].state_dict(),'C:/Users/Jimmy/Desktop/' + 'shakesmodel')
   plt.show()
 
 def fetchGutData():
