@@ -113,7 +113,7 @@ def create_data(datas, vocab, sequence_size):
     num_data = (len(datas) - sequence_size) // sequence_size
     # Initialize the tensors.
     sequence = torch.zeros(sequence_size).long()
-    Idebug()
+    #Idebug()
     data = torch.zeros(num_data, sequence_size-1).long()
     labels = torch.zeros(num_data, sequence_size-1).long()
     for i in range(num_data):
@@ -339,11 +339,11 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
             datas[int(0.8*n):],labels[int(0.8*n):]),
             batch_size=batch_size, shuffle=False, num_workers=0)
     if mode=="textgen":
-        Idebug()
+        #Idebug()
         n = len(dataset)
         if n>400000:
             print("if")
-            Idebug()
+            #Idebug()
             data, labels = create_data(dataset[:350000], t_vocab, sequence_size)
             trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=True, num_workers=0)
@@ -352,7 +352,7 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
             testloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=False, num_workers=0)
         else:
-            Idebug()
+            #Idebug()
             data, labels = create_data(dataset[:int(0.8*n)], t_vocab, sequence_size)
             trainloader = torch.utils.data.DataLoader(text_dataset(data,labels),
                 batch_size=batch_size, shuffle=True, num_workers=0)
