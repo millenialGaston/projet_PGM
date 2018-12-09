@@ -114,8 +114,8 @@ def main(*args,**kwargs):
 
   print("==============================")
   print("OK thanks training started\n\n")
-  word_data: List[str] = [list(gut.words(name)) for name in names]
-
+  word_data: List[List[str]] = [[w.lower() for w in gut.words(name)]
+                                           for name in names]
   data = list(zip(names,word_data))
   target_vocab = list(set(reduce(operator.concat,word_data)))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
