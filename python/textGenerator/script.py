@@ -152,39 +152,56 @@ def main(*args,**kwargs):
   target_vocab = list(set(data))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
+
+
   # TRAIN CLASSIFIER -----------------------------------------------------
   rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
 
-  #dataTensor, labelsTensor = tg.create_class_data([dat1,dat2,dat3,dat4], t_vocab,100,100000)
+  dataTensor, labelsTensor = tg.create_class_data([dat1,dat2,dat3,dat4], t_vocab,100,100000)
 
-  #classifier = tg.sequence_classifier(device, *rnnParams).to(device)
-  #mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
-  #numParam = Numerical_Parameters(1,100,32,0.0001)
-  #loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
+  classifier = tg.sequence_classifier(device, *rnnParams).to(device)
+  mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
+  numParam = Numerical_Parameters(1,100,32,0.0001)
+  loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
 
   # TRAIN MODELS
-  target_vocab = list(set(dat1))
-  t_vocab = {k:v for v,k in enumerate(target_vocab)}
-  rnnParams = RNN_Parameters(len(target_vocab), 256, len(target_vocab))
-  numParam = Numerical_Parameters(10,50,64,0.005)
+  numParam = Numerical_Parameters(1,50,64,0.005)
+  target_vocab_hp = list(set(dat1))
+  t_vocab_hp = {k:v for v,k in enumerate(target_vocab_hp)}
+  rnnParams = RNN_Parameters(len(target_vocab_hp), 256, len(target_vocab_hp))
   hpmodel = tg.RNN(device, *rnnParams).to(device)
+  modelParam = [hpmodel ,device, dat1 , t_vocab_hp,target_vocab_hp]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+  
+  target_vocab_lotr = list(set(dat2))
+  t_vocab_lotr = {k:v for v,k in enumerate(target_vocab_lotr)}
+  rnnParams = RNN_Parameters(len(target_vocab_lotr), 256, len(target_vocab_lotr))
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
+  modelParam = [lotrmodel ,device, dat2 , t_vocab_lotr,target_vocab_lotr]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+
+  target_vocab_quote = list(set(dat3))
+  t_vocab_quote = {k:v for v,k in enumerate(target_vocab_quote)}
+  rnnParams = RNN_Parameters(len(target_vocab_quote), 256, len(target_vocab_quote))
   quotemodel = tg.RNN(device, *rnnParams).to(device)
+  modelParam = [quotemodel ,device, dat3 , t_vocab_quote,target_vocab_quote]
+  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+
+  target_vocab_shakes = list(set(dat4))
+  t_vocab_shakes = {k:v for v,k in enumerate(target_vocab_shakes)}
+  rnnParams = RNN_Parameters(len(target_vocab_shakes), 256, len(target_vocab_shakes))
   shakesmodel = tg.RNN(device, *rnnParams).to(device)
-  modelParam = [hpmodel ,device, dat1 , t_vocab,target_vocab]
+  modelParam = [shakesmodel ,device, dat4 , t_vocab_shakes,target_vocab_shakes]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
-  target_vocab = list(set(dat2))
-  t_vocab = {k:v for v,k in enumerate(target_vocab)}
-  modelParam = [lotrmodel ,device, dat2 , t_vocab,target_vocab]
-  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
-  modelParam = [quotemodel ,device, dat3 , t_vocab,target_vocab]
-  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
-  modelParam = [shakesmodel ,device, dat4 , t_vocab,target_vocab]
-  _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+
+  target_vocabs = [target_vocab_hp, target_vocab_lotr, target_vocab_quote,
+  	target_vocab_shakes]
+  t_vocabs = [t_vocab_hp, t_vocab_lotr, t_vocab_quote,
+  	t_vocab_shakes]
   ##Classify syntethic data
   ## -------------------------------------------------------------------------
   models = [hpmodel, lotrmodel, quotemodel, shakesmodel]
-  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,10)
+  d,l = tg.create_texgen_data(models, device, target_vocabs, t_vocabs,100,10)
   tg.evaluate_texgen(classifier, device, (d,l),100, 16)
   plt.show()
 
