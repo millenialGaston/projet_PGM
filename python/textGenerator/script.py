@@ -91,14 +91,37 @@ def localDataFetchDriver(toFetch: Text_Fetch_Parameters = None) -> List[Tuple(st
   return data
 
 def main(*args,**kwargs):
-
   torch.cuda.manual_seed(10)
+
+  #beauty local text files
   #data : List[Tuple(str,str)] = localDataFetchDriver()
+  #beauty gut text files
   #data, target_vocab, t_vocab = fetchGutData()
   #beautyTrain(data,target_vocab,t_vocab)
-  data,target_vocab,t_vocab = fetchUglyData()
 
-  ## TRAIN CLASSIFIER -----------------------------------------------------
+  data : List[List[str]] = None
+  data,target_vocab,t_vocab = fetchUglyData()
+  classifier, loss_train, loss_test = uglyTrainClassifier(data,target_vocab,t_vocab)
+  models = uglyTrainGenerators(data,target_vocab,t_vocab)
+  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
+  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
+
+  #Save
+  saveModels(models)
+  torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
+
+
+def fetchUglyData():
+  dat1 = fetchData("hpnew2","txt",True)
+  dat2 = fetchData("returnoftheking2","txt",True)
+  dat3 = fetchData("QUOTE","csv",True)
+  dat4 = fetchData("shakes","txt",True)
+  data = dat1+dat2+dat3+dat4
+  target_vocab = list(set(data))
+  t_vocab = {k:v for v,k in enumerate(target_vocab)}
+  return [dat1,dat2,dat3,dat4], target_vocab, t_vocab
+
+def uglyTrainClassifier(data,target_vocab,t_vocab):
   rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
   dataTensor, labelsTensor = tg.create_class_data(data,t_vocab,100,100000)
 
@@ -106,8 +129,9 @@ def main(*args,**kwargs):
   mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
   numParam = Numerical_Parameters(5,100,32,0.0001)
   loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
+  return classifier, loss_train, loss_test
 
-  ## TRAIN MODELS
+def uglyTrainGenerators(data,target_vocab,t_vocab):
   rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
   numParam = Numerical_Parameters(5,50,64,0.005)
   models = list()
@@ -115,18 +139,13 @@ def main(*args,**kwargs):
     models.append(tg.RNN(device, *rnnParams).to(device))
     modelParam = [hpmodel ,device, d, t_vocab,target_vocab]
     _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+  return models
 
-  ###Classify syntethic data
-  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
-  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
-
-  #Save
-  torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
+def saveModels(models):
   torch.save(models[0].state_dict(),'C:/Users/Jimmy/Desktop/' + 'hpmodel')
   torch.save(models[1].state_dict(),'C:/Users/Jimmy/Desktop/' + 'lotrmodel')
   torch.save(models[2].state_dict(),'C:/Users/Jimmy/Desktop/' + 'quotemodel')
   torch.save(models[3].state_dict(),'C:/Users/Jimmy/Desktop/' + 'shakesmodel')
-  plt.show()
 
 def fetchGutData():
   names = []
@@ -170,16 +189,6 @@ def beautyTrain(data,target_vocab,t_vocab):
       torch.save(model.state_dict(),'models/' + d[0] + '.model')
 
     print(tg.evaluate(model,device,target_vocab, t_vocab,'i', 40))
-
-def fetchUglyData():
-  dat1 = fetchData("hpnew2","txt",True)
-  dat2 = fetchData("returnoftheking2","txt",True)
-  dat3 = fetchData("QUOTE","csv",True)
-  dat4 = fetchData("shakes","txt",True)
-  data = dat1+dat2+dat3+dat4
-  target_vocab = list(set(data))
-  t_vocab = {k:v for v,k in enumerate(target_vocab)}
-  return [dat1,dat2,dat3,dat4], target_vocab, t_vocab
 
 def plotting(loss_train,loss_test,loss_cross):
   plt.style.use('ggplot')
