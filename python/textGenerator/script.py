@@ -164,7 +164,7 @@ def main(*args,**kwargs):
 
   # TRAIN MODELS
   rnnParams = RNN_Parameters(len(target_vocab), 256, len(target_vocab))
-  numParam = Numerical_Parameters(10,100,16,0.005)
+  numParam = Numerical_Parameters(10,50,64,0.005)
   hpmodel = tg.RNN(device, *rnnParams).to(device)
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
   quotemodel = tg.RNN(device, *rnnParams).to(device)
