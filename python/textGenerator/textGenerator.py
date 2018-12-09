@@ -294,7 +294,6 @@ def evaluate_texgen(model, device, dataset, sequence_size, batch_size):
     plt.colorbar()
     plt.yticks(range(numclass), classes)
     plt.xticks(range(numclass), classes, rotation='vertical')
-    plt.tight_layout()
     plt.xlabel('Predicted')
     plt.ylabel('True')
     plt.show()
