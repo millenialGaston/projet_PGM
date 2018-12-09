@@ -15,3 +15,5 @@
 *.blg
 *.fdb_latexmk
 *.synctex.gz
+## Python aux
+*.pyc
