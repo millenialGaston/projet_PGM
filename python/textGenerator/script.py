@@ -141,10 +141,10 @@ def main(*args,**kwargs):
   # -------------------------------------------------------------------------------
   
   # UGLY STUFF BUT WORKING FOR NOW -----------------------------------------------
-  dat1 = fetchData("hp","txt",False).lower().split()
-  dat2 = fetchData("returnoftheking","txt",False).lower().split()
-  dat3 = fetchData("QUOTE","csv",False).lower().split()
-  dat4 = fetchData("shakes","txt",False).lower().split()
+  dat1 = fetchData("hp","txt",False)
+  dat2 = fetchData("returnoftheking","txt",False)
+  dat3 = fetchData("QUOTE","csv",False)
+  dat4 = fetchData("shakes","txt",False)
   data = dat1+dat2+dat3+dat4
   target_vocab = list(set(dat1+dat2+dat3+dat4))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
