@@ -179,7 +179,7 @@ def main(*args,**kwargs):
   modelParam = [lotrmodel ,device, dat2 , t_vocab_lotr,target_vocab_lotr]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
 
-  numParam = Numerical_Parameters(7,50,64,0.005)
+  numParam = Numerical_Parameters(5,50,64,0.005)
   target_vocab_quote = list(set(dat3))
   t_vocab_quote = {k:v for v,k in enumerate(target_vocab_quote)}
   rnnParams = RNN_Parameters(len(target_vocab_quote), 512, len(target_vocab_quote))
@@ -187,7 +187,7 @@ def main(*args,**kwargs):
   modelParam = [quotemodel ,device, dat3 , t_vocab_quote,target_vocab_quote]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
 
-  numParam = Numerical_Parameters(7,50,64,0.005)
+  numParam = Numerical_Parameters(5,50,64,0.005)
   target_vocab_shakes = list(set(dat4))
   t_vocab_shakes = {k:v for v,k in enumerate(target_vocab_shakes)}
   rnnParams = RNN_Parameters(len(target_vocab_shakes), 512, len(target_vocab_shakes))
