@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from typing import List, Tuple
 import operator
 from functools import reduce
-
+import nltk
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
