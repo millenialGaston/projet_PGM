@@ -31,13 +31,13 @@ class RNN(nn.Module):
     '''
     Define the model structure.
     '''
-    def __init__(self, device, input_size, hidden_size, output_size, n_layers=1):
+    def __init__(self, device, input_size, hidden_size, output_size, n_layers=2):
         super(RNN, self).__init__()
         self.input_size = input_size    # Size of the character list.
         self.hidden_size = hidden_size  # Size of the hidden layer.
         self.output_size = output_size  # Size of output, here same as input.
         self.n_layers = n_layers
-        self.embedding_dim = 512
+        self.embedding_dim = 256
         self.encoder = nn.Embedding(input_size, self.embedding_dim) # Encode inputs.
         self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers, batch_first=True)
         self.linear1 = nn.Linear(self.hidden_size, output_size)
