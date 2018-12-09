@@ -171,8 +171,8 @@ def create_texgen_data(models,device, target_vocab, vocab, sequence_size,
     for i in range(dataset_size):
         print(i)
         cur_model = models[i%k]
-        data[i,:] = char_tensor(evaluate(cur_model,device,target_vocab[i%k],
-            vocab[i%k], "i", predict_len=99),vocab[i%k])
+        data[i,:] = char_tensor(evaluate(cur_model,device,target_vocab,
+            vocab, "i", predict_len=99),vocab)
         labels[i] = i%k
 
     return data, labels
