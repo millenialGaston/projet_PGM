@@ -149,7 +149,7 @@ def main(*args,**kwargs):
   dat4 = fetchData("shakes","txt",True)
   data = dat1+dat2+dat3+dat4
   print(len(dat1),len(dat2),len(dat3),len(dat4))
-  target_vocab = list(set(dat1))
+  target_vocab = list(set(data))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
   # TRAIN CLASSIFIER -----------------------------------------------------
@@ -169,8 +169,12 @@ def main(*args,**kwargs):
   lotrmodel = tg.RNN(device, *rnnParams).to(device)
   quotemodel = tg.RNN(device, *rnnParams).to(device)
   shakesmodel = tg.RNN(device, *rnnParams).to(device)
+  target_vocab = list(set(dat1))
+  t_vocab = {k:v for v,k in enumerate(target_vocab)}
   modelParam = [hpmodel ,device, dat1 , t_vocab,target_vocab]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
+  target_vocab = list(set(dat2))
+  t_vocab = {k:v for v,k in enumerate(target_vocab)}
   modelParam = [lotrmodel ,device, dat2 , t_vocab,target_vocab]
   _,_ = tg.train(*modelParam, *numParam, mode="textgen")
   modelParam = [quotemodel ,device, dat3 , t_vocab,target_vocab]
