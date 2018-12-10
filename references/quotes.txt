@@ -1,0 +1,29 @@
+Character-level language modelling with neural networks has recently been
+considered [30, 24], and found to give slightly worse performance than equiv-
+alent word-level models. 
+p.6
+
+\cite{gravesGenerating}
+
+In principle a large enough RNN should be sufficient to generate sequences
+of arbitrary complexity. In practice however, standard RNNs are unable to
+store information about past inputs for very long [15]. As well as diminishing
+their ability to model long-range structure, this ‘amnesia’ makes them prone to
+instability when generating sequences. The problem (common to all conditional
+generative models) is that if the network’s predictions are only based on the last
+few inputs, and these inputs were themselves predicted by the network, it has
+little opportunity to recover from past mistakes. Having a longer memory has
+a stabilising effect, because even if the network cannot make sense of its recent
+history, it can look further back in the past to formulate its predictions. The
+problem of instability is especially acute with real-valued data, where it is easy
+for the predictions to stray from the manifold on which the training data lies.
+One remedy that has been proposed for conditional models is to inject noise into
+the predictions before feeding them back into the model [31], thereby increasing
+the model’s robustness to surprising inputs. However we believe that a better
+memory is a more profound and effective solution.
+Long Short-term Memory (LSTM) [16] is an RNN architecture designed to
+be better at storing and accessing information than standard RNNs. LSTM has
+recently given state-of-the-art results in a variety of sequence processing tasks,
+including speech and handwriting recognition [10, 12].
+
+\cite{gravesGenerating} p.2

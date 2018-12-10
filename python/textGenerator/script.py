@@ -60,20 +60,19 @@ class Text_Fetch_Parameters:
 
 def main(*args,**kwargs):
   torch.cuda.manual_seed(10)
-  save = cliParsing().save[0]
-  #beauty local text files
-  #data : List[Tuple(str,str)] = localDataFetchDriver()
+  save = False
   #beauty gut text files
-  #data, target_vocab, t_vocab = fetchGutData()
-  #beautyTrain(data,target_vocab,t_vocab)
+  data, target_vocab, t_vocab = fetchGutData()
+  models, losses = beautyTrainGenerator(data,target_vocab,t_vocab)
 
-  data : List[List[str]] = None
-  data,target_vocab,t_vocab = fetchUglyData()
-  print("Dictinary size: {}".format(len(t_vocab)))
-  for i,j in enumerate(data):
-    print("Length dataset {}:{}".format(i,len(j)))
-  classifier, loss_train, loss_test = uglyTrainClassifier(data,target_vocab,t_vocab)
-  models, losses = uglyTrainGenerators(data,target_vocab,t_vocab)
+  #data : List[List[str]] = None
+  #data,target_vocab,t_vocab = fetchUglyData()
+  #print("Dictinary size: {}".format(len(t_vocab)))
+  #for i,j in enumerate(data):
+  #  print("Length dataset {}:{}".format(i,len(j)))
+  #classifier, loss_train, loss_test = uglyTrainClassifier(data,target_vocab,t_vocab)
+  #models, losses = uglyTrainGenerators(data,target_vocab,t_vocab)
+
   d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
   tg.evaluate_texgen(classifier, device, (d,l),100, 16)
 
@@ -112,26 +111,32 @@ def fetchData(name : str, extension : str, filtering=False, charLevel=False) -> 
 def fetchGutData():
   names = []
   gut_names = gut.fileids()
+  availableTexts = gut_names + ['hp','shakes','lotr','quotes']
   while not names:
     print("================================================\n")
     print("List of available text to train textGenerator:\n")
-    print(gut_names)
+    print(availableTexts)
     print("\n\n" + "Enter filenames seperated by whitespaces : ")
     user_input = [str(x) for x in input().split()]
     for user_in in user_input:
-      if user_in not in gut_names:
+      if user_in not in availableTexts:
         print("\n Error not found : " + user_in + "\n")
 
-    names = list(set(user_input) & set(gut_names))
+    names = list(set(user_input) and set(availableTexts))
+    gut_choice = list(set(user_input) and set(gut_names))
     if not names:
       print("Error no text selected ===> Try again Please \n\n")
 
   print("==============================")
   print("OK thanks training started\n\n")
-  word_data: List[List[str]] = [[w.lower() for w in gut.words(name)]
-                                           for name in names]
-  data = list(zip(names,word_data))
-  target_vocab = list(set(reduce(operator.concat,word_data)))
+
+  char_data: List[List[str]] = [[w.lower() for w in gut.raw(name)]
+                                           for name in gut_choice]
+  uglyData, _, _ = fetchUglyData(charLevel=True)
+  char_data += uglyData
+
+  data = list(zip(names,char_data))
+  target_vocab = list(set(reduce(operator.concat,char_data)))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
   return data, target_vocab, t_vocab
@@ -161,20 +166,23 @@ def uglyTrainClassifier(data,target_vocab,t_vocab):
   return classifier, loss_train, loss_test
 
 def beautyTrainGenerator(data,target_vocab,t_vocab):
+  rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
+  numParam = Numerical_Parameters(1,50,64,0.1)
+  models = list()
+  losses = list()
   for d in data :
-    rnnParams = RNN_Parameters(len(target_vocab),256,len(target_vocab))
-    model = tg.RNN(device, *rnnParams).to(device)
+    models.append(tg.RNN(device, *rnnParams).to(device))
     fileCheck = Path('models/' + d[0])
     cached = fileCheck.exists()
     if cached:
       model.load_state_dict(torch.load('models/' + d[0]))
     else:
-      modelParam = [model ,device, d[1] , t_vocab,target_vocab]
-      numParam = Numerical_Parameters(1,20,16,0.01)
-      loss_train, loss_test = tg.train(*modelParam, *numParam, mode="textgen")
+      modelParam = [models[-1],device, d[1] , t_vocab,target_vocab]
+      l_train, l_test = tg.train(*modelParam, *numParam, mode="textgen")
       torch.save(model.state_dict(),'models/' + d[0] + '.model')
+      losses.append((l_train,l_test))
 
-    print(tg.evaluate(model,device,target_vocab, t_vocab,'i', 40))
+  return models, losses
 
 def uglyTrainGenerators(data,target_vocab,t_vocab):
   rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
@@ -223,9 +231,7 @@ def plotting(loss_train,loss_test):
 
 def cliParsing():
   # For later
-  parser = argparse.ArgumentParser(description="TextGen TM")
-  parser.add_argument('save',metavar='saveMe',type=bool,nargs=1)
-  args = parser.parse_args()
+  pass
   return args
 
 if __name__ == '__main__':
