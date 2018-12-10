@@ -73,9 +73,9 @@ def main(*args,**kwargs):
   for i,j in enumerate(data):
   	print("Length dataset {}:{}".format(i,len(j)))
   classifier, loss_train, loss_test = uglyTrainClassifier(data,target_vocab,t_vocab)
-  models, losses = uglyTrainGenerators(data,target_vocab,t_vocab)
-  d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
-  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
+  #models, losses = uglyTrainGenerators(data,target_vocab,t_vocab)
+  #d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
+  #tg.evaluate_texgen(classifier, device, (d,l),100, 16)
 
   #Save
   saveModels(models)
@@ -150,12 +150,12 @@ def beautyTrainClassifier(data,target_vocab,t_vocab):
   pass
 
 def uglyTrainClassifier(data,target_vocab,t_vocab):
-  rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
+  rnnParams = RNN_Parameters(len(target_vocab), 512, 4)
   dataTensor, labelsTensor = tg.create_class_data(data,t_vocab,50,100000)
 
   classifier = tg.sequence_classifier(device, *rnnParams).to(device)
   mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
-  numParam = Numerical_Parameters(5,50,64,0.0001)
+  numParam = Numerical_Parameters(10,50,64,0.0001)
   loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
   return classifier, loss_train, loss_test
 
