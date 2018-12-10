@@ -448,9 +448,11 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
 
         if mode=="textgen":
             print(evaluate(model,device,target_vocab, t_vocab,'i', 40))
-
-        print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
+            print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
                     loss_train[epoch], loss_test[epoch]))
+        else:
+            print('Train error: {0:.2f} Test error: {1:.2f}\n'.format(
+                    err_train[epoch], err_test[epoch]))
 
     if mode=="classification":
         correct = 0
