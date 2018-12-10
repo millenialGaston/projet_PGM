@@ -132,8 +132,9 @@ def fetchGutData():
 
   char_data: List[List[str]] = [[w.lower() for w in gut.raw(name)]
                                            for name in gut_choice]
-  uglyData, _, _ = fetchUglyData(charLevel=True)
-  char_data += uglyData
+  if(not gut_choice):
+    uglyData, _, _ = fetchUglyData(charLevel=True)
+    char_data += uglyData
 
   data = list(zip(names,char_data))
   target_vocab = list(set(reduce(operator.concat,char_data)))
