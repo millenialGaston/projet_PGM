@@ -81,7 +81,7 @@ def main(*args,**kwargs):
   saveModels(models)
   torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
 
-  return models 
+  return models, target_vocab,t_vocab
 def fetchData(name : str, extension : str, filtering=False) -> str:
   dataPath = 'data/'
   dataset = None
@@ -221,4 +221,4 @@ def cliParsing():
   args = parser.parse_args()
 
 if __name__ == '__main__':
-  model = main()
+  model,target_vocab,t_vocab = main()
