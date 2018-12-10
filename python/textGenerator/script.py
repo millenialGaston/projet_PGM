@@ -177,7 +177,7 @@ def beautyTrainGenerator(data,target_vocab,t_vocab):
 
 def uglyTrainGenerators(data,target_vocab,t_vocab):
   rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
-  numParam = Numerical_Parameters(10,50,64,0.005)
+  numParam = Numerical_Parameters(5,50,64,0.005)
   models = list()
   losses = list()
   for d in data:
