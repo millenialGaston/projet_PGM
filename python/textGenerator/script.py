@@ -60,7 +60,7 @@ class Text_Fetch_Parameters:
 
 def main(*args,**kwargs):
   torch.cuda.manual_seed(10)
-
+  save = cliParsing().save[0]
   #beauty local text files
   #data : List[Tuple(str,str)] = localDataFetchDriver()
   #beauty gut text files
@@ -71,18 +71,19 @@ def main(*args,**kwargs):
   data,target_vocab,t_vocab = fetchUglyData()
   print("Dictinary size: {}".format(len(t_vocab)))
   for i,j in enumerate(data):
-  	print("Length dataset {}:{}".format(i,len(j)))
+    print("Length dataset {}:{}".format(i,len(j)))
   classifier, loss_train, loss_test = uglyTrainClassifier(data,target_vocab,t_vocab)
   models, losses = uglyTrainGenerators(data,target_vocab,t_vocab)
   d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
   tg.evaluate_texgen(classifier, device, (d,l),100, 16)
 
   #Save
-  saveModels(models)
-  torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
+  if(save):
+    saveModels(models,classifier)
 
   return models, target_vocab,t_vocab, losses
-def fetchData(name : str, extension : str, filtering=False) -> str:
+
+def fetchData(name : str, extension : str, filtering=False, charLevel=False) -> str:
   dataPath = 'data/'
   dataset = None
   setNeedsColumnParsing = {"QUOTE","shortjokes"}
@@ -100,12 +101,11 @@ def fetchData(name : str, extension : str, filtering=False) -> str:
     dataset = dataset.lower()
 
   # filtering
-  if filtering == True:
-    #punc = [p for p in string.punctuation]
-    #dataset = [dataset[i].translate(
-    #    str.maketrans("","",string.punctuation)) for i in range(len(dataset))]
-    #dataset = list(filter(('').__ne__,dataset)) + punc
+  if filtering and not charLevel:
     return nltk.word_tokenize(dataset)
+  if filtering and charLevel:
+    return [char for char in dataset.lower()]
+
   dataset = dataset.split()
   return dataset
 
@@ -136,11 +136,12 @@ def fetchGutData():
 
   return data, target_vocab, t_vocab
 
-def fetchUglyData():
-  dat1 = fetchData("hpnew2","txt",True)
-  dat2 = fetchData("returnoftheking2","txt",True)
-  dat3 = fetchData("QUOTE","csv",True)
-  dat4 = fetchData("shakes","txt",True)
+def fetchUglyData(charLevel=False):
+
+  dat1 = fetchData("hpnew2","txt",True,charLevel)
+  dat2 = fetchData("returnoftheking2","txt",True,charLevel)
+  dat3 = fetchData("QUOTE","csv",True,charLevel)
+  dat4 = fetchData("shakes","txt",True,charLevel)
   data = dat1+dat2+dat3+dat4
   target_vocab = list(set(data))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
@@ -187,11 +188,19 @@ def uglyTrainGenerators(data,target_vocab,t_vocab):
     losses.append((l_train,l_test))
   return models, losses
 
-def saveModels(models):
-  torch.save(models[0].state_dict(),'C:/Users/Jimmy/Desktop/' + 'hpmodel')
-  torch.save(models[1].state_dict(),'C:/Users/Jimmy/Desktop/' + 'lotrmodel')
-  torch.save(models[2].state_dict(),'C:/Users/Jimmy/Desktop/' + 'quotemodel')
-  torch.save(models[3].state_dict(),'C:/Users/Jimmy/Desktop/' + 'shakesmodel')
+def saveModels(models, classifier, isJim=False):
+  if isJim:
+    torch.save(models[0].state_dict(),'C:/Users/Jimmy/Desktop/' + 'hpmodel')
+    torch.save(models[1].state_dict(),'C:/Users/Jimmy/Desktop/' + 'lotrmodel')
+    torch.save(models[2].state_dict(),'C:/Users/Jimmy/Desktop/' + 'quotemodel')
+    torch.save(models[3].state_dict(),'C:/Users/Jimmy/Desktop/' + 'shakesmodel')
+    torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
+  else:
+    torch.save(models[0].state_dict(),'models/' + 'hpmodel')
+    torch.save(models[1].state_dict(),'models/' + 'lotrmodel')
+    torch.save(models[2].state_dict(),'models/' + 'quotemodel')
+    torch.save(models[3].state_dict(),'models/' + 'shakesmodel')
+    torch.save(classifier.state_dict(),'models/' + 'classifier')
 
 def localDataFetchDriver(toFetch: Text_Fetch_Parameters = None) -> List[Tuple[str,str]]:
   if toFetch is None:
@@ -214,11 +223,10 @@ def plotting(loss_train,loss_test):
 
 def cliParsing():
   # For later
-  parser = argparse.ArgumentParser()
-  parser.add_argument('--num_epoch')
-  parser.add_argument('--batch_size')
-  parser.add_argument('--learning_rate')
+  parser = argparse.ArgumentParser(description="TextGen TM")
+  parser.add_argument('save',metavar='saveMe',type=bool,nargs=1)
   args = parser.parse_args()
+  return args
 
 if __name__ == '__main__':
   model,target_vocab,t_vocab, losses = main()
