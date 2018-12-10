@@ -69,8 +69,11 @@ def main(*args,**kwargs):
 
   data : List[List[str]] = None
   data,target_vocab,t_vocab = fetchUglyData()
+  print("Dictinary size: {}".format(len(t_vocab)))
+  for i,j in enumerate(data):
+  	print("Length dataset {}:{}".format(i,len(j)))
   classifier, loss_train, loss_test = uglyTrainClassifier(data,target_vocab,t_vocab)
-  models = uglyTrainGenerators(data,target_vocab,t_vocab)
+  models, losses = uglyTrainGenerators(data,target_vocab,t_vocab)
   d,l = tg.create_texgen_data(models, device, target_vocab, t_vocab,100,1000)
   tg.evaluate_texgen(classifier, device, (d,l),100, 16)
 
@@ -78,6 +81,7 @@ def main(*args,**kwargs):
   saveModels(models)
   torch.save(classifier.state_dict(),'C:/Users/Jimmy/Desktop/' + 'classifier')
 
+  return models, target_vocab,t_vocab, losses
 def fetchData(name : str, extension : str, filtering=False) -> str:
   dataPath = 'data/'
   dataset = None
@@ -147,11 +151,11 @@ def beautyTrainClassifier(data,target_vocab,t_vocab):
 
 def uglyTrainClassifier(data,target_vocab,t_vocab):
   rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
-  dataTensor, labelsTensor = tg.create_class_data(data,t_vocab,100,100000)
+  dataTensor, labelsTensor = tg.create_class_data(data,t_vocab,50,100000)
 
   classifier = tg.sequence_classifier(device, *rnnParams).to(device)
   mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
-  numParam = Numerical_Parameters(5,100,32,0.0001)
+  numParam = Numerical_Parameters(5,50,64,0.0001)
   loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
   return classifier, loss_train, loss_test
 
@@ -175,11 +179,13 @@ def uglyTrainGenerators(data,target_vocab,t_vocab):
   rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
   numParam = Numerical_Parameters(5,50,64,0.005)
   models = list()
+  losses = list()
   for d in data:
     models.append(tg.RNN(device, *rnnParams).to(device))
     modelParam = [models[-1],device, d, t_vocab,target_vocab]
-    _,_ = tg.train(*modelParam, *numParam, mode="textgen")
-  return models
+    l_train,l_test = tg.train(*modelParam, *numParam, mode="textgen")
+    losses.append((l_train,l_test))
+  return models, losses
 
 def saveModels(models):
   torch.save(models[0].state_dict(),'C:/Users/Jimmy/Desktop/' + 'hpmodel')
@@ -187,16 +193,13 @@ def saveModels(models):
   torch.save(models[2].state_dict(),'C:/Users/Jimmy/Desktop/' + 'quotemodel')
   torch.save(models[3].state_dict(),'C:/Users/Jimmy/Desktop/' + 'shakesmodel')
 
-
-
-
 def localDataFetchDriver(toFetch: Text_Fetch_Parameters = None) -> List[Tuple[str,str]]:
   if toFetch is None:
     toFetch = [Text_Fetch_Parameters("shakes","txt",False)]
   data = [(p.name,fetchData(*p)) for p in toFetch]
   return data
 
-def plotting(loss_train,loss_test,loss_cross):
+def plotting(loss_train,loss_test):
   plt.style.use('ggplot')
   plt.rc('xtick', labelsize=25)
   plt.rc('ytick', labelsize=25)
@@ -218,4 +221,4 @@ def cliParsing():
   args = parser.parse_args()
 
 if __name__ == '__main__':
-  main()
+  model,target_vocab,t_vocab, losses = main()

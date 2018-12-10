@@ -1,0 +1,19 @@
+embedding:256, hidden:512, batch:64, sequences:50, lr=0.005
+
+Harry Potter
+`` well , we ’ ll do it with a wand , '' said hermione . `` really ? '' said harry , looking at each other .
+ `` i know it ! '' said professor trelawney as they pulled wellnigh harry and umbridge .
+
+LOTR
+ what looked about this way , the black citadel , was far from the darkness , the ring was heard ,
+	but the sea big was big , and a great ring was in his battle .
+
+ the short shadows of the great move of a longer was coloured on the sun , and there it was not yet way .
+
+Quote
+you have to be the most important thing .
+failure is a beginning of love and a family which comes from god .
+
+Shakespeare
+ '' that now my mind shall screens his music , '' '' and i to give thee my vulgar heaven , '' '' i am your brother .
+ '' but if you could have duke and thine honour so ''
