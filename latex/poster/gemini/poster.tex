@@ -41,7 +41,8 @@ citestyle=numeric
 % ====================
 % Title
 % ====================
-\title{Text Sequence Generation and Classification, model or inference}
+\title{Text Sequence Generation and Classification: \textit{of the imitation of
+Shakespeare}}
 \author{Jimmy Leroux, Nicolas Laliberté, Frédéric Boileau}
 
 \institute[]{Départment d'Informatique et de Recherche Opérationnelle -
@@ -60,25 +61,25 @@ Université de Montréal}
 
 \begin{block}{Introduction}
 \begin{itemize}
-\item Hidden Markov Models used to be the go-to probabilistic tool to model 
-sequential data; the Markov assumption however proves to often be unreasonably
-strong. Adding links to form higher order chains is not a scalable solution as
-the computationnal complexity grows exponentially in the order of the chain.
+\item Hidden Markov Models used to be the go-to probabilistic tool to reason
+    about sequential data; the Markov assumption however proves to often be
+    unreasonably strong. Adding links to form higher order chains is not a
+    scalable solution as the computationnal complexity grows exponentially in
+    the order of the chain.
 
 \item Recurrent Neural Networks (RNN) constitute a family of neural network
 architectures specialized to process sequential data which can forfeit
 Markovian assumptions while remaining tractable.
 
+\item RNNs can track longer range dependencies while
+    staying tractable by leveraging the simple idea of sharing parameters
+    across the model \cite{deeplearning}. Concretely this means adding loops to
+    the hidden units of the neural network.
 
-\item RNN enable to track longer range dependencies while staying tractable by
-    leveraging the simple idea of sharing parameters across the model
-    \cite{deeplearning}. Concretely this means adding loops to the hidden units
-    of the neural network.
-
-\item RNNs have been used in diverse domains for
+\item RNNs have been successfully used in diverse domains for
   generating sequences such as music and text \cite{gravesGenerating}. 
 
-\item Despite the aforementionned features, RNN suffer from the fact 
+\item Despite the aforementionned features, naive RNNs suffer from the fact 
 that the influence of some input the hidden layer either decays or blows up
 exponentially in time, a phenomenon reffered to in the literature as the
 \textit{vanishing gradient problem}.
@@ -88,9 +89,8 @@ networks is the loss of a fully probabilistic interpretation. There has
 recently been an increased interest into finding reasonable probabilistic
 interpretaions to RNNs, see for example \cite{finnish}. On the other hand the
 very existence of some monolithic notion of ``interpretability'' has been
-recently questionned, see \cite{mythos} for a philosophical overview and the
-interesting blog post by Jacob Andreas on the blur between a model and an
-inference procedure in RNNs.\cite{monference}
+recently questionned, see \cite{mythos} for a philosophically inclined take
+on the question.
 \end{block}
 
 \begin{block}{RNN} 
@@ -124,66 +124,68 @@ architecture tries to tackle this issue on a higher level than regularization.
 \begin{column}{\colwidth}
 
 \begin{block}{LSTM: architecture and its application to sequence generation}
-
-The LSTM model has been introduced primarily to solve the vanishing and
-exploding gradients problem. This model is a RNN in which we replaced every
-hidden nodes by a \textit{memory cell}.  \begin{center}
+To go from a RNN to a LSTM we replace hidden units with components known as
+\textit{memory cells}. Our presentation and notation follows \cite{revieww}.
+\begin{center}
     \includegraphics[width = 0.7\linewidth]{lstm.png}
 \end{center}
 
-Intuitively, RNN have \textit{long-term memory} in the form of matrix weights,
-they change during the training encoding general knowledge about the data. RNN
-also have \textit{short-term memory} in the form of activation passing from
-each node to successive ones. The memory cell introduced in the LSTM model
-provides storage for those memories. We now describe components of the cell
-following.\cite{review}
-
+Intuitively, RNNs have \textit{long-term memory} in the form of matrix weights,
+they change during the training; encoding through training some general
+knowledge about the data. They also have \textit{short-term memory} in the form
+of activation passing from each node to successive ones. The memory cell
+introduced in the LSTM model formalizes those notions and provides a framework
+to control their impact on the internal representation of the network.
 \begin{center}
     \begin{itemize}
-    \item Gates ($f_t, i_t, o_t$): They are sigmoidal units that takes
-      activation from the input $x_t$ and the output of the hidden layer from
-      previous state $h_{t-1}$. Note that $f_t$ multiply the value of the
-      previous cell $c_{t-1}$. The term \textit{gate} stands for the literal
-      meaning in the sense that if $f_{t}$ is close to $0$, then the gate is
-      \textit{closed} and the flow from the previous cell is cut off. If $f_t$
-      is closed to $1$ then all flow is passed through. The output to the
-      hidden layer is $h_t = o_t \odot \tanh(c_t)$ where $\odot$ denote the
-      pointwise multiplication.
-    \item Cell state ($c_t = f_t \odot c_{t-1} + i_t \odot \tilde{c}_t$): Cell
-    state maintains information on the input. Also refered as the internal state,
-    $c_t$ has a self-connected edges with a fixed unit weight. This constant
-    weight implies that the error can flow across time without vanishing or
-    exploding. 
-\end{itemize}
+    \item $f_t, i_t, o_t$: Respectively forget, input and output gates.
+        \begin{itemize}
+            \normalsize
+            \item Sigmoidal units activated through  $x_t$ (current input) and
+                $h_{t-1}$ (past hidden unit output) \item $f_t$ controls the
+                recursive flow
+            \item $i_t$ and $o_t$ control the input and output flow
+                respectively
+            \item $h_t = o_t \odot \tanh(c_t)$ where $\odot$ denotes element
+                wise multiplication.
+        \end{itemize}
+    \item $c_t = \mathbf{f_t \odot c_{t-1}} + i_t \odot \tilde{c}_t$: The cell
+    which has a self-connected edge with a fixed unit weight, thereby delegating
+    control of recursion to the gate \end{itemize}
 \end{center}
 
 \end{block}
 
-\begin{block}{Our implementation}
-For the implementation section of this project, we gathered text data that we
-found around the internet to train a sequence classifier and generate text
-sequences. The training of the classifier consist of identifying from which
-corpus between Harry Potter, Lord of the rings, some random quotes and
-Shakespeare, the sequence corresponds to. Further to this, we trained one model
-per sequence type for the text generation. Finally, we verified that our
-generated sequences were well classified by our classifier. The parameters we
-used for the models are shown in the table below. 
-
-Before doing any sort or training, we had to do a bit of preprocessing on the
-data. First, we tokenized each corpus in sequences of 50 tokens. Then, we
-removed every capital letters to standardize the text. We built up a dictionary
-of every tokens ($\approx 60k$) in the datasets, this is our input space. Next,
-encode each token in a 256 dimensions vector with en embedding layer. We then
-feed the encoded vectors to our LSTMs with a hidden/cell state of 512
-dimensions. The output dimension is 4 for the classifier and $\approx 60k$ for
-the text genetation. 
-
-For the generation of sequences, we initialize our LSTM with a random word
-drawn from our dictionary. Next, we feed back the prediction in the network
-until we reach the desired sequence length. We generated 1000 sequences (250
-per models) and used our classifier on them. A few examples of generated
-sequences are shown above. With no surprise, we scored 98\% on the
-classification task, which confirms that our sequences are at least probable.
+\begin{block}{Implementation Details}
+    \begin{itemize}
+        \item 4 text sequences (referred to as datasets later on) were used for
+            training: excerpts from Shakespeare' plays, books of the Harry
+            Potter and Lord of the Ring series and a list of popular quotes.
+            All in English and ASCII encoded. Punctuation and structure was
+            left unprocessed.
+        \item Each dataset was split in sequences of 50 tokens (i.e. ``words'') and a
+            dictionnary was built from the complete input ($\approx 60k$ unique tokens),
+            defining the input space for the networks.
+        \item Vector encoding of this space was used through an embedding layer 
+            mapping the words to real vector space of dimension 256. Available
+            embeddings such as \textit{word2vec} and \textit{glove} were 
+            initally used but proved to be more cumbersome than our own 
+            trained version.
+        \item Two LSTM networks were successively trained with the above, a
+            \textit{generator} and a \textit{classifier} (one model per dataset
+             Training was achieved at ``word''level (strings tokenized by
+             whitespace).  Character level is envisionned for the rest of the
+             project as it is more flexible and can \textit{learn new words and
+             structural information}\cite{gravesGenerating} for the generators)
+    \end{itemize}
+To generate the sequences the trained models were initialized with a random word
+drawn from the dictionary and the most likely next word was fed back in the network
+until the desired sequence length was reached. 1000 sequences (250 per model) were
+generated. The classifier was then used to automatically estimate which
+dataset (or model, equivalently) was used for its generation, thereby giving us
+some ``metric'' of the quality of the data; expecting data generated from the
+Shakespeare trained model to consistenly differ from the data ``generated by
+Harry Potter''.
 \end{block}
 \end{column}
 
@@ -213,6 +215,7 @@ Shakespeare & 0.94 & 26\\
 \end{tabular}
 \end{figure}
 
+Examples of generated quotes:
 \begin{itemize}\compresslist
     \item `` well , we ' ll do it with a wand , '' said hermione . `` really ?
       '' said harry , looking at each other .
