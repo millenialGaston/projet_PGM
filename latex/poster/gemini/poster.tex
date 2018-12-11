@@ -83,7 +83,7 @@ generation project. We worked on 4 differents dataset: Harry Potter's books,
 Lord of the ring's books, random quotes and a text from Shakespeare. 
 \end{block}
 
-\begin{block}{RNN structure} 
+\begin{block}{RNN} 
 RNN comes from the following question: is there a neural network that depends
 on the full previous context that would model: \begin{align*}
     P(o_1, \dots , o_T) = \prod_{t = 1}^T P(o_t | \hspace{0.05in} o_1, \ldots o_{t-1})
@@ -97,17 +97,6 @@ figure below. Thus, an input at time $t$ can influence the output at time $t + \
 \begin{center}
     \includegraphics[width = 0.9\linewidth]{RNN.png}
 \end{center}
-\end{block}
-
-
-
-\end{column}
-
-\separatorcolumn
-
-\begin{column}{\colwidth}
-
-\begin{block}{RNN parameter udpates and vanishing-exploding gradient}
 \begin{align*}
     &h_t = \sigma(U x_t + V h_{(t-1)} + b_h)\text{,}\\
     &o_t = \text{softmax}(W h_t + b_o)
@@ -126,71 +115,46 @@ chain rule we can see that
 Thus, as $\delta$ grows, the gradient grows exponentially with $V$. If $V$ is
 small or large than the gradient will either vanish or explode. This problem is
 well known. Solutions exist, which brings us to present the LSTM.
+\end{block}
+\end{column}
+\separatorcolumn
+
+\begin{column}{\colwidth}
+\begin{block}{LSTM}
+
+The LSTM model has been introduced primarily to solve the vanishing and
+exploding gradients problem. This model is a RNN in which we replaced every
+hidden nodes by a \textit{memory cell}.  \begin{center}
+    \includegraphics[width = 0.7\linewidth]{lstm.png}
+\end{center}
+
+Intuitively, RNN have \textit{long-term memory} in the form of matrix weights,
+they change during the training encoding general knowledge about the data. RNN
+also have \textit{short-term memory} in the form of activation passing from
+each node to successive ones. The memory cell introduced in the LSTM model
+provides storage for those memories. We now describe components of the cell
+following.\cite{review}
+
+\begin{center}
+    \begin{itemize}
+    \item Gates ($f_t, i_t, o_t$): They are sigmoidal units that takes
+      activation from the input $x_t$ and the output of the hidden layer from
+      previous state $h_{t-1}$. Note that $f_t$ multiply the value of the
+      previous cell $c_{t-1}$. The term \textit{gate} stands for the literal
+      meaning in the sense that if $f_{t}$ is close to $0$, then the gate is
+      \textit{closed} and the flow from the previous cell is cut off. If $f_t$
+      is closed to $1$ then all flow is passed through. The output to the
+      hidden layer is $h_t = o_t \odot \tanh(c_t)$ where $\odot$ denote the
+      pointwise multiplication.
+    \item Cell state ($c_t = f_t \odot c_{t-1} + i_t \odot \tilde{c}_t$): Cell
+    state maintains information on the input. Also refered as the internal state,
+    $c_t$ has a self-connected edges with a fixed unit weight. This constant
+    weight implies that the error can flow across time without vanishing or
+    exploding. 
+\end{itemize}
+\end{center}
 
 \end{block}
-
-  \begin{block}{Fusce aliquam magna velit}
-
-    Et rutrum ex euismod vel. Pellentesque ultricies, velit in fermentum
-    vestibulum, lectus nisi pretium nibh, sit amet aliquam lectus augue vel
-    velit. Suspendisse rhoncus massa porttitor augue feugiat molestie. Sed
-    molestie ut orci nec malesuada. Sed ultricies feugiat est fringilla
-    posuere.
-
-    \begin{figure}
-      \centering
-      \begin{tikzpicture}
-        \begin{axis}[
-            scale only axis,
-            no markers,
-            domain=0:2*pi,
-            samples=100,
-            axis lines=center,
-            axis line style={-},
-            ticks=none]
-          \addplot[red] {sin(deg(x))};
-          \addplot[blue] {cos(deg(x))};
-        \end{axis}
-      \end{tikzpicture}
-      \caption{Another figure caption.}
-    \end{figure}
-
-  \end{block}
-
-  \begin{block}{Nam cursus consequat egestas}
-
-    Nulla eget sem quam. Ut aliquam volutpat nisi vestibulum convallis. Nunc a
-    lectus et eros facilisis hendrerit eu non urna. Interdum et malesuada fames
-    ac ante \textit{ipsum primis} in faucibus. Etiam sit amet velit eget sem
-    euismod tristique. Praesent enim erat, porta vel mattis sed, pharetra sed
-    ipsum. Morbi commodo condimentum massa, \textit{tempus venenatis} massa
-    hendrerit quis. Maecenas sed porta est. Praesent mollis interdum lectus,
-    sit amet sollicitudin risus tincidunt non.
-
-    Etiam sit amet tempus lorem, aliquet condimentum velit. Donec et nibh
-    consequat, sagittis ex eget, dictum orci. Etiam quis semper ante. Ut eu
-    mauris purus. Proin nec consectetur ligula. Mauris pretium molestie
-    ullamcorper. Integer nisi neque, aliquet et odio non, sagittis porta justo.
-
-    \begin{itemize}
-      \item \textbf{Sed consequat} id ante vel efficitur. Praesent congue massa
-        sed est scelerisque, elementum mollis augue iaculis.
-        \begin{itemize}
-          \item In sed est finibus, vulputate
-            nunc gravida, pulvinar lorem. In maximus nunc dolor, sed auctor eros
-            porttitor quis.
-          \item Fusce ornare dignissim nisi. Nam sit amet risus vel lacus
-            tempor tincidunt eu a arcu.
-          \item Donec rhoncus vestibulum erat, quis aliquam leo
-            gravida egestas.
-        \end{itemize}
-      \item \textbf{Sed luctus, elit sit amet} dictum maximus, diam dolor
-        faucibus purus, sed lobortis justo erat id turpis.
-      \item \textbf{Pellentesque facilisis dolor in leo} bibendum congue.
-        Maecenas congue finibus justo, vitae eleifend urna facilisis at.
-    \end{itemize}
-
-  \end{block}
 
 \end{column}
 
@@ -198,76 +162,86 @@ well known. Solutions exist, which brings us to present the LSTM.
 
 \begin{column}{\colwidth}
 
-  \begin{block}{A block containing some math}
+\begin{block}{Implementation Goal}
 
-    Nullam non est elit. In eu ornare justo. Maecenas porttitor sodales lacus,
-    ut cursus augue sodales ac.
+For the implementation section of this project, we gathered text data that we
+found around the internet to train a sequence classifier and generate text
+sequences. The training of the classifier consist of identifying from which
+corpus between Harry Potter, Lord of the rings, some random quotes and
+Shakespeare, the sequence corresponds to. Further to this, we trained one model
+per sequence type for the text generation. Finally, we verified that our
+generated sequences were well classified by our classifier. The parameters we
+used for the models are shown in the table below. 
 
-    $$
-    \int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi}
-    $$
+\end{block}
 
-    Interdum et malesuada fames $\{1, 4, 9, \ldots\}$ ac ante ipsum primis in
-    faucibus. Cras eleifend dolor eu nulla suscipit suscipit. Sed lobortis non
-    felis id vulputate.
+\begin{block}{Preprocessing}
+Before doing any sort or training, we had to do a bit of preprocessing on the
+data. First, we tokenized each corpus in sequences of 50 tokens. Then, we
+removed every capital letters to standardize the text. We built up a dictionary
+of every tokens ($\approx 60k$) in the datasets, this is our input space. Next,
+encode each token in a 256 dimensions vector with en embedding layer. We then
+feed the encoded vectors to our LSTMs with a hidden/cell state of 512
+dimensions. The output dimension is 4 for the classifier and $\approx 60k$ for
+the text genetation. 
+\end{block}
+\begin{block}{Results}
+\textbf{Classification of sequences}
 
-    \heading{A heading inside a block}
+For the training of our classifier, we used the many-to-one architecture like the one below.
+\begin{center}
+	\includegraphics[width=.65\linewidth]{manytoone}
+		\captionof{figure}{Many-to-one architecture.}
+\end{center}
+We used the last output of the LSTM as our input for the classifier,
+disregarding all the other outputs. The last hidden state contains information
+about about all the sequence through the memory cell.  \begin{center}
+	\includegraphics[width=.7\linewidth]{classerror}
+	\captionof{figure}{Classification error on train/test set.}
+\end{center}
+The error we used here is the cross-entropy loss, which is standard for
+classification tasks. We see on our training curves (figure 2) that we have
+reach 96\% for the classification accuracy.
 
-    Praesent consectetur mi $x^2 + y^2$ metus, nec vestibulum justo viverra
-    nec. Proin eget nulla pretium, egestas magna aliquam, mollis neque. Vivamus
-    dictum $\mathbf{u}^\intercal\mathbf{v}$ sagittis odio, vel porta erat
-    congue sed. Maecenas ut dolor quis arcu auctor porttitor.
+\textbf{TextGen and Classification}
+For the text generation models, we used a many-to-many achitecture like the one
+showed in the RNN section. We trained our models by minimizing the
+cross-entropy loss. Then, we calculated the average number of extra byte needed
+to encode each character. We fixed the average number of character per word to
+5. As another standard metric for language modeling, we also calculated the
+perplexity of our model \cite{gravesGenerating}.
+\begin{tabular}{|l|l|c|}
+\hline
+Dataset & BPC & Perplexity \\
+\hline
+Harry Potter & 1.00 & 33 \\
+LOTR & 1.02 & 35 \\
+Random quotes & 1.10 & 45 \\
+Shakespeare & 0.94 & 26\\
+\hline
+\end{tabular}
 
-    \heading{Another heading inside a block}
-
-    Sed augue erat, scelerisque a purus ultricies, placerat porttitor neque.
-    Donec $P(y \mid x)$ fermentum consectetur $\nabla_x P(y \mid x)$ sapien
-    sagittis egestas. Duis eget leo euismod nunc viverra imperdiet nec id
-    justo.
-
-  \end{block}
-
-  \begin{block}{Nullam vel erat at velit convallis laoreet}
-
-    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-    inceptos himenaeos. Phasellus libero enim, gravida sed erat sit amet,
-    scelerisque congue diam. Fusce dapibus dui ut augue pulvinar iaculis.
-
-    \begin{table}
-      \centering
-      \begin{tabular}{l r r c}
-        \toprule
-        \textbf{First column} & \textbf{Second column} & \textbf{Third column} & \textbf{Fourth} \\
-        \midrule
-        Foo & 13.37 & 384,394 & $\alpha$ \\
-        Bar & 2.17 & 1,392 & $\beta$ \\
-        Baz & 3.14 & 83,742 & $\delta$ \\
-        Qux & 7.59 & 974 & $\gamma$ \\
-        \bottomrule
-      \end{tabular}
-      \caption{A table caption.}
-    \end{table}
-
-    Donec quis posuere ligula. Nunc feugiat elit a mi malesuada consequat. Sed
-    imperdiet augue ac nibh aliquet tristique. Aenean eu tortor vulputate,
-    eleifend lorem in, dictum urna. Proin auctor ante in augue tincidunt
-    tempor. Proin pellentesque vulputate odio, ac gravida nulla posuere
-    efficitur. Aenean at velit vel dolor blandit molestie. Mauris laoreet
-    commodo quam, non luctus nibh ullamcorper in. Class aptent taciti sociosqu
-    ad litora torquent per conubia nostra, per inceptos himenaeos.
-
-    Nulla varius finibus volutpat. Mauris molestie lorem tincidunt, iaculis
-    libero at, gravida ante. Phasellus at felis eu neque suscipit suscipit.
-    Integer ullamcorper, dui nec pretium ornare, urna dolor consequat libero,
-    in feugiat elit lorem euismod lacus. Pellentesque sit amet dolor mollis,
-    auctor urna non, tempus sem.
-
-  \end{block}
-
-  \begin{block}{References}
-
-
-  \end{block}
+\begin{itemize}\compresslist
+    \item `` well , we ' ll do it with a wand , '' said hermione . `` really ?
+      '' said harry , looking at each other .
+    \item  what looked about this
+      way , the black citadel , was far from the
+          darkness , the ring was heard , but the sea big was big , and a great
+          ring was in his battle .
+    \item failure is a beginning of love and a family which comes from god .
+    \item  '' that now my mind shall screens his music , '' '' and i to give
+      thee my vulgar heaven , '' '' i am your brother .
+\end{itemize}
+For the generation of sequences, we initialize our LSTM with a random word
+drawn from our dictionary. Next, we feed back the prediction in the network
+until we reach the desired sequence length. We generated 1000 sequences (250
+per models) and used our classifier on them. A few examples of generated
+sequences are shown above. With no surprise, we scored 98\% on the
+classification task, which confirms that our sequences are at least probable.
+\end{block}
+\begin{block}{References}
+\printbibliography
+\end{block}
 
 \end{column}
 
