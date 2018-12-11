@@ -63,37 +63,28 @@ citestyle=numeric
 \begin{column}{\colwidth}
 
 \begin{block}{Introduction}
-Recurrent neural networks (RNN) constitute a family of neural network architectures
-specialized to process sequential data. They do so by leveraging the simple idea
-of sharing parameters across the model\cite{deeplearning}. They have been used in diverse domains for
-generating sequences such as music and text. They can be trained by processing
-real data sequences one step at a time and predicting what comes next.
-In practice, early RNNs designs are unable to store information about far past
-inputs. This fact diminishes their efficiency at modeling long structure. If
-the network's predictions are based only on the last few inputs, which are
-themselves predicted by the networks, then it has less chance to recover from
-past mistakes. The solution to this problem seems to be a better memory and
-especially a long-term memory for the network. 
+Hidden Markov Models used to be the go-to probabilistic tool to model 
+sequential data; the Markov assumption however proves to often be 
+unreasonably strong. Adding links to form higher order chains
+is not a scalable solution as the computationnal complexity grows 
+exponentially in the order of the cain
+Recurrent Neural Networks (RNN) constitute a family of neural network architectures
+specialized to process sequential data which can forfeit Markovian assumptions
+(the cost is the lost of a simple probabilistic interpretation).
 
-Long Short-Term Memory (LSTM) are RNN designed to solve this problem. They are
-better at storing informations than standard RNNs. It is important to note that
-LSTM gives state-of-the-art results in a variety of sequence processing tasks.
-This is the main reason why we decided to implement a LSTM for our text
-generation project. We worked on 4 differents dataset: Harry Potter's books,
-Lord of the ring's books, random quotes and a text from Shakespeare. 
+They do so by leveraging the simple idea
+of sharing parameters across the model \cite{deeplearning}.
+RNNs have been used in diverse domains for
+generating sequences such as music and text \cite{gravesGenerating}.
+
+Naive RNNs designs are unable to store information about far past
+inputs. The solution to this problem seems to be a better memory and especially
+a long-term memory for the network.  Long Short-Term Memory (LSTM) are RNN
+designed to solve this problem.
 \end{block}
 
 \begin{block}{RNN} 
-RNN comes from the following question: is there a neural network that depends
-on the full previous context that would model: \begin{align*}
-    P(o_1, \dots , o_T) = \prod_{t = 1}^T P(o_t | \hspace{0.05in} o_1, \ldots o_{t-1})
-\end{align*}
-
-They are feedforward neural networks with the addition of time dependency in
-the model by introducing edges that span the adjacent time steps in the
-network. At a given time, the nodes with recurrent edges receive input from the
-current data and from the output of the hidden layer in the previous state, see
-figure below. Thus, an input at time $t$ can influence the output at time $t + \delta$.
+  Description of RNN
 \begin{center}
     \includegraphics[width = 0.9\linewidth]{RNN.png}
 \end{center}
@@ -102,9 +93,11 @@ figure below. Thus, an input at time $t$ can influence the output at time $t + \
     &o_t = \text{softmax}(W h_t + b_o)
 \end{align*}
 
-Here, $ U$, $V$ and $W$ are weights matrix. The vectors $b$ are bias
-parameters. Learning with RNN is challenging due to dependencies between long
-time steps. Consider the gradient with respect to $h_t$ of $o_{t + \delta}$.
+Where $ U$, $V$ and $W$ are weights matrix and the vectors $b$ are bias
+parameters.
+
+One of the major drawbacks of naive RNN is the numerical
+instability of the gradient.Consider the gradient with respect to $h_t$ of $o_{t + \delta}$.
 How does it vary with $\delta$? Following the graph above and applying the
 chain rule we can see that
 \begin{equation*}
@@ -120,7 +113,8 @@ well known. Solutions exist, which brings us to present the LSTM.
 \separatorcolumn
 
 \begin{column}{\colwidth}
-\begin{block}{LSTM}
+
+\begin{block}{LSTM: architecture and its application to sequence generation}
 
 The LSTM model has been introduced primarily to solve the vanishing and
 exploding gradients problem. This model is a RNN in which we replaced every
@@ -156,14 +150,7 @@ following.\cite{review}
 
 \end{block}
 
-\end{column}
-
-\separatorcolumn
-
-\begin{column}{\colwidth}
-
-\begin{block}{Implementation Goal}
-
+\begin{block}{Our implementation}
 For the implementation section of this project, we gathered text data that we
 found around the internet to train a sequence classifier and generate text
 sequences. The training of the classifier consist of identifying from which
@@ -173,9 +160,6 @@ per sequence type for the text generation. Finally, we verified that our
 generated sequences were well classified by our classifier. The parameters we
 used for the models are shown in the table below. 
 
-\end{block}
-
-\begin{block}{Preprocessing}
 Before doing any sort or training, we had to do a bit of preprocessing on the
 data. First, we tokenized each corpus in sequences of 50 tokens. Then, we
 removed every capital letters to standardize the text. We built up a dictionary
@@ -184,32 +168,33 @@ encode each token in a 256 dimensions vector with en embedding layer. We then
 feed the encoded vectors to our LSTMs with a hidden/cell state of 512
 dimensions. The output dimension is 4 for the classifier and $\approx 60k$ for
 the text genetation. 
-\end{block}
-\begin{block}{Results}
-\textbf{Classification of sequences}
 
-For the training of our classifier, we used the many-to-one architecture like the one below.
-\begin{center}
-	\includegraphics[width=.65\linewidth]{manytoone}
-		\captionof{figure}{Many-to-one architecture.}
-\end{center}
+For the generation of sequences, we initialize our LSTM with a random word
+drawn from our dictionary. Next, we feed back the prediction in the network
+until we reach the desired sequence length. We generated 1000 sequences (250
+per models) and used our classifier on them. A few examples of generated
+sequences are shown above. With no surprise, we scored 98\% on the
+classification task, which confirms that our sequences are at least probable.
+\end{block}
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+\begin{block}{Results}
+For the training of our classifier, we used the many-to-one architecture .
 We used the last output of the LSTM as our input for the classifier,
 disregarding all the other outputs. The last hidden state contains information
 about about all the sequence through the memory cell.  \begin{center}
 	\includegraphics[width=.7\linewidth]{classerror}
 	\captionof{figure}{Classification error on train/test set.}
 \end{center}
-The error we used here is the cross-entropy loss, which is standard for
-classification tasks. We see on our training curves (figure 2) that we have
-reach 96\% for the classification accuracy.
 
-\textbf{TextGen and Classification}
-For the text generation models, we used a many-to-many achitecture like the one
-showed in the RNN section. We trained our models by minimizing the
-cross-entropy loss. Then, we calculated the average number of extra byte needed
-to encode each character. We fixed the average number of character per word to
-5. As another standard metric for language modeling, we also calculated the
-perplexity of our model \cite{gravesGenerating}.
+Training trough minimization of the cross-entropy loss, which is equivalent to
+\textit{perplexity}.  The standard metric for language
+modeling\cite{gravesGenerating}.
+\begin{figure}[htbp!]
 \begin{tabular}{|l|l|c|}
 \hline
 Dataset & BPC & Perplexity \\
@@ -220,6 +205,7 @@ Random quotes & 1.10 & 45 \\
 Shakespeare & 0.94 & 26\\
 \hline
 \end{tabular}
+\end{figure}
 
 \begin{itemize}\compresslist
     \item `` well , we ' ll do it with a wand , '' said hermione . `` really ?
@@ -232,12 +218,6 @@ Shakespeare & 0.94 & 26\\
     \item  '' that now my mind shall screens his music , '' '' and i to give
       thee my vulgar heaven , '' '' i am your brother .
 \end{itemize}
-For the generation of sequences, we initialize our LSTM with a random word
-drawn from our dictionary. Next, we feed back the prediction in the network
-until we reach the desired sequence length. We generated 1000 sequences (250
-per models) and used our classifier on them. A few examples of generated
-sequences are shown above. With no surprise, we scored 98\% on the
-classification task, which confirms that our sequences are at least probable.
 \end{block}
 \begin{block}{References}
 \printbibliography
