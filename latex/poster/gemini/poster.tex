@@ -93,7 +93,7 @@ recently questionned, see \cite{mythos} for a philosophically inclined take
 on the question.
 \end{block}
 
-\begin{block}{RNN} 
+\begin{block}{RNN and the Vanishing Gradient} 
 \begin{center}
     \includegraphics[width = 0.9\linewidth]{RNN.png}
 \end{center}
@@ -114,16 +114,17 @@ Applying the chain rule according to the graph above we get:
 \end{equation*}
 
 Thus, as $\delta$ grows, the gradient grows exponentially with $V$. If $V$ is
-small or large than the gradient will either vanish or explode. A myriad
-of solutions exist such as regularization through weight noise, the LSTM
-architecture tries to tackle this issue on a higher level than regularization.
+small or large then the gradient will either vanish or explode. A myriad
+of solutions exist such as regularization through weight noise, the Long Short
+Term Memory architecture tries to tackle this issue on a higher level than
+regularization.
 \end{block}
 \end{column}
 \separatorcolumn
 
 \begin{column}{\colwidth}
 
-\begin{block}{LSTM: architecture and its application to sequence generation}
+\begin{block}{LSTM Architecture}
 To go from a RNN to a LSTM we replace hidden units with components known as
 \textit{memory cells}. Our presentation and notation follows \cite{revieww}.
 \begin{center}
@@ -156,7 +157,7 @@ to control their impact on the internal representation of the network.
 
 \end{block}
 
-\begin{block}{Implementation Details}
+\begin{block}{Sequence Generation and Implementation Details}
     \begin{itemize}
         \item 4 text sequences (referred to as datasets later on) were used for
             training: excerpts from Shakespeare' plays, books of the Harry
@@ -167,16 +168,16 @@ to control their impact on the internal representation of the network.
             dictionnary was built from the complete input ($\approx 60k$ unique tokens),
             defining the input space for the networks.
         \item Vector encoding of this space was used through an embedding layer 
-            mapping the words to real vector space of dimension 256. Available
+            mapping the words to a real vector space of dimension 256. Available
             embeddings such as \textit{word2vec} and \textit{glove} were 
             initally used but proved to be more cumbersome than our own 
             trained version.
-        \item Two LSTM networks were successively trained with the above, a
-            \textit{generator} and a \textit{classifier} (one model per dataset
-             Training was achieved at ``word''level (strings tokenized by
-             whitespace).  Character level is envisionned for the rest of the
-             project as it is more flexible and can \textit{learn new words and
-             structural information}\cite{gravesGenerating} for the generators)
+        \item 5 LSTM networks were trained with the above, 4
+            \textit{generators} and a \textit{classifier}. Training
+            was achieved at ``word'' level (strings tokenized by whitespace).
+            Character level is envisionned for the rest of the project as it is
+            more flexible and can \textit{learn new words and structural
+            information} \cite{gravesGenerating} for the generators)
     \end{itemize}
 To generate the sequences the trained models were initialized with a random word
 drawn from the dictionary and the most likely next word was fed back in the network
@@ -200,8 +201,8 @@ Harry Potter''.
 \end{center}
 
 Training trough minimization of the cross-entropy loss, which is equivalent to
-\textit{perplexity}.  The standard metric for language
-modeling\cite{gravesGenerating}.
+\textit{perplexity}; the standard metric for language
+modeling \cite{gravesGenerating}.
 \begin{figure}[htbp!]
 \begin{tabular}{|l|l|c|}
 \hline
