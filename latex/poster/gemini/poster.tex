@@ -5,7 +5,6 @@
 \usetheme{gemini}
 \usecolortheme{gemini}
 \usepackage{graphicx}
-\graphicspath{{figures/}} 
 \usepackage{booktabs}
 \usepackage{tikz}
 \usepackage{pgfplots}
@@ -37,25 +36,22 @@ citestyle=numeric
 \newlength{\colwidth}
 \setlength{\sepwidth}{0.025\paperwidth}
 \setlength{\colwidth}{0.3\paperwidth}
-
 \newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
 
 % ====================
 % Title
 % ====================
+\title{Text Sequence Generation and Classification, model or inference}
+\author{Jimmy Leroux, Nicolas Laliberté, Frédéric Boileau}
 
-\title{Some fancy title: followed by some more text}
-
-\author{Alyssa P. Hacker \inst{1} \and Ben Bitdiddle \inst{2} \and Lem E. Tweakit \inst{2}}
-
-\institute[shortinst]{\inst{1} Some Institute \samelineand \inst{2} Another Institute}
+\institute[]{Départment d'Informatique et de Recherche Opérationnelle -
+Université de Montréal}
 
 % ====================
 % Body
 % ====================
 
 \begin{document}
-
 \begin{frame}[t]
 \begin{columns}[t]
 \separatorcolumn
@@ -63,51 +59,64 @@ citestyle=numeric
 \begin{column}{\colwidth}
 
 \begin{block}{Introduction}
-Hidden Markov Models used to be the go-to probabilistic tool to model 
-sequential data; the Markov assumption however proves to often be 
-unreasonably strong. Adding links to form higher order chains
-is not a scalable solution as the computationnal complexity grows 
-exponentially in the order of the cain
-Recurrent Neural Networks (RNN) constitute a family of neural network architectures
-specialized to process sequential data which can forfeit Markovian assumptions
-(the cost is the lost of a simple probabilistic interpretation).
+\begin{itemize}
+\item Hidden Markov Models used to be the go-to probabilistic tool to model 
+sequential data; the Markov assumption however proves to often be unreasonably
+strong. Adding links to form higher order chains is not a scalable solution as
+the computationnal complexity grows exponentially in the order of the chain.
 
-They do so by leveraging the simple idea
-of sharing parameters across the model \cite{deeplearning}.
-RNNs have been used in diverse domains for
-generating sequences such as music and text \cite{gravesGenerating}.
+\item Recurrent Neural Networks (RNN) constitute a family of neural network
+architectures specialized to process sequential data which can forfeit
+Markovian assumptions while remaining tractable.
 
-Naive RNNs designs are unable to store information about far past
-inputs. The solution to this problem seems to be a better memory and especially
-a long-term memory for the network.  Long Short-Term Memory (LSTM) are RNN
-designed to solve this problem.
+
+\item RNN enable to track longer range dependencies while staying tractable by
+    leveraging the simple idea of sharing parameters across the model
+    \cite{deeplearning}. Concretely this means adding loops to the hidden units
+    of the neural network.
+
+\item RNNs have been used in diverse domains for
+  generating sequences such as music and text \cite{gravesGenerating}. 
+
+\item Despite the aforementionned features, RNN suffer from the fact 
+that the influence of some input the hidden layer either decays or blows up
+exponentially in time, a phenomenon reffered to in the literature as the
+\textit{vanishing gradient problem}.
+\end{itemize}
+The cost of abandonning probabilistic models such as the HMM in favor of neural
+networks is the loss of a fully probabilistic interpretation. There has
+recently been an increased interest into finding reasonable probabilistic
+interpretaions to RNNs, see for example \cite{finnish}. On the other hand the
+very existence of some monolithic notion of ``interpretability'' has been
+recently questionned, see \cite{mythos} for a philosophical overview and the
+interesting blog post by Jacob Andreas on the blur between a model and an
+inference procedure in RNNs.\cite{monference}
 \end{block}
 
 \begin{block}{RNN} 
-  Description of RNN
 \begin{center}
     \includegraphics[width = 0.9\linewidth]{RNN.png}
 \end{center}
-\begin{align*}
-    &h_t = \sigma(U x_t + V h_{(t-1)} + b_h)\text{,}\\
-    &o_t = \text{softmax}(W h_t + b_o)
-\end{align*}
+\begin{equation*}
+    h_t = \sigma(U x_t + V h_{(t-1)} + b_h)\text{,}
+    \qquad o_t = \text{softmax}(W h_t + b_o)
+\end{equation*}
+\small{Where $ U$, $V$ and $W$ are weights matrix and the vectors $b$ are bias
+parameters.}\\
 
-Where $ U$, $V$ and $W$ are weights matrix and the vectors $b$ are bias
-parameters.
+\normalsize
+Consider the gradient of $o_{t + \delta}$ with respect to $h_t$.\\
+Applying the chain rule according to the graph above we get:
 
-One of the major drawbacks of naive RNN is the numerical
-instability of the gradient.Consider the gradient with respect to $h_t$ of $o_{t + \delta}$.
-How does it vary with $\delta$? Following the graph above and applying the
-chain rule we can see that
 \begin{equation*}
   \nabla_{h_t} o_{t + \delta} = \left( \prod_{k = t+1}^{t+\delta} V^T
   \text{diag}(1 - h^2_k) \right)\nabla_{h_{t + \delta}}o_{t + \delta}.
 \end{equation*}
 
 Thus, as $\delta$ grows, the gradient grows exponentially with $V$. If $V$ is
-small or large than the gradient will either vanish or explode. This problem is
-well known. Solutions exist, which brings us to present the LSTM.
+small or large than the gradient will either vanish or explode. A myriad
+of solutions exist such as regularization through weight noise, the LSTM
+architecture tries to tackle this issue on a higher level than regularization.
 \end{block}
 \end{column}
 \separatorcolumn
@@ -183,10 +192,7 @@ classification task, which confirms that our sequences are at least probable.
 \begin{column}{\colwidth}
 
 \begin{block}{Results}
-For the training of our classifier, we used the many-to-one architecture .
-We used the last output of the LSTM as our input for the classifier,
-disregarding all the other outputs. The last hidden state contains information
-about about all the sequence through the memory cell.  \begin{center}
+ \begin{center}
 	\includegraphics[width=.7\linewidth]{classerror}
 	\captionof{figure}{Classification error on train/test set.}
 \end{center}
@@ -222,9 +228,7 @@ Shakespeare & 0.94 & 26\\
 \begin{block}{References}
 \printbibliography
 \end{block}
-
 \end{column}
-
 \separatorcolumn
 \end{columns}
 \end{frame}
