@@ -25,7 +25,6 @@ import pickle
 import torchvision
 
 from IPython.core import debugger
-Idebug = debugger.Pdb().set_trace
 
 class RNN(nn.Module):
     '''

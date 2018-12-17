@@ -52,10 +52,11 @@ def main(*args,**kwargs):
   save = False
 
   data = fetchTextData()
-  tokensDict, target_vocab, t_vocab = preProcessData(data)
+  cleanData, target_vocab, t_vocab = preProcessData(data)
   #models, losses = trainGenerator(data,target_vocab,t_vocab)
+  print("test")
   classifier, loss_train, loss_test = \
-    trainClassifier(list(tokensDict.values()),target_vocab,t_vocab)
+    trainClassifier(list(cleanData.values()),target_vocab,t_vocab)
 
   #d,l = tg.create_texgen_data(list(models.values()),
   #                            device, target_vocab, t_vocab,100,1000)
@@ -71,7 +72,7 @@ def preProcessData(data):
   tokensDict = {k : tokenize.word_tokenize(d) for (k,d) in data.items()}
   target_vocab = list(set(itertools.chain(*tokensDict.values())))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
-  #human_names = {k : get_human_names(t) for (k,t) in tokensDict.items()}
+  human_names = {k : get_human_names(t) for (k,t) in tokensDict.items()}
   return tokensDict, target_vocab, t_vocab
 
 def get_human_names(tokens):
