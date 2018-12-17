@@ -10,16 +10,20 @@ __maintainer__ = "Jimmy Leroux, Nicolas Laliberte, Frederic Boileau"
 __email__ = "jim.leroux1@gmail.com, n.laliberte01@gmail.com, "
 __studentid__ = "1024610, 1005803, "
 
-from pathlib import Path
 import unidecode
 import string
+import re
 
 from collections import namedtuple
-from typing import List, Tuple
-
+from typing import List, Tuple, Dict
 import operator
+import functools
 from functools import reduce
+import itertools
+
 import nltk
+import nltk.tokenize as tokenize
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -30,11 +34,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 
-from IPython.core import debugger
-import re
-Idebug = debugger.Pdb().set_trace
 from os import listdir
 from os.path import isfile, join
+from pathlib import Path
 
 import textGenerator as tg
 
@@ -49,13 +51,15 @@ def main(*args,**kwargs):
   torch.cuda.manual_seed(10)
   save = False
 
-  data, target_vocab, t_vocab = fetchTextData()
-  models, losses = trainGenerator(data,target_vocab,t_vocab)
-  classifier, loss_train, loss_test = trainClassifier(data,target_vocab,t_vocab)
+  data = fetchTextData()
+  tokensDict, target_vocab, t_vocab = preProcessData(data)
+  #models, losses = trainGenerator(data,target_vocab,t_vocab)
+  classifier, loss_train, loss_test = \
+    trainClassifier(list(tokensDict.values()),target_vocab,t_vocab)
 
-  d,l = tg.create_texgen_data(list(models.values()),
-                              device, target_vocab, t_vocab,100,1000)
-  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
+  #d,l = tg.create_texgen_data(list(models.values()),
+  #                            device, target_vocab, t_vocab,100,1000)
+  #tg.evaluate_texgen(classifier, device, (d,l),100, 16)
 
   #Save
   if(save):
@@ -63,30 +67,54 @@ def main(*args,**kwargs):
 
   return models, target_vocab,t_vocab, losses
 
+def preProcessData(data):
+  tokensDict = {k : tokenize.word_tokenize(d) for (k,d) in data.items()}
+  target_vocab = list(set(itertools.chain(*tokensDict.values())))
+  t_vocab = {k:v for v,k in enumerate(target_vocab)}
+  #human_names = {k : get_human_names(t) for (k,t) in tokensDict.items()}
+  return tokensDict, target_vocab, t_vocab
 
-def fetchTextData():
-  names = []
+def get_human_names(tokens):
+    pos = nltk.pos_tag(tokens)
+    sentt = nltk.ne_chunk(pos, binary = False)
+    person_list = []
+    person = []
+    name = ""
+    for subtree in sentt.subtrees(filter=lambda t: t.label() == 'PERSON'):
+        for leaf in subtree.leaves():
+            person.append(leaf[0])
+        if len(person) > 1: #avoid grabbing lone surnames
+            for part in person:
+                name += part + ' '
+            if name[:-1] not in person_list:
+                person_list.append(name[:-1])
+            name = ''
+        person = []
+
+    return person_list
+
+def fetchTextData() -> Dict[str,str]:
+  names = None
   path = "./data/"
   availableTexts = [f for f in listdir(path) if isfile(join(path, f))]
   while not names:
-    print("\n\n" + str(availableTexts) + "\n\nEnter filenames seperated by whitespaces : ")
+    print("\n\n" + str(availableTexts) + \
+          "\n\nEnter filenames seperated by whitespaces : ")
     user_input = [str(x) for x in input().split()]
     notFound = [f for f in user_input if f not in availableTexts]
     if notFound:
       print("\n Error not found : " + str(notFound) + "\n")
-    names = list(set(user_input) and set(availableTexts))
+    names = set(user_input) & set(availableTexts)
     if not names:
       print("Error no text selected ===> Try again Please \n\n")
   print("OK")
 
-  data = []
-  for name in names:
-    with open(path+name,'r',encoding='utf-8',errors='ignore') as  file:
-      data.append((name,(file.read())))
+  data = {}
+  for name in list(names):
+    with open(path+name,'r',encoding='utf-8-sig') as file:
+      data[name] = file.read().lower()
 
-  target_vocab = list(set(reduce(operator.concat,data)))
-  t_vocab = {k:v for v,k in enumerate(target_vocab)}
-  return data, target_vocab, t_vocab
+  return data
 
 def trainClassifier(data,target_vocab,t_vocab):
   rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
