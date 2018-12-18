@@ -1,75 +1,125 @@
-@inproceedings{langley00,
- author    = {P. Langley},
- title     = {Crafting Papers on Machine Learning},
- year      = {2000},
- pages     = {1207--1216},
- editor    = {Pat Langley},
- booktitle     = {Proceedings of the 17th International Conference
-              on Machine Learning (ICML 2000)},
- address   = {Stanford, CA},
- publisher = {Morgan Kaufmann}
+%RNN-general
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+@article{gravesGenerating,
+  author    = {Alex Graves},
+  title     = {Generating Sequences With Recurrent Neural Networks},
+  journal   = {CoRR},
+  volume    = {abs/1308.0850},
+  year      = {2013},
+  url       = {http://arxiv.org/abs/1308.0850},
+  archivePrefix = {arXiv},
+  eprint    = {1308.0850},
+  timestamp = {Mon, 13 Aug 2018 16:47:21 +0200},
+  biburl    = {https://dblp.org/rec/bib/journals/corr/Graves13},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+@book{gravesBook,
+author = {Graves, Alex},
+year = {2012},
+month = {01},
+pages = {},
+title = {Supervised Sequence Labelling with Recurrent Neural Networks},
+volume = {385},
+journal = {Stud Comput Intell},
+doi = {10.1007/978-3-642-24797-2}
 }
 
-@TechReport{mitchell80,
-  author = 	 "T. M. Mitchell",
-  title = 	 "The Need for Biases in Learning Generalizations",
-  institution =  "Computer Science Department, Rutgers University",
-  year = 	 "1980",
-  address =	 "New Brunswick, MA",
-}
-
-@phdthesis{kearns89,
-  author = {M. J. Kearns},
-  title =  {Computational Complexity of Machine Learning},
-  school = {Department of Computer Science, Harvard University},
-  year =   {1989}
-}
-
-@Book{MachineLearningI,
-  editor = 	 "R. S. Michalski and J. G. Carbonell and T.
-		  M. Mitchell",
-  title = 	 "Machine Learning: An Artificial Intelligence
-		  Approach, Vol. I",
-  publisher = 	 "Tioga",
-  year = 	 "1983",
-  address =	 "Palo Alto, CA"
-}
-
-@Book{DudaHart2nd,
-  author =       "R. O. Duda and P. E. Hart and D. G. Stork",
-  title =        "Pattern Classification",
-  publisher =    "John Wiley and Sons",
-  edition =      "2nd",
-  year =         "2000"
-}
-
-@misc{anonymous,
-  title= {Suppressed for Anonymity},
-  author= {Author, N. N.},
-  year= {2011},
-}
-
-@InCollection{Newell81,
-  author =       "A. Newell and P. S. Rosenbloom",
-  title =        "Mechanisms of Skill Acquisition and the Law of
-                  Practice", 
-  booktitle =    "Cognitive Skills and Their Acquisition",
-  pages =        "1--51",
-  publisher =    "Lawrence Erlbaum Associates, Inc.",
-  year =         "1981",
-  editor =       "J. R. Anderson",
-  chapter =      "1",
-  address =      "Hillsdale, NJ"
+@article{revieww,
+  author    = {Zachary Chase Lipton},
+  title     = {A Critical Review of Recurrent Neural Networks for Sequence Learning},
+  journal   = {CoRR},
+  volume    = {abs/1506.00019},
+  year      = {2015},
+  url       = {http://arxiv.org/abs/1506.00019},
+  archivePrefix = {arXiv},
+  eprint    = {1506.00019},
+  timestamp = {Mon, 13 Aug 2018 16:48:10 +0200},
+  biburl    = {https://dblp.org/rec/bib/journals/corr/Lipton15},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 
-@Article{Samuel59,
-  author = 	 "A. L. Samuel",
-  title = 	 "Some Studies in Machine Learning Using the Game of
-		  Checkers",
-  journal =	 "IBM Journal of Research and Development",
-  year =	 "1959",
-  volume =	 "3",
-  number =	 "3",
-  pages =	 "211--229"
+%Proba interpretation
+
+@misc{inter,
+  title={Probabilistic Interpretations of Recurrent Neural Networks},
+  author={Yo Joong Choe and J. C. Shin and Neil Spencer},
+  year={2017}
 }
+@article{finnish,
+author    = {Mathias Berglund and
+             Tapani Raiko and
+             Mikko Honkala and
+             Leo K{\"{a}}rkk{\"{a}}inen and
+             Akos Vetek and
+             Juha Karhunen},
+title     = {Bidirectional Recurrent Neural Networks as Generative Models - Reconstructing
+             Gaps in Time Series},
+journal   = {CoRR},
+volume    = {abs/1504.01575},
+year      = {2015},
+url       = {http://arxiv.org/abs/1504.01575},
+archivePrefix = {arXiv},
+eprint    = {1504.01575},
+timestamp = {Mon, 13 Aug 2018 16:47:11 +0200},
+biburl    = {https://dblp.org/rec/bib/journals/corr/BerglundRHKVK15},
+bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+@article{mythos,
+  author    = {Zachary Chase Lipton},
+  title     = {The Mythos of Model Interpretability},
+  journal   = {CoRR},
+  volume    = {abs/1606.03490},
+  year      = {2016},
+  url       = {http://arxiv.org/abs/1606.03490},
+  archivePrefix = {arXiv},
+  eprint    = {1606.03490},
+  timestamp = {Mon, 13 Aug 2018 16:48:59 +0200},
+  biburl    = {https://dblp.org/rec/bib/journals/corr/Lipton16a},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+@misc{monference,
+author = {Andreas, Jacob},
+title = {A neural network is a monference, not a model},
+type = {Blog},
+year = {2016},
+url = {http://blog.jacobandreas.net/monference.html}
+}
+%NLP specific
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+@inproceedings{glove,
+	author = {Jeffrey Pennington and Richard Socher and Christopher D. Manning},
+	booktitle = {Empirical Methods in Natural Language Processing (EMNLP)},
+	title = {GloVe: Global Vectors for Word Representation},
+	year = {2014},
+	pages = {1532--1543},
+	url = {http://www.aclweb.org/anthology/D14-1162},
+}
+
+%Algos
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+@article{adam,
+	author    = {Diederik P. Kingma and
+	Jimmy Ba},
+	title     = {Adam: {A} Method for Stochastic Optimization},
+	journal   = {CoRR},
+	volume    = {abs/1412.6980},
+	year      = {2014},
+	url       = {http://arxiv.org/abs/1412.6980},
+	archivePrefix = {arXiv},
+	eprint    = {1412.6980},
+	timestamp = {Mon, 13 Aug 2018 16:47:35 +0200},
+	biburl    = {https://dblp.org/rec/bib/journals/corr/KingmaB14},
+	bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+%Ml-DL general books
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+@book{deeplearning,
+ author = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron},
+ title = {Deep Learning},
+ year = {2016},
+ isbn = {0262035618, 9780262035613},
+ publisher = {The MIT Press},
+} 
+%Data
