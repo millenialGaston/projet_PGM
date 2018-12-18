@@ -118,7 +118,7 @@ def fetchTextData() -> Dict[str,str]:
   return data
 
 def trainClassifier(data,target_vocab,t_vocab):
-  rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
+  rnnParams = RNN_Parameters(len(target_vocab), 256, 2)
   dataTensor, labelsTensor = tg.create_class_data(data,t_vocab,50,100000)
   classifier = tg.sequence_classifier(device, *rnnParams).to(device)
   mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
