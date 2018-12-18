@@ -24,6 +24,7 @@ import itertools
 import nltk
 import nltk.tokenize as tokenize
 
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -40,6 +41,9 @@ from pathlib import Path
 
 import textGenerator as tg
 
+
+#TODO : soft code output_size of classifier (rnnParam)
+
 # To use GPU if available.
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 Numerical_Parameters = namedtuple('Numerical_Parameters',
@@ -53,14 +57,13 @@ def main(*args,**kwargs):
 
   data = fetchTextData()
   cleanData, target_vocab, t_vocab = preProcessData(data)
-  #models, losses = trainGenerator(data,target_vocab,t_vocab)
-  print("test")
+  models, losses = trainGenerator(cleanData,target_vocab,t_vocab)
   classifier, loss_train, loss_test = \
     trainClassifier(list(cleanData.values()),target_vocab,t_vocab)
 
-  #d,l = tg.create_texgen_data(list(models.values()),
-  #                            device, target_vocab, t_vocab,100,1000)
-  #tg.evaluate_texgen(classifier, device, (d,l),100, 16)
+  d,l = tg.create_texgen_data(list(models.values()),
+                              device, target_vocab, t_vocab,100,1000)
+  tg.evaluate_texgen(classifier, device, (d,l),100, 16)
 
   #Save
   if(save):
@@ -70,10 +73,25 @@ def main(*args,**kwargs):
 
 def preProcessData(data):
   tokensDict = {k : tokenize.word_tokenize(d) for (k,d) in data.items()}
-  target_vocab = list(set(itertools.chain(*tokensDict.values())))
+
+  properNouns = {k : get_human_names(t) for (k,t) in tokensDict.items()}
+  maxProperNouns = len(max(properNouns.values(),key=len))
+  otherNouns_gen = (name for name in nltk.corpus.names.words('male.txt'))
+  otherNouns = list(itertools.islice(otherNouns_gen,maxProperNouns))
+
+  replaceMap = {}
+  for text,nouns in properNouns.items():
+    replaceMap[text] = {noun : otherNoun for (noun,otherNoun) in zip(nouns,otherNouns)}
+
+  newTokensDict = {}
+  for text,tokens in tokensDict.items():
+    newTokens[text] = [replaceMap.get(t,t) for t in tokens]
+
+
+  target_vocab = list(set(itertools.chain(*newTokensDict.values())))
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
-  human_names = {k : get_human_names(t) for (k,t) in tokensDict.items()}
-  return tokensDict, target_vocab, t_vocab
+
+  return newTokensDict, target_vocab, t_vocab
 
 def get_human_names(tokens):
     pos = nltk.pos_tag(tokens)
@@ -131,18 +149,18 @@ def trainGenerator(data,target_vocab,t_vocab):
   numParam = Numerical_Parameters(1,50,64,0.1)
   models = {}
   losses = list()
-  for d in data :
+  for k,v in data.items() :
     m = tg.RNN(device, *rnnParams).to(device)
-    models[d[0]] = m
-    fileCheck = Path('models/' + d[0])
+    models[k] = m
+    fileCheck = Path('models/' + k)
     cached = fileCheck.exists()
     if cached:
-      m.load_state_dict(torch.load('models/' + d[0]))
+      m.load_state_dict(torch.load('models/' + k))
     else:
-      modelParam = [m,device, d[1] , t_vocab,target_vocab]
+      modelParam = [m,device, v, t_vocab,target_vocab]
       l_train, l_test = m.train(*modelParam, *numParam, mode="textgen")
       createFolder("models/")
-      torch.save(model.state_dict(),'models/' + d[0] + '.model')
+      torch.save(model.state_dict(),'models/' + k + '.model')
       losses.append((l_train,l_test))
 
   return models, losses
