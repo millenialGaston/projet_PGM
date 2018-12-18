@@ -166,7 +166,7 @@ def trainGenerator(data,target_vocab,t_vocab):
       modelParam = [m,device, v, t_vocab,target_vocab]
       l_train, l_test = tg.train(*modelParam, *numParam, mode="textgen")
       createFolder("models/")
-      torch.save(model.state_dict(),'models/' + k + '.model')
+      torch.save(m.state_dict(),'models/' + k + '.model')
       losses.append((l_train,l_test))
 
   return models, losses
