@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """
 Project for IFT6269.
 """
@@ -35,6 +34,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 
+import os
 from os import listdir
 from os.path import isfile, join
 from pathlib import Path
@@ -74,7 +74,7 @@ def main(*args,**kwargs):
 def preProcessData(data):
   tokensDict = {k : tokenize.word_tokenize(d) for (k,d) in data.items()}
 
-  properNouns = {k : get_human_names(t) for (k,t) in tokensDict.items()}
+  properNouns = {k : get_proper_nouns(t) for (k,t) in tokensDict.items()}
   maxProperNouns = len(max(properNouns.values(),key=len))
   otherNouns_gen = (name for name in nltk.corpus.names.words('male.txt'))
   otherNouns = list(itertools.islice(otherNouns_gen,maxProperNouns))
@@ -85,13 +85,19 @@ def preProcessData(data):
 
   newTokensDict = {}
   for text,tokens in tokensDict.items():
-    newTokens[text] = [replaceMap.get(t,t) for t in tokens]
+    newTokensDict[text] = [replaceMap[text].get(t,t) for t in tokens]
 
 
   target_vocab = list(set(itertools.chain(*newTokensDict.values())))
+
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
   return newTokensDict, target_vocab, t_vocab
+
+def get_proper_nouns(tokens):
+  tagged = nltk.pos_tag(tokens)
+  properNouns = {word for word,tag in tagged if tag == 'NNP' or tag == 'NNPS'}
+  return properNouns
 
 def get_human_names(tokens):
     pos = nltk.pos_tag(tokens)
@@ -131,7 +137,7 @@ def fetchTextData() -> Dict[str,str]:
   data = {}
   for name in list(names):
     with open(path+name,'r',encoding='utf-8-sig') as file:
-      data[name] = file.read().lower()
+      data[name] = file.read()
 
   return data
 
@@ -158,7 +164,7 @@ def trainGenerator(data,target_vocab,t_vocab):
       m.load_state_dict(torch.load('models/' + k))
     else:
       modelParam = [m,device, v, t_vocab,target_vocab]
-      l_train, l_test = m.train(*modelParam, *numParam, mode="textgen")
+      l_train, l_test = tg.train(*modelParam, *numParam, mode="textgen")
       createFolder("models/")
       torch.save(model.state_dict(),'models/' + k + '.model')
       losses.append((l_train,l_test))
