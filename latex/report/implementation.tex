@@ -35,39 +35,9 @@ the network until the desired sequence length was reached. 1000 sequences (250
 per model) were generated.
 
 The classifier were trained on the original datasets and were was then used to
-classify the generated synthetic data estimate which dataset (or model, equivalently)
-was used for its generation, thereby giving us some ``metric'' of the quality
-of the data.
-
-Authorship analysis is a field of computationnal linguistics where
-the author's identity is to be extracted from the writing style of text.
-\cite{stylo}. It has diverse applications beyond complementing the
-work of traditionnal philologists such a fraud and plagiarism detection
-or even identifying cybercriminals on underground forums\cite{doppel}.
-Classically the field depended on statistical analysis 
-of manually engineered features such as word frequency, length of 
-sentences etc. 
-
-Despite its great importance and the fact that it is fundamentally
-quite well defined, i.e. the question who wrote this text
-is more well posed than the ones concerning sentiment analysis for
-example, there are major challenges. Clearly one needs to differentiate
-between writing features specific to writing style as opposed to
-context/ content specific features as Rosenthal and Yoon mention in 
-their paper on the application of stylometric techniques to detect
-multiple authorship in legal decision \yrcite{rosenthal}.
-
-In this context the simple ``anonymization'' of the text sequences we performed
-has the intent to disentangle the contextual features from the imprint of the
-author. We have mentionned before that the classifier could be used as some
-kind of metric on the synthetic data. Conversely, suppose one is fairly
-confident in the quality of the generated text, i.e. after reading its content
-and using some domain knowledge experts determines that it reflects quite well
-the imprint of an author's style. In this case the generated data could be a
-candidate for training of classifiers to detect authorship, when the data is
-sparse for instance or simply because the very nature of synthetic data could
-prevent overfitting to less relevant features, the author's footprint being 
-in some sense crystallized in the generator's features.
-
+classify the generated synthetic data estimate which dataset (or model,
+equivalently) was used for its generation, thereby giving us some ``metric'' of
+the quality of the data.
 
 \clearpage
+
