@@ -346,7 +346,11 @@ def train(model, device, dataset, t_vocab, target_vocab, num_epoch=20,
             # Learning rate decay.
             lrd = lr * (1./(1 + 5 * epoch / num_epoch))
             # Define the optimizing method and pass the parameters to optimize.
+            #JIM: comment out tous sauf celui que tu veux tester
             optimizer = torch.optim.Adam(model.parameters(), lr=lrd)
+            optimizer = torch.optim.SGD(model.parameters(),lr=lrd,momentum=0.8,
+                                        dampening=0,weight_decay=0,nesterov=True)
+            optimizer = torch.optim.RMSprop(model.parameters(),lr=lrd)
             # zero the gradient after each step.
             model.zero_grad()
             # get a training exemple.
