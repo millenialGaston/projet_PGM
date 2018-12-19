@@ -158,7 +158,7 @@ def trainClassifier(data,target_vocab,t_vocab):
 
 def trainGenerator(data,target_vocab,t_vocab):
   rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
-  numParam = Numerical_Parameters(1,50,64,0.1)
+  numParam = Numerical_Parameters(5,50,64,0.01)
   models = {}
   losses = list()
   for k,v in data.items() :
