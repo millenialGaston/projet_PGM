@@ -74,7 +74,7 @@ def main(*args,**kwargs):
 def preProcessData(data,replaceProperNouns=False):
   if not replaceProperNouns:
     tokensDict = {k : tokenize.word_tokenize(d) for (k,d) in data.items()}
-    target_vocab = list(set(itertools.chain(*newTokensDict.values())))
+    target_vocab = list(set(itertools.chain(*tokensDict.values())))
     t_vocab = {k:v for v,k in enumerate(target_vocab)}
     return tokensDict, target_vocab, t_vocab
 
