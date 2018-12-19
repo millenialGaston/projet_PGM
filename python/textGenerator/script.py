@@ -54,7 +54,7 @@ RNN_Parameters = namedtuple('RNN_Parameters',
 def main(*args,**kwargs):
   torch.cuda.manual_seed(10)
   save = False
-  replaceProperNouns = False
+  replaceProperNouns = True
   data = fetchTextData(replaceProperNouns)
   cleanData, target_vocab, t_vocab = preProcessData(data,replaceProperNouns)
   models, losses = trainGenerator(cleanData,target_vocab,t_vocab)
@@ -72,8 +72,8 @@ def main(*args,**kwargs):
   return models, target_vocab,t_vocab, losses
 
 def preProcessData(data,replaceProperNouns=False):
+  tokensDict = {k : tokenize.word_tokenize(d) for (k,d) in data.items()}
   if not replaceProperNouns:
-    tokensDict = {k : tokenize.word_tokenize(d) for (k,d) in data.items()}
     target_vocab = list(set(itertools.chain(*tokensDict.values())))
     t_vocab = {k:v for v,k in enumerate(target_vocab)}
     return tokensDict, target_vocab, t_vocab
@@ -148,7 +148,7 @@ def fetchTextData(replaceProperNouns=False) -> Dict[str,str]:
   return data
 
 def trainClassifier(data,target_vocab,t_vocab):
-  rnnParams = RNN_Parameters(len(target_vocab), 256, 2)
+  rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
   dataTensor, labelsTensor = tg.create_class_data(data,t_vocab,50,100000)
   classifier = tg.sequence_classifier(device, *rnnParams).to(device)
   mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
@@ -158,7 +158,7 @@ def trainClassifier(data,target_vocab,t_vocab):
 
 def trainGenerator(data,target_vocab,t_vocab):
   rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
-  numParam = Numerical_Parameters(5,50,64,0.01)
+  numParam = Numerical_Parameters(5,50,64,0.005)
   models = {}
   losses = list()
   for k,v in data.items() :
