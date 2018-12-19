@@ -1,0 +1,47 @@
+\documentclass{article}
+\input{premath}
+\usepackage{enumitem}
+\usepackage{times}
+\usepackage{graphicx} % more modern
+\usepackage{subfigure} 
+\usepackage{natbib}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{hyperref}
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+\usepackage[accepted]{icml2016}
+
+\usepackage{comment}
+\newcommand{\compresslist}{
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}}
+
+%\yrcite{} if named otherwise \cite
+\begin{document} 
+\icmltitlerunning{LSTM}
+\twocolumn[
+\icmltitle{LSTM for Text Generation and Classsification}
+\icmlauthor{Frédéric Boileau}{frederic.boileau@umontreal.ca}
+\icmlauthor{Jimmy Leroux}{jimmy.leroux@umontreal.ca}
+\icmlauthor{Nicolas Laliberté}{nicolas.laliberte@umontreal.ca}
+\vskip 0.3in
+]
+
+\begin{abstract} 
+    \input{abstract}
+\end{abstract} 
+
+\medskip
+\section{Introduction}
+\input{intro}
+\section{Implementation}
+\input{implementation}
+\section{Empirical Results}
+\input{results}
+\section{Conclusion and Further Work}
+\input{conclusion}
+\section{Citations and References} 
+\bibliography{example_paper}
+\bibliographystyle{icml2016}
+\end{document} 

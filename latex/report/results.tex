@@ -1,0 +1,38 @@
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{classerror}}
+\caption{Classification error on train/test set.}
+\end{center}
+\vskip -0.2in
+\end{figure} 
+
+Training trough minimization of the cross-entropy loss, which is equivalent to
+\textit{perplexity}; the standard metric for language
+modeling \cite{gravesGenerating}.
+\begin{figure}[htbp!]
+\begin{tabular}{|l|l|c|}
+\hline
+Dataset & BPC & Perplexity \\
+\hline
+Harry Potter & 1.00 & 33 \\
+LOTR & 1.02 & 35 \\
+Random quotes & 1.10 & 45 \\
+Shakespeare & 0.94 & 26\\
+\hline
+\end{tabular}
+\end{figure}
+
+Examples of generated quotes:
+\begin{itemize}\compresslist
+    \item `` well , we ' ll do it with a wand , '' said hermione . `` really ?
+      '' said harry , looking at each other .
+    \item  what looked about this
+      way , the black citadel , was far from the
+          darkness , the ring was heard , but the sea big was big , and a great
+          ring was in his battle .
+    \item failure is a beginning of love and a family which comes from god .
+    \item  '' that now my mind shall screens his music , '' '' and i to give
+      thee my vulgar heaven , '' '' i am your brother .
+\end{itemize}

@@ -1,0 +1,18 @@
+
+In the context of our project for the IFT6269-A2018 we have investigated the
+different available models for the generation and classification of natural
+text data.  While we were initially interested in fully probabilistic models
+such as Hidden Markov Models (HMM), a quick review of the contemporary
+literature on the topic of pattern recognition on sequences made it clear that
+neural networks (NN) provided the better toolset. In the end we implemented two
+Long Short-Term Memory networks, for generation and classification respectively
+which we trained on subsequences of some corpora of prose fiction. Despite the
+rather coarse nature of our implementation the generators were able to produce
+legible and decently structured text which reflected the material used for
+training; in the style of the writing for example. The classifier reported 
+excellent metrics however there are several interesting questions as to
+what overfitting consists of when classifying prose fiction. The most
+obvious is the one of proper nouns, but others such as temporal markers
+are more subtle. The solutions to be decided with some context of the
+intent of the task, so as to be the answer to a well-defined question.
+
