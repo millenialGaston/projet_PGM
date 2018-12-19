@@ -85,11 +85,10 @@ def preProcessData(data):
 
   newTokensDict = {}
   for text,tokens in tokensDict.items():
-    newTokensDict[text] = [replaceMap[text].get(t,t) for t in tokens]
+    newTokensDict[text] = [replaceMap[text].get(t,t).lower() for t in tokens]
 
 
   target_vocab = list(set(itertools.chain(*newTokensDict.values())))
-
   t_vocab = {k:v for v,k in enumerate(target_vocab)}
 
   return newTokensDict, target_vocab, t_vocab
