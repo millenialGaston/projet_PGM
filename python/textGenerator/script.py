@@ -71,8 +71,15 @@ def main(*args,**kwargs):
 
   return models, target_vocab,t_vocab, losses
 
-def preProcessData(data):
+def preProcessData(data,replaceProperNouns=False):
   tokensDict = {k : tokenize.word_tokenize(d) for (k,d) in data.items()}
+
+  if not replaceProperNouns:
+    tokensDict = {k : [t.lower for t in tokens]
+                  for (k,tokens) in tokensDict.items()}
+    target_vocab = list(set(itertools.chain(*tokensDict.values())))
+    t_vocab = {k:v for v,k in enumerate(target_vocab)}
+    return tokensDict, target_vocab, t_vocab
 
   properNouns = {k : get_proper_nouns(t) for (k,t) in tokensDict.items()}
   maxProperNouns = len(max(properNouns.values(),key=len))
