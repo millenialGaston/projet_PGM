@@ -54,9 +54,9 @@ RNN_Parameters = namedtuple('RNN_Parameters',
 def main(*args,**kwargs):
   torch.cuda.manual_seed(10)
   save = False
-
-  data = fetchTextData()
-  cleanData, target_vocab, t_vocab = preProcessData(data)
+  replaceProperNouns = False
+  data = fetchTextData(replaceProperNouns)
+  cleanData, target_vocab, t_vocab = preProcessData(data,replaceProperNouns)
   models, losses = trainGenerator(cleanData,target_vocab,t_vocab)
   classifier, loss_train, loss_test = \
     trainClassifier(list(cleanData.values()),target_vocab,t_vocab)
@@ -72,12 +72,9 @@ def main(*args,**kwargs):
   return models, target_vocab,t_vocab, losses
 
 def preProcessData(data,replaceProperNouns=False):
-  tokensDict = {k : tokenize.word_tokenize(d) for (k,d) in data.items()}
-
   if not replaceProperNouns:
-    tokensDict = {k : [t.lower for t in tokens]
-                  for (k,tokens) in tokensDict.items()}
-    target_vocab = list(set(itertools.chain(*tokensDict.values())))
+    tokensDict = {k : tokenize.word_tokenize(d) for (k,d) in data.items()}
+    target_vocab = list(set(itertools.chain(*newTokensDict.values())))
     t_vocab = {k:v for v,k in enumerate(target_vocab)}
     return tokensDict, target_vocab, t_vocab
 
@@ -124,7 +121,7 @@ def get_human_names(tokens):
 
     return person_list
 
-def fetchTextData() -> Dict[str,str]:
+def fetchTextData(replaceProperNouns=False) -> Dict[str,str]:
   names = None
   path = "./data/"
   availableTexts = [f for f in listdir(path) if isfile(join(path, f))]
@@ -143,7 +140,10 @@ def fetchTextData() -> Dict[str,str]:
   data = {}
   for name in list(names):
     with open(path+name,'r',encoding='utf-8-sig') as file:
-      data[name] = file.read()
+      if replaceProperNouns:
+        data[name] = file.read()
+      else:
+        data[name] = file.read().lower()
 
   return data
 
