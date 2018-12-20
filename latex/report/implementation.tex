@@ -1,14 +1,22 @@
+We now discuss training of the LSTM \textit{generators}. During initial
+prototyping we trained on quite varied datasets to see how structure would
+impact the generation. The four datasets were the Harry Potter novel series,
+the Lord of The Rings series, a Kaggle dataset of jokes and a collection of
+excerpts from shakespeare. This produced reasonable synthetic data (presented
+below, note that the text for training is easily identifiable) and we
+afterwards focused exclusively on prose fiction, selecting authors which seemed
+\textit{close} in terms of style.  
 
-Two text sequences (referred to as datasets later on) were used for training:
-two concatenated novels of Jane Austen and of George Eliot respectively.  All
-in English and utf-8 encoded.  Punctuation and structure was left unprocessed.
-Each dataset was split in sequences of 50 tokens (i.e.  ``words'') and a
-dictionnary was built from the complete input ($\approx 60k$ unique tokens),
-defining the input space for the networks.  Vector encoding of this space was
-used through an embedding layer mapping the words to a real vector space of
-dimension 256.  Available embeddings such as \textit{word2vec} and
-\textit{glove} were initally used but proved to be more cumbersome than our own
-trained version. 
+The two text sequences of prose used for the subsequent training of generators
+were two concatenated novels of Jane Austen and of George Eliot respectively.
+All in English and utf-8 encoded.  Punctuation and structure was left
+unprocessed.  Each dataset was split in sequences of 50 tokens (i.e.
+``words'') and a dictionnary was built from the complete input ($\approx 60k$
+unique tokens), defining the input space for the networks.  Vector encoding of
+this space was used through an embedding layer mapping the words to a real
+vector space of dimension 256.  Available embeddings such as \textit{word2vec}
+and \textit{glove} were initally used but proved to be more cumbersome than our
+own trained version. 
 
 We trained four LSTM networks with the aforementionned data, a generator and a
 classifier, once without preprocessing and another where the NLTK Part of
@@ -19,7 +27,6 @@ datasets. This was an effort to make the classifier be trained on rather
 structural aspects of the prose, such as syntax, length of sentences and broad
 notions of \textit{style} as opposed to simply directly matching vocabulary
 which would have been trivial with the names of the characters.
-
 
 Training was achieved at ``word'' level (tokenized with NLTK).
 Character level had been previsously envisionned for the rest of the project as
@@ -32,11 +39,8 @@ text available and the second one being speed of convergence.
 To generate the sequences the trained generators were initialized with a random
 word drawn from the dictionary and the most likely next word was fed back in
 the network until the desired sequence length was reached. 1000 sequences (250
-per model) were generated.
-
-The classifier were trained on the original datasets and were was then used to
-classify the generated synthetic data estimate which dataset (or model,
-equivalently) was used for its generation, thereby giving us some ``metric'' of
-the quality of the data.
-
+per model) were generated.  The classifier was trained on the original datasets
+and were was then used to classify the generated synthetic data estimate which
+dataset (or model, equivalently) was used for its generation, thereby giving us
+some ``metric'' of the quality of the data.
 

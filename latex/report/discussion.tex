@@ -1,3 +1,19 @@
+We first tackle the results on the text generation. It seems to be hard to draw
+major conclusions from the measure that is Bit Per Character at this stage. The
+preprocessing of character names doens't seem to have an interpretable effect
+on the results of the generators as it gets higher for Jane Austen but lower
+for George Eliot. The values for all text data tried so far were each too close
+to be a solid basis for interpretation.
+
+In the case of classification, training converges very fast, with
+or without replacing character names with generic names. Moreover
+it performs as well on synthetic data, meaning when trained on 
+the original novels it can identify which generator output which
+synthetic data. This leads us to think that the generator networks
+captured quite well the defining features of the authors. Now the 
+important question is whether or not those features are relevant
+in determining authorship in general.
+
 Authorship analysis is a field of computationnal linguistics where
 the author's identity is to be extracted from the writing style of text.
 \cite{stylo}. It has diverse applications beyond complementing the
