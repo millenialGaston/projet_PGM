@@ -23,10 +23,15 @@ see \cite{mythos} for a philosophically inclined take on the question.
 
 \section{Neural Networks Archicture}
 \subsection{RNN and the Vanishing Gradient}
+\begin{figure}[ht]
+\vskip 0.2in
 \begin{center}
     \includegraphics[width=\columnwidth]{RNN.png}
-    \caption{
+    \caption{Unfolded RNN network. Figure taken from Christopher Olah's blog.}
 \end{center}
+\vskip -0.2in
+\end{figure}
+
 \begin{equation*}
     h_t = \sigma(U x_t + V h_{(t-1)} + b_h)
     \quad o_t = \text{softmax}(W h_t + b_o)
@@ -48,9 +53,14 @@ regularization.
 \subsection{LSTM Architecture}
 To go from a RNN to a LSTM we replace hidden units with components known as
 \textit{memory cells}. Our presentation and notation follows \cite{revieww}.
+\begin{figure}[ht]
+\vskip 0.2in
 \begin{center}
     \includegraphics[width =\columnwidth]{lstm.png}
+    \caption{Memory cell of a LSTM. Figure taken from Christopher Olah's blog.}
 \end{center}
+\vskip -0.2in
+\end{figure}
 
 Intuitively, RNNs have \textit{long-term memory} in the form of matrix weights,
 they change during the training; encoding through training some general
