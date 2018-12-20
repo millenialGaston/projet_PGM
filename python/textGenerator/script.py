@@ -148,17 +148,17 @@ def fetchTextData(replaceProperNouns=False) -> Dict[str,str]:
   return data
 
 def trainClassifier(data,target_vocab,t_vocab):
-  rnnParams = RNN_Parameters(len(target_vocab), 256, 4)
+  rnnParams = RNN_Parameters(len(target_vocab), 256, 6)
   dataTensor, labelsTensor = tg.create_class_data(data,t_vocab,50,100000)
   classifier = tg.sequence_classifier(device, *rnnParams).to(device)
   mp = [classifier,device, (dataTensor,labelsTensor), t_vocab, target_vocab]
-  numParam = Numerical_Parameters(5,50,64,0.0001)
+  numParam = Numerical_Parameters(10,50,64,0.0001)
   loss_train, loss_test = tg.train(*mp, *numParam, mode="classification")
   return classifier, loss_train, loss_test
 
 def trainGenerator(data,target_vocab,t_vocab):
   rnnParams = RNN_Parameters(len(target_vocab), 512, len(target_vocab))
-  numParam = Numerical_Parameters(5,50,64,0.005)
+  numParam = Numerical_Parameters(2,50,64,0.005)
   models = {}
   losses = list()
   for k,v in data.items() :
