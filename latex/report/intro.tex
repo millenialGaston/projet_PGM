@@ -36,7 +36,7 @@ to $h_t$. Applying the chain rule according to the graph above we get:
 
 \begin{equation*}
   \nabla_{h_t} o_{t + \delta} = \left( \prod_{k = t+1}^{t+\delta} V^T
-  \text{diag}(1 - h^2_k) \right)\nabla_{h_{t + \delta}}o_{t + \delta}.
+  \text{diag}(h_k(1 - h_k)) \right)\nabla_{h_{t + \delta}}o_{t + \delta}.
 \end{equation*}
 
 Thus, as $\delta$ grows, the gradient grows exponentially with $V$. If $V$ is
@@ -75,3 +75,12 @@ to control their impact on the internal representation of the network.
     control of recursion to the gate
     \end{itemize}
 \end{center}
+The architecture of the memory cell improves the capacity to learn long time 
+dependencies. Indeed, following the definition of the cell state, we have
+\begin{equation*}
+	c_t = \sum_{k = o}^{t}f_t \odot \dots \odot f_{k + 1} \odot i_k \odot \tilde{c}_k.
+\end{equation*}
+We can see that the gradient may pass over long time gaps as long as the forget 
+gates are open (closed to $1$) which can be achieved with a appropriate initialization
+setting a large bias  for the gates $f$. 
+ 
