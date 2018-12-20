@@ -25,6 +25,7 @@ see \cite{mythos} for a philosophically inclined take on the question.
 \subsection{RNN and the Vanishing Gradient}
 \begin{center}
     \includegraphics[width=\columnwidth]{RNN.png}
+    \captionof{figure}{Unfolded RNN network. Figure taken from Christopher Olah's blog.}
 \end{center}
 \begin{equation*}
     h_t = \sigma(U x_t + V h_{(t-1)} + b_h)
@@ -49,6 +50,7 @@ To go from a RNN to a LSTM we replace hidden units with components known as
 \textit{memory cells}. Our presentation and notation follows \cite{revieww}.
 \begin{center}
     \includegraphics[width =\columnwidth]{lstm.png}
+    \captionof{figure}{Memory cell of a LSTM. Figure taken from Christopher Olah's blog.}
 \end{center}
 
 Intuitively, RNNs have \textit{long-term memory} in the form of matrix weights,
