@@ -1,12 +1,16 @@
 
-\subsection(Models details)
+\subsection{Models details}
 
 We used the many-to-one architecture like the one below for our 
 classifier.
+\begin{figure}[ht]
+\vskip 0.2in
 \begin{center}
-	\includegraphics[width=.65\linewidth]{manytoone}
-	\captionof{figure}{Many-to-one architecture.}
+\centerline{\includegraphics[width=\columnwidth]{manytoone}}
+\caption{Many-to-one architecture}
 \end{center}
+\vskip -0.2in
+\end{figure}
 We used the last output of the LSTM as our input for the classifier, 
 disregarding all the other outputs. The last hidden state contains 
 information about about all the sequence through the memory cell. 
