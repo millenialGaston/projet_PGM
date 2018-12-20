@@ -1,1 +1,47 @@
-conclu bla bla
+Through our project we have explored the different available methodologies for
+the generation and classification of textual data. We explored both problems as
+they seem complementary in some respects however for practical applications
+classification is the most interesting and relevant. 
+
+The most capable tools right now  for sequence classification and generation
+revolve around NN and more precisely the LSTM architecture seems to be the go
+to building block for those applications. One criticism of NN and deep learning
+based pattern recognition techniques has revolved around notions of
+\textit{interpretability}, however as Lipton discussed in his paper
+\yrcite{inter} there is no single monolithic notion of interpretability. One of
+the reasonable challenges he mentions is the one of \textit{contestability} of
+the results of a model when we need ethical decision-making. Classical
+stylometric techniques rely on statistics which are fairly easy to explain
+and/or refute but the result from a LSTM might be harder to verify. This issue
+can be adressed in many ways but first the notion that results need be
+understandable by a reasonably educated person might seem over reaching as we
+already rely on hard to contest forensic techniques such as DNA testing. To
+adress this issue instead of simply dismissing it one might consider ways to
+make the internal representation of a RNN model more cogent, ironically one
+possible avenue Lipton suggests is to train a RNN to map the internal state of
+the model used to a textual explanation.
+
+One critical application of text classification is \textit{authorship analysis}
+of which we have surveyed examples in diverse settings such as identifying
+cyber criminals in underground forums or determining multiple authorship in
+legal cases. 
+
+We have obtained surprinsingly good results in both classification and text
+generation despite our rather coarse training. The generative models clearly
+learned some structural information, often matching speech marks in a
+reasonable way, and yielding more complex sentence structures using hypotaxis
+when trained from authors such as Jane Austen while using simpler shorter
+sentences with conjunctives in the case of popular authors such as JK Rowling. 
+
+In the case of classification for authorship analysis, overfitting seems to be
+difficult to prevent without a clear methodology of what constitutes contextual
+information and what is more intrisic to an author's style. As discussed before
+there are many ways to answer this question and domain knowledge should not be
+dismissed. Replacing character names in prose fiction by generic ones seems to
+have reduced the confidence in our model. Explorations into what other
+irrelevant features should be trimmed from the set is thus warranted such as
+spatial markers. That is, obviously, when those markers are deemed irrelevant
+to the task. In some cases, with larger datasets with many character names that
+end up being shared across corpora, their choice by an author could very well
+be considered to be relevant as markers of their style.
+

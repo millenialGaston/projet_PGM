@@ -1,4 +1,16 @@
 
+\subsection(Models details)
+
+We used the many-to-one architecture like the one below for our 
+classifier.
+\begin{center}
+	\includegraphics[width=.65\linewidth]{manytoone}
+	\captionof{figure}{Many-to-one architecture.}
+\end{center}
+We used the last output of the LSTM as our input for the classifier, 
+disregarding all the other outputs. The last hidden state contains 
+information about about all the sequence through the memory cell. 
+
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
@@ -6,11 +18,19 @@
 \caption{Classification error on train/test set.}
 \end{center}
 \vskip -0.2in
-\end{figure} 
+\end{figure}
 
-Training trough minimization of the cross-entropy loss, which is equivalent to
-\textit{perplexity}; the standard metric for language
-modeling \cite{gravesGenerating}.
+The error we used here is the cross-entropy loss, which is standard for 
+classification tasks. We see on our training curves (figure 2) that we 
+have reach 96\% for the classification accuracy.
+
+\vspace{0.2in} 
+
+For the text generation models, we used a many-to-many achitecture like 
+the one showed in the RNN section with one layer for computational reasons.
+LSTMs are with a cell state of 512 dimensions. We trained trough minimization 
+of the cross-entropy loss, which is equivalent to\textit{perplexity}; the 
+standard metric for language modeling \cite{gravesGenerating}.
 \begin{figure}[htbp!]
 \begin{tabular}{|l|l|c|}
 \hline
