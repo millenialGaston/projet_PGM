@@ -17,7 +17,6 @@ information about about all the sequence through the memory cell.
 
 \subsection{Results}
 
-
 \begin{figure}[ht]
 \vskip 0.2in
 \begin{center}
@@ -35,6 +34,15 @@ information about about all the sequence through the memory cell.
 \end{center}
 \vskip -0.2in
 \end{figure}
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{yeet}}
+\caption{Classification eror for novels from Austen, Eliot, Bronte, Gaskell, Dickens}
+\label{fig2}
+\end{center}
+\vskip -0.2in
+\end{figure}
 The error we used here is the cross-entropy loss, which is standard for 
 classification tasks. We see on our training curves (figure 2) that we 
 have reach 96\% for the classification accuracy.
@@ -42,7 +50,7 @@ have reach 96\% for the classification accuracy.
 For the text generation models, we used a many-to-many achitecture like 
 the one showed in the RNN section with one layer for computational reasons.
 LSTMs are with a cell state of 512 dimensions. We trained trough minimization 
-of the cross-entropy loss, which is equivalent to\textit{perplexity}; the 
+of the cross-entropy loss, which is equivalent to \textit{perplexity}; the 
 standard metric for language modeling \cite{gravesGenerating}.
 
 \begin{figure}[htbp!]
@@ -51,20 +59,9 @@ standard metric for language modeling \cite{gravesGenerating}.
 Dataset & BPC & Perplexity \\
 \hline
 Jane Austen & 1.00 & 33 \\
-George Eliot& 1.11 & 47.18 \\
-Jane Austen generic names & 1.29  & 88.03 \\
-George Eliot generic names & 1.09 & 43.41\\
-\hline
-\end{tabular}
-\end{figure}
-
-
-
-\begin{figure}[htbp!]
-\begin{tabular}{|l|l|c|}
-\hline
-Dataset & BPC & Perplexity \\
-\hline
+George Eliot& 1.11 & 47 \\
+Jane Austen generic names & 1.29  & 88 \\
+George Eliot generic names & 1.09 & 43\\
 Harry Potter & 1.00 & 33 \\
 LOTR & 1.02 & 35 \\
 Random quotes & 1.10 & 45 \\
@@ -84,4 +81,6 @@ Examples of generated quotes:
     \item failure is a beginning of love and a family which comes from god .
     \item  '' that now my mind shall screens his music , '' '' and i to give
       thee my vulgar heaven , '' '' i am your brother .
+    \item why i gone that sort man , because he came : they had been oldest to
+        look ; i shall be ready to that their clerk , and zebedee 's lay 's long wanted
 \end{itemize}

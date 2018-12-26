@@ -1,7 +1,7 @@
 We now discuss training of the LSTM \textit{generators}. During initial
 prototyping we trained on quite varied datasets to see how structure would
 impact the generation. The four datasets were the Harry Potter novel series,
-the Lord of The Rings series, a Kaggle dataset of jokes and a collection of
+the Lord of The Rings series, a Kaggle dataset of quotes and a collection of
 excerpts from shakespeare. This produced reasonable synthetic data (presented
 below, note that the text for training is easily identifiable) and we
 afterwards focused exclusively on prose fiction, selecting authors which seemed
@@ -37,7 +37,7 @@ robustness towards unicode characters which might vary between versions of the
 text available and the second one being speed of convergence. 
 
 To generate the sequences the trained generators were initialized with a random
-word drawn from the dictionary and the most likely next word was fed back in
+word drawn from the dictionary and a word sampled from the output was fed back in
 the network until the desired sequence length was reached. 1000 sequences (250
 per model) were generated.  The classifier was trained on the original datasets
 and were was then used to classify the generated synthetic data estimate which
