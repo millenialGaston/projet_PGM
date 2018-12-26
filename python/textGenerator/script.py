@@ -162,7 +162,7 @@ def trainGenerator(data,target_vocab,t_vocab):
   models = {}
   losses = list()
   for k,v in data.items() :
-    m = tg.RNN(device, *rnnParams).to(device)
+    m = tg.textGenerator(device, *rnnParams).to(device)
     models[k] = m
     fileCheck = Path('models/' + k)
     cached = fileCheck.exists()

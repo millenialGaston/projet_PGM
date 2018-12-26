@@ -1,15 +1,3 @@
-#!/usr/bin/env python
-
-"""
-Project for IFT6269.
-"""
-
-__authors__ = "Jimmy Leroux, Nicolas Laliberte, Frederic Boileau"
-__version__ = "1.0"
-__maintainer__ = "Jimmy Leroux, Nicolas Laliberte, Frederic Boileau"
-__email__ = "jim.leroux1@gmail.com, n.laliberte01@gmail.com, "
-__studentid__ = "1024610, 1005803, "
-
 import numpy as np
 import pandas as pd
 import unidecode
@@ -23,117 +11,149 @@ import matplotlib.pyplot as plt
 import bcolz
 import pickle
 import torchvision
+import itertools
+import functools
+from numba import jit
 
-from IPython.core import debugger
-
-class RNN(nn.Module):
-    '''
-    Define the model structure.
-    '''
-    def __init__(self, device, input_size, hidden_size, output_size, n_layers=1):
-        super(RNN, self).__init__()
-        self.input_size = input_size    # Size of the character list.
-        self.hidden_size = hidden_size  # Size of the hidden layer.
-        self.output_size = output_size  # Size of output, here same as input.
-        self.n_layers = n_layers
-        self.embedding_dim = 256
-        self.encoder = nn.Embedding(input_size, self.embedding_dim) # Encode inputs.
-        self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers, batch_first=True)
-        self.linear1 = nn.Linear(self.hidden_size, output_size)
-        self.device = device
-        self.loss_train = None
-        self.loss_test = None
-
-    def forward(self, inputs, hidden, sequence_len, batch_size):
-        inputs = inputs.view(batch_size, sequence_len)
-        inputs = self.encoder(inputs)
-        inputs, hidden = self.lstm(inputs, hidden)
-        inputs = inputs.contiguous()
-        output = self.linear1(inputs.view(batch_size*sequence_len,-1))
-        return output, hidden
-
-    def init_hidden(self, batch_size):
-        '''
-        Initialize the hidden layer to 0s.
-        '''
-
-        return (torch.zeros(self.n_layers, batch_size, self.hidden_size).to(self.device),
-            torch.zeros(self.n_layers, batch_size, self.hidden_size).to(self.device))
-
-class sequence_classifier(RNN):
+class LSTM(nn.module):
 
     def __init__(self, device, input_size, hidden_size, output_size, n_layers=1):
-        super(sequence_classifier, self).__init__(device, input_size,
-            hidden_size, output_size, n_layers=1)
+      super(RNN, self).__init__()
+      self.input_size = input_size    # Size of the character list.
+      self.hidden_size = hidden_size  # Size of the hidden layer.
+      self.output_size = output_size  # Size of output, here same as input.
+      self.n_layers = n_layers
+      self.embedding_dim = 256
+      self.encoder = nn.Embedding(input_size, self.embedding_dim) # Encode inputs.
+      self.lstm = nn.LSTM(self.embedding_dim, hidden_size, n_layers, batch_first=True)
+      self.linear1 = nn.Linear(self.hidden_size, output_size)
+      self.device = device
+      self.loss_train = None
+      self.loss_test = None
 
-    def forward(self, inputs, hidden, sequence_len, batch_size):
-        inputs = inputs.view(batch_size, sequence_len)
-        inputs = self.encoder(inputs)
-        inputs, hidden = self.lstm(inputs, hidden)
-        inputs = inputs.contiguous()[:,-1,:]
-        output = self.linear1(inputs.view(batch_size*1,-1))
+    def zeroHidden(self, batch_size):
+      return itertools.repeat(torch.zeros(
+              self.n_layers, batch_size,self.hidden_size),2)
 
-        return output, hidden
+    def forward(self):
+      raise NotImplementedError
+
+class textGenerator(LSTM):
+
+  def forward(self, inputs, hidden, sequence_len, batch_size):
+    inputs = inputs.view(batch_size, sequence_len)
+    inputs = self.encoder(inputs)
+    inputs, hidden = self.lstm(inputs, hidden)
+    inputs = inputs.contiguous()
+    output = self.linear1(inputs.view(batch_size*sequence_len,-1))
+    return output, hidden
+
+  def train(self,device, dataset, t_vocab, target_vocab, num_epoch=20,
+            sequence_size=20, batch_size=200, lr=0.005):
+    n = len(dataset)
+    criterion = nn.CrossEntropyLoss()
+    numParams = tuple(sequence_size,batch_size,lr)
+    dataCreateParams = {'batchsize':batch_size, 'shuffle':True, 'num_workers':0}
+    dataCreator = functools.partial(create_data,
+                                    vocab=t_vocab,sequence_size=sequence_size)
+    dataLoader = torch.utils.data.Dataloader
+
+    trainDataSet = text_dataset(dataCreator(dataset[:int(0.9*n)]))
+    trainloader = dataLoader(trainDataSet, **dataCreateParams)
+
+    testDataSet = text_dataset(dataCreator(dataset[int(0.9*n):]))
+    testloader = dataLoader(testDataSet, **dataCreateParams)
+
+    for epoch in range(num_epoch):
+      self._step(**locals())
+      print('Epoch: {}'.format(epoch))
+      print('Train error: {0:.2f} Test error: {1:.2f}\n'
+            .format(self.loss_train[epoch],loss_test[epoch]))
+
+    return self.loss_train, self.loss_test
+
+  def _step(self,**kwargs):
+    for i, data in enumerate(trainloader):
+      nn.module.train(self)
+      inputs, targets = data
+      batchSize = inputs.shape[0]
+      lrd = lr * (1./(1 + 5 * epoch / num_epoch))
+      optimizer = torch.optim.Adam(self.parameters(), lr=lrd)
+      self.zero_grad()
+      hidden = self.zeroHidden(batchSize)
+      output, hidden = self(inputs.to(device), hidden, sequence_size-1, batchSize)
+      targets = targets.contiguous().view(batchSize*(sequence_size-1))
+      criterion(output.to(device), targets.to(device)).backward()
+      optimizer.step()
+      self.eval()
+    with torch.no_grad():
+      self.loss_train.append(self._computeLoss(trainloader))
+      self.loss_test.append(self._computeLoss(testloader))
+
+  def _computeLoss(self,loader):
+    lossAvg=0
+    for i, data in enumerate(loader):
+      inputs, targets = data
+      hidden = self.zeroHidden(inputs.shape[0])
+      output, hidden = self(inputs.to(device), hidden,
+                             sequence_size-1, inputs.shape[0])
+      targets = targets.contiguous().view(inputs.shape[0] * (sequence_size-1))
+      loss = criterion(output.to(device), targets.to(device))
+      lossAvg += loss.item()
+    return lossAvg/len(loader)
+
+
+class textClassifier(RNN):
+
+  def forward(self, inputs, hidden, sequence_len, batch_size):
+    inputs = inputs.view(batch_size, sequence_len)
+    inputs = self.encoder(inputs)
+    inputs, hidden = self.lstm(inputs, hidden)
+    inputs = inputs.contiguous()[:,-1,:]
+    output = self.linear1(inputs.view(batch_size*1,-1))
+
+    return output, hidden
 
 class text_dataset(torch.utils.data.dataset.Dataset):
-    '''
-    Create a Dataset to use with DataLoaders. We need to define __getitem__
-    and __len__.
-    '''
+  def __init__(self, data, labels):
+    self.data = data
+    self.labels = labels
 
-    def __init__(self, data, labels):
-        self.data = data
-        self.labels = labels
+  def __getitem__(self, index):
+    dat = self.data[index]
+    return (dat,self.labels[index])
 
-    def __getitem__(self, index):
-        dat = self.data[index]
-        return (dat,self.labels[index])
-
-    def __len__(self):
-        return len(self.data)
+  def __len__(self):
+    return len(self.data)
 
 def create_data(datas, vocab, sequence_size):
-    '''
-    Format the datas in sequences.
+  num_sequences = (len(datas) - sequence_size) // sequence_size
+  sequence = torch.zeros(sequence_size).long()
+  data = torch.zeros(num_sequences, sequence_size-1).long()
+  labels = torch.zeros(num_sequences, sequence_size-1).long()
 
-    Parameters:
-    -----------
-    datas: The data we want to split in sequences.
-    vocab: Dictionary of the words in datas.
-    sequence_size: The length of the output sequences.
+  for i in range(num_sequences):
+    for s in range(sequence_size):
+      sequence[s] = vocab[datas[i * sequence_size + s]]
+      data[i,:] , labels[i,:] = sequence[:-1], sequence[1:]
 
-    Returns:
-    --------
-    data: tensor containing the data, shape(number of sequence, sequence_size-1)
-    labels: tensor containing the labels, same shape as data
-    '''
-
-    num_sequences = (len(datas) - sequence_size) // sequence_size
-    sequence = torch.zeros(sequence_size).long()
-    data = torch.zeros(num_sequences, sequence_size-1).long()
-    labels = torch.zeros(num_sequences, sequence_size-1).long()
-    for i in range(num_sequences):
-        for s in range(sequence_size):
-            sequence[s] = vocab[datas[i * sequence_size + s]]
-        data[i,:] , labels[i,:] = sequence[:-1], sequence[1:]
-
-    return data, labels
+  return data, labels
 
 def create_class_data(datas, vocab, sequence_size, dataset_size):
-    '''
-    Format the datas in sequences.
+  '''
+  Format the datas in sequences.
 
     Parameters:
-    -----------
-    datas: list of the datas we want to split in sequences.
-    vocab: Dictionary of the words in datas.
-    sequence_size: The length of the output sequences.
+      -----------
+      datas: list of the datas we want to split in sequences.
+      vocab: Dictionary of the words in datas.
+      sequence_size: The length of the output sequences.
 
     Returns:
-    --------
-    data: tensor containing the data, shape(number of sequence, sequence_size-1)
-    labels: tensor containing the labels, same shape as data
-    '''
+      --------
+      data: tensor containing the data, shape(number of sequence, sequence_size-1)
+      labels: tensor containing the labels, same shape as data
+      '''
 
     # Calculate the number of sequences.
     # Initialize the tensors.
